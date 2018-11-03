@@ -1,0 +1,32 @@
+#include <syslog.h>
+#include "log.h"
+#include "rest.h"
+#include "laser.h"
+#include "lifeline_resource.h"
+#include "player_resource.h"
+
+void closeResources(void) {
+    log::info("Closing BBLaser...");
+}
+
+int main() {
+#ifndef __APPLE__
+    openlog("bb-laser", ( LOG_CONS | LOG_PID), LOG_USER);
+    setlogmask(LOG_UPTO(LOG_ERR));
+#endif
+
+    log::info("Starting BBLaser...");
+    atexit(closeResources);
+
+    laser laser1;
+    laser1.setEnabled(true);
+    lifeline_resource ll_resource(&laser1);
+    player_resource p_resource(&laser1);
+    rest r({&ll_resource, &p_resource});
+
+    log::info("Stopping BBLaser...");
+#ifndef __APPLE__
+    closelog();
+#endif
+    pthread_exit(NULL);
+}

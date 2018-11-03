@@ -1,0 +1,8 @@
+.idea
+
+/bblaser-arm/.idea
+/bblaser-arm/cmake-build-debug
+
+/bblaser-service/target
+
+/bblaser-web/node_modules
