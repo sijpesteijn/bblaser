@@ -3,7 +3,7 @@
 //
 
 #include "gpio.h"
-#include "log.h"
+#include "../log.h"
 #include <string>
 #include <syslog.h>
 

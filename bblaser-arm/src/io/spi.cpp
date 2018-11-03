@@ -5,7 +5,7 @@
 #include <cstdio>
 #include <syslog.h>
 #include "spi.h"
-#include "log.h"
+#include "../log.h"
 #include <sys/ioctl.h>
 #include <cmath>
 

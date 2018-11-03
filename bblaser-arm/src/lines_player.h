@@ -7,8 +7,8 @@
 
 #include <future>
 #include <list>
-#include "laser.h"
-#include "line.h"
+#include "domain/laser.h"
+#include "domain/line.h"
 
 using namespace std;
 

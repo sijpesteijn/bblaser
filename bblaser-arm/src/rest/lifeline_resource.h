@@ -7,7 +7,7 @@
 
 
 #include "rest_resource.h"
-#include "laser.h"
+#include "../domain/laser.h"
 
 class lifeline_resource: public rest_resource {
 public:

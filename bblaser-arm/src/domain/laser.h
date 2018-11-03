@@ -5,8 +5,8 @@
 #ifndef BB_LASER_LASER_H
 #define BB_LASER_LASER_H
 
-#include "spi.h"
-#include "gpio.h"
+#include "../io/spi.h"
+#include "../io/gpio.h"
 #include "line.h"
 
 #define MCP23S08_ALL_DOWN		0x00

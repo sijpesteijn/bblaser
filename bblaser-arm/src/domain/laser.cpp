@@ -5,7 +5,7 @@
 #include <cmath>
 #include <sstream>
 #include "laser.h"
-#include "log.h"
+#include "../log.h"
 #include "line.h"
 
 laser::laser() {

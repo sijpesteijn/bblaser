@@ -3,9 +3,9 @@
 //
 
 #include "player_resource.h"
-#include "lines_player.h"
-#include "log.h"
-#include "line.h"
+#include "../lines_player.h"
+#include "../log.h"
+#include "../domain/line.h"
 
 #include <thread>
 #include <jansson.h>

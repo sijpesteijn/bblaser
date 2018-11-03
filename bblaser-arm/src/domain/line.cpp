@@ -3,7 +3,7 @@
 //
 
 #include "line.h"
-#include "log.h"
+#include "../log.h"
 
 line::line(string str) {
     this->red = str.substr(0, 2);

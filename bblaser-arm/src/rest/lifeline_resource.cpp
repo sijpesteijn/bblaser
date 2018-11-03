@@ -3,9 +3,9 @@
 //
 #include <map>
 
-#include "log.h"
+#include "../log.h"
 #include "lifeline_resource.h"
-#include "laser.h"
+#include "../domain/laser.h"
 #include "websocket_handshake.h"
 
 

@@ -1,9 +1,9 @@
 #include <syslog.h>
 #include "log.h"
-#include "rest.h"
-#include "laser.h"
-#include "lifeline_resource.h"
-#include "player_resource.h"
+#include "rest/rest.h"
+#include "domain/laser.h"
+#include "rest/lifeline_resource.h"
+#include "rest/player_resource.h"
 
 void closeResources(void) {
     log::info("Closing BBLaser...");
