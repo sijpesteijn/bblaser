@@ -1,0 +1,195 @@
+@import '../../styles';
+
+.timeline-content {
+  display: block;
+
+  .timeline-navigator {
+    width: 100%;
+    height: 20px;
+    border: 1px solid #000;
+    border-bottom: 0;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    position: relative;
+    white-space: nowrap;
+    background-color: $timeline_background;
+
+    .timeline-header {
+      height: 20px;
+      width: 150px;
+      border-right: 1px solid black;
+      float: left;
+    }
+
+    .timeline-ruler-scroll-container {
+      height: 100%;
+      //width: 100%;
+      position: relative;
+      overflow-x: scroll;
+      overflow-y: hidden;
+
+      .timeline-ruler-container {
+        height: 20px;
+        width: 100%;
+        position: relative;
+        display: block;
+
+        .timeline-ruler {
+          background: $white;
+          color: #444;
+          font-family: source code pro, "Arial Narrow", "Helvetica Neue", Helvetica, Arial, Veranda, sans-serif;
+          font-size: 12px;
+          line-height: 20px;
+          overflow: hidden;
+        }
+
+        .timeline-ruler-indicator {
+          position: absolute;
+          top: 0px;
+          z-index: 2001;
+          width: 0;
+          height: 0;
+          border-left: 10px solid transparent;
+          border-right: 10px solid transparent;
+          border-top: 25px solid $timeline_indicator;
+        }
+
+        .timeline-ruler-indicator.cursor {
+          cursor: move;
+          cursor: -webkit-grab;
+        }
+
+        .timeline-ruler-indicator.cursor.moving {
+          cursor: -webkit-grabbing;
+        }
+      }
+    }
+
+    .timeline-ruler-scroll-container:hover {
+      cursor: pointer;
+    }
+
+    .timeline-ruler-scroll-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .timeline-ruler {
+    }
+  }
+
+  .timeline-group {
+    width: 100%;
+    //height: calc(100% - 16px);
+    height: 20vh;
+    overflow-y: scroll;
+    /* remove header height, its a patch */
+    border: 1px solid black;
+    overflow-x: hidden;
+    position: relative;
+    white-space: nowrap;
+    background-color: #F0F0F5;
+
+    .timeline-group-headers {
+      width: 150px;
+      vertical-align: top;
+      float: left;
+      background-color: #808080;
+      color: white;
+      border-right: 1px black dashed;
+      min-height: 100%;
+
+      .highlight {
+        color: #1bf5f5;
+      }
+
+
+      .timeline-group-header {
+        background-color: #999;
+        vertical-align: middle;
+        overflow: hidden;
+        background: $white;
+        cursor: pointer;
+        /* Old browsers */
+        background: -moz-linear-gradient(top, $white 0%, #e5e5e5 100%);
+        /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(100%, #e5e5e5));
+        /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(top, $white 0%, #e5e5e5 100%);
+        /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(top, $white 0%, #e5e5e5 100%);
+        /* Opera 11.10+ */
+        background: -ms-linear-gradient(top,$white 0%, #e5e5e5 100%);
+        /* IE10+ */
+        background: linear-gradient(to bottom, $white 0%, #e5e5e5 100%);
+        /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#e5e5e5', GradientType=0);
+        /* IE6-9 */
+        min-height: 21px;
+
+        i {
+          color: #888;
+          height: 12px;
+          width: 15px;
+        }
+
+        .timeline-group-header-track {
+          top: 50%;
+          height: 18px;
+          margin-top: -9px;
+          /* = height/2 */
+          padding-left: 5px;
+          color: #888;
+        }
+      }
+    }
+
+    .timeline-group-container {
+      vertical-align: top;
+      position: relative;
+      overflow-x: scroll;
+      width: auto;
+      min-height: 100%;
+
+      .timeline-ruler-indicator {
+        z-index: 2000;
+        height: 100%;
+        position: absolute;
+        width: 1px;
+        top: 0px;
+        background-color: blue;
+        box-shadow: 0px 0px 3px #888897;
+      }
+    }
+  }
+
+  .timeline-controls {
+    width: 100%;
+    height: 20px;
+    background-color: $timeline_background;
+
+    mat-icon {
+      font-size: 20px;
+      margin-top: -6px;
+      margin-left: -2px;
+    }
+    button {
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+    }
+
+    .repeat {
+      border-radius: 0px;
+      background-color: #808080;
+    }
+
+    .divider {
+      position: absolute;
+      top: 0px;
+      width: 1px;
+      height: 100%;
+    }
+
+
+  }
+}

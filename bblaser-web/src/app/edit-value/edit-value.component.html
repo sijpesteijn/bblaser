@@ -1,0 +1,2 @@
+<span *ngIf="!edit"><span [innerHTML]="name" (click)="nameCLicked()"></span><mat-icon (click)="edit = true">edit</mat-icon></span>
+<span *ngIf="edit"><mat-form-field><input matInput [value]="name" (keyup)="save($event)"></mat-form-field></span>

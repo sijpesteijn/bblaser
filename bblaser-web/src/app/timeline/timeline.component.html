@@ -1,0 +1,72 @@
+<div class="timeline-content"
+     (mousemove)="moveEvent($event)"
+     (mouseup)="mouseupIndicator($event)"
+     (mouseout)="stopMove($event)">
+  <div class="timeline-navigator">
+    <div class="timeline-header"></div>
+    <div class="timeline-ruler-scroll-container" #timelineRulerScrollContainer
+         (mousedown)="mousedownIndicator($event)"
+         (mouseup)="mouseupIndicator($event)"
+         (scroll)="scrollIndicator($event, groupContainer)">
+      <div class="timeline-ruler-container">
+        <div class="timeline-ruler">
+          <ng-container *ngFor="let tick of ticks">
+            <bb-timeline-major-tick *ngIf="tick.type === 'major'"
+                                    [tick]="tick"></bb-timeline-major-tick>
+            <bb-timeline-minor-tick *ngIf="tick.type === 'minor'"
+                                    [tick]="tick"></bb-timeline-minor-tick>
+            <bb-timeline-label-tick *ngIf="tick.type === 'label'"
+                                    [tick]="tick"></bb-timeline-label-tick>
+          </ng-container>
+        </div>
+        <div class="timeline-ruler-indicator cursor" #timelineRulerIndicator></div>
+      </div>
+    </div>
+  </div>
+  <div class="timeline-group"
+       (mousemove)="handleMoveEvent($event)"
+       (mouseup)="stopMove($event)">
+    <div class="timeline-group-headers">
+      <div class="timeline-group-header" *ngFor="let timelineRow of timelineRows"
+           [ngClass]="{'selected': timelineRow.selected, 'highlight': timelineRow.highlight}"
+           (mouseover)="timelineRow.highlight = true"
+           (mouseout)="timelineRow.highlight = false"
+           (click)="timelineRow.expanded = !timelineRow.expanded">
+        <i class="fa fa-chevron-right" *ngIf="!timelineRow.expanded && hasEffects(timelineRow)"></i>
+        <i class="fa fa-chevron-down" *ngIf="timelineRow.expanded && hasEffects(timelineRow)"></i>
+        <span class="timeline-group-header-track" [innerHTML]="timelineRow.name"></span>
+      </div>
+    </div>
+    <div class="timeline-group-container" (scroll)="scrollIndicator($event, indicatorContainer)"
+         #timelineGroupContainer (click)="handleClick($event)">
+      <div class="timeline-ruler-indicator" #timelineIndicator></div>
+      <bb-timeline-row *ngFor="let timelineRow of timelineRows" [timelineRow]="timelineRow"
+                       [timeScale]="timeScales[timeScaleIndex]"
+                       (timelineRowChanged)="handleTimelineRowChanged($event)"
+                       (leftEvent)="handleLeftTimelineObjectEvent($event)"
+                       (rightEvent)="handleRightTimelineObjectEvent($event)"
+      ></bb-timeline-row>
+    </div>
+  </div>
+  <div class="timeline-controls">
+    <button mat-icon-button [disabled]="timeScaleIndex === 0" (click)="zoomIn()">
+      <mat-icon aria-label="Zoom in">zoom_in</mat-icon>
+    </button>
+    <button mat-icon-button [disabled]="timeScaleIndex === timeScales.length - 1" (click)="zoomOut()">
+      <mat-icon aria-label="Zoom out">zoom_out</mat-icon>
+    </button>
+    <div class="divider"></div>
+    <button mat-icon-button (click)="rewind()" [disabled]="position === 0">
+      <mat-icon aria-label="First">fast_rewind</mat-icon>
+    </button>
+    <button mat-icon-button *ngIf="isPlaying()" (click)="stopPlaying()">
+      <mat-icon aria-label="Stop">pause</mat-icon>
+    </button>
+    <button mat-icon-button *ngIf="!isPlaying()" (click)="startPlaying()">
+      <mat-icon aria-label="Play">play_arrow</mat-icon>
+    </button>
+    <button mat-icon-button (click)="loop()" [ngClass]="{'repeat': repeat}">
+      <mat-icon aria-label="Loop">repeat</mat-icon>
+    </button>
+  </div>
+</div>

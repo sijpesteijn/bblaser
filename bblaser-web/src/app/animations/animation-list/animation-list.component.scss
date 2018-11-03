@@ -1,0 +1,46 @@
+.animation_list {
+
+  mat-sidenav {
+    width: 25vw;
+  }
+
+  .mat-form-field {
+    font-size: 14px;
+    width: 100%;
+  }
+
+  td, th {
+    width: 25%;
+  }
+
+  mat-cell {
+    cursor: pointer;
+  }
+
+  .highlight {
+    background: #42A948; /* green */
+  }
+
+  .highlightTable {
+    opacity: 0.5;
+  }
+
+  .animation_preview {
+    //width: 20vw;
+    //margin-left: 35px;
+  }
+
+  mat-paginator {
+    border-top-width: 1px;
+    border-top-style: solid;
+    flex: 0 0 auto;
+  }
+
+  .mat-column-last_update {
+    max-width: 100px;
+  }
+  .mat-column-remove {
+    max-width: 15px;
+  }
+
+}
