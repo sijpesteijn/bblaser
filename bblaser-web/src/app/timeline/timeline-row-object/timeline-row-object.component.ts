@@ -35,6 +35,7 @@ import {
             (mousedown)="leftDown($event)"
             (mouseup)="leftUp($event)"></span>
         <span class="center cursor"
+              (mouseout)="outCenter($event)"
               (mousedown)="downCenter($event)"
               (mousemove)="moveCenter($event)"
               (mouseup)="upCenter($event)">
@@ -136,13 +137,17 @@ export class TimelineRowObjectComponent implements OnChanges {
   }
 
   outCenter(event: MouseEvent) {
-    this.center_down = false;
+    if (this.center_down) {
+      this.center_down = false;
+      this.timelineObjectMove.emit(this.timelineRowObject);
+    }
   }
+
 
   moveCenter(event: MouseEvent) {
     if (this.center_down) {
       event.preventDefault();
-      this.timelineObject.start = this.timelineObject.start + (event.clientX - this.center_down_x);
+      this.timelineObject.start = this.timelineObject.start + (event.clientX - this.center_down_x) * this.timeScale.pixelsPerTick;
       this.center_down_y = -1;
       this.center_down_x = event.clientX;
       this.timelineObjectMove.emit(this.timelineRowObject);
@@ -170,9 +175,10 @@ export class TimelineRowObjectComponent implements OnChanges {
 
   handleMouseOut() {
     this.highlightObject(false);
-    if (this.center_down) {
+    // if (this.center_down) {
       this.center_down = false;
-    }
+      this.timelineObjectChanged.emit(this.timelineObject);
+    // }
   }
 
   addEffect(type: string) {

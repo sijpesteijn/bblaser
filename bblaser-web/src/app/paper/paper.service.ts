@@ -218,7 +218,6 @@ export class PaperService {
           .filter(app => app.start <= position && position < app.start + app.duration).length > 0)
         .forEach(element => this.drawShapeWithEffects(element, position));
       const bbShapes: BBShape[] = this.getBBShapes(JSON.parse(paper.project.activeLayer.exportJSON())[1].children);
-      console.log('Shapes: ', bbShapes);
       return bbShapes;
     }
     return [];

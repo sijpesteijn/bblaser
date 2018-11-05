@@ -276,11 +276,17 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
     const biggest = row.timelineObjects.reduce((previousValue, currentValue) => previousValue.concat(currentValue), [])
       .sort((a: TimelineObject, b: TimelineObject) => (a.start + a.duration) - (b.start + b.duration))
       .reverse();
-    if (biggest.length > 0 && this.maxPosition < (biggest[0].start + biggest[0].duration)) {
-      console.log('Bla ', this.maxPosition);
-      console.log('Moe ', (biggest[0]));
-      this.maxPosition = (biggest[0].start + biggest[0].duration);
-      this.setTimeIndication();
+    console.log('Max ', this.maxPosition);
+    console.log('Big ', biggest);
+    if (biggest.length > 0) {
+      if (this.maxPosition < (biggest[0].start + biggest[0].duration)) {
+        this.maxPosition = (biggest[0].start + biggest[0].duration);
+        this.setTimeIndication();
+      } else if (this.maxPosition > (biggest[0].start + biggest[0].duration)) {
+        this.calculateMaxTimePosition();
+        // this.maxPosition = (biggest[0].start + biggest[0].duration);
+        this.setTimeIndication();
+      }
     }
     this.timelineRowChanged.emit(row);
   }
