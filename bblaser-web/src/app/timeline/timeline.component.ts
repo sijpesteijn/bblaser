@@ -70,7 +70,7 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
       name: 'seconds',
       postfix: 's',
       scale: 1,
-      pixelsPerTick: 1000/ LABEL_WIDTH
+      pixelsPerTick: 1000 / LABEL_WIDTH
     },
     {
       name: 'tenseconds',
@@ -91,7 +91,7 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnInit() {
-    this.store.select(timelineStore.indicatorPosition).subscribe(indicator => this.position = indicator * 0.2);
+    this.store.select(timelineStore.indicatorPosition).subscribe(indicator => this.position = indicator);
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -107,9 +107,9 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
     let labelIndex = 0;
     const timeScale = this.timeScales[this.timeScaleIndex];
     this.ticks = [];
-    for (let i = 0; i < this.getMaxPosition() / timeScale.pixelsPerTick; i = i + 5) {
+    for (let i = 0; i < this.getMaxPosition(); i = i + 5) {
       if (i % LABEL_WIDTH === 0) {
-        this.ticks.push({type: 'label', offset: i, label:  i > 0 ? labelIndex++ + timeScale.postfix : ''});
+        this.ticks.push({type: 'label', offset: i, label:  i > 0 ? ++labelIndex + timeScale.postfix : ''});
       } else if (i % 10 === 0) {
         this.ticks.push({type: 'major', offset: i});
       } else if (i % 5 === 0) {
@@ -126,7 +126,7 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
   private setIndicator() {
     this.rulerIndicator.nativeElement.style.setProperty('left', (this.getIndicatorPosition() - 9) + 'px');
     this.indicator.nativeElement.style.setProperty('left', (this.getIndicatorPosition()) + 'px');
-    this.indicatorPosition.emit(this.position);
+    this.indicatorPosition.emit(this.getIndicatorPosition() * this.timeScales[this.timeScaleIndex].pixelsPerTick);
   }
 
   mousedownIndicator(event: MouseEvent) {
@@ -144,7 +144,7 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
 
   moveEvent(event: MouseEvent) {
     if (this.moveIndicator && event.x - OBJECT_NAMES_WIDTH > 0 &&
-      event.x - OBJECT_NAMES_WIDTH <= this.getMaxPosition() / this.timeScales[this.timeScaleIndex].pixelsPerTick) {
+      event.x - OBJECT_NAMES_WIDTH <= this.getMaxPosition()) { // / this.timeScales[this.timeScaleIndex].pixelsPerTick) {
       this.position = event.x - OBJECT_NAMES_WIDTH;
       this.setIndicator();
     }
@@ -247,7 +247,7 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private getMaxPosition(): number {
-    return this.maxPosition / this.timeScales[this.timeScaleIndex].scale;
+    return this.maxPosition / this.timeScales[this.timeScaleIndex].scale / this.timeScales[this.timeScaleIndex].pixelsPerTick;
   }
 
   private getIndicatorPosition(): number {
@@ -276,15 +276,12 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
     const biggest = row.timelineObjects.reduce((previousValue, currentValue) => previousValue.concat(currentValue), [])
       .sort((a: TimelineObject, b: TimelineObject) => (a.start + a.duration) - (b.start + b.duration))
       .reverse();
-    console.log('Max ', this.maxPosition);
-    console.log('Big ', biggest);
     if (biggest.length > 0) {
       if (this.maxPosition < (biggest[0].start + biggest[0].duration)) {
         this.maxPosition = (biggest[0].start + biggest[0].duration);
         this.setTimeIndication();
       } else if (this.maxPosition > (biggest[0].start + biggest[0].duration)) {
         this.calculateMaxTimePosition();
-        // this.maxPosition = (biggest[0].start + biggest[0].duration);
         this.setTimeIndication();
       }
     }
@@ -294,4 +291,5 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
   hasEffects(timelineRow: TimelineRow) {
     return timelineRow.timelineObjects.filter(timelineObject => timelineObject.effects.length > 0).length > 0;
   }
+
 }

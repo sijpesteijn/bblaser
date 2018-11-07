@@ -15,8 +15,7 @@ import { TimeScale } from '../timeline.component';
                                   [expanded]="timelineRow.expanded"
                                   (leftEvent)="handleLeftTimelineObjectEvent($event)"
                                   (rightEvent)="handleRightTimelineObjectEvent($event)"
-                                  (timelineObjectChanged)="handleTimelineObjectChanged($event)"
-                                  (timelineObjectMove)="handleTimelineObjectMove($event)">
+                                  (timelineObjectChanged)="handleTimelineObjectChanged($event)">
           </bb-timeline-row-object>
         </div>
       </div>
@@ -81,12 +80,6 @@ export class TimelineRowComponent implements OnChanges {
   handleTimelineObjectChanged(event: TimelineObject) {
     if (event) {
       this.timelineRowChanged.emit(this.timelineRow);
-    }
-  }
-
-  handleTimelineObjectMove(event: TimelineObject) {
-    if (event) {
-      this.timelineObjectMove.emit(event);
     }
   }
 }

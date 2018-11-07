@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 import {
-  ANIMATION_ALL, ANIMATION_BYID, ANIMATION_REMOVE, ANIMATION_SAVE,
-  EndpointsService, LASER
+  ANIMATION_ALL,
+  ANIMATION_BYID,
+  ANIMATION_REMOVE,
+  ANIMATION_SAVE,
+  EndpointsService,
+  LASER
 } from '../endpoints.service';
-import { BehaviorSubject, Subject, Observable } from 'rxjs/index';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject, throwError } from 'rxjs/index';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { catchError, debounceTime, distinctUntilChanged, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { map } from 'rxjs/internal/operators';
-import { RequestOptions } from '@angular/http';
 
 export interface GetAnimationOptions {
   page: number;
@@ -27,9 +30,10 @@ export interface BBColor {
   green: number;
 }
 
+// tslint:disable-next-line
 export interface BBLine extends BBShape {
 }
-
+// tslint:disable-next-line
 export interface BBBox extends BBShape {
 }
 
@@ -38,6 +42,14 @@ export interface BBShape {
   type: string;
   points: BBPoint[];
   color: BBColor;
+}
+
+export interface BBEffect {
+  id: number;
+  type: string;
+  name: string;
+  start: number;
+  duration: number;
 }
 
 export interface BBColorEffect extends BBEffect {
@@ -56,14 +68,6 @@ export interface BBRotateEffect extends BBEffect {
 
 export interface BBResizeEffect extends BBEffect {
   scale: number;
-}
-
-export interface BBEffect {
-  id: number;
-  type: string;
-  name: string;
-  start: number;
-  duration: number;
 }
 
 export interface BBAppearance {
@@ -87,9 +91,6 @@ export class BBAnimation {
   elements: BBElement[];
 }
 
-export interface AnimationPagedCollection extends PagedCollection {
-  content: BBAnimation[];
-}
 export interface PagedCollection {
   totalPages: number;
   totalElements: number;
@@ -100,7 +101,7 @@ export interface PagedCollection {
   sort: {
     sorted: boolean;
     unsorted: boolean;
-  },
+  };
   numberOfElements: number;
   pageable: {
     offset: number;
@@ -115,15 +116,29 @@ export interface PagedCollection {
   };
 }
 
+export interface AnimationPagedCollection extends PagedCollection {
+  content: BBAnimation[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class AnimationService {
   private animation: Subject<BBAnimation>;
+  private animationSaveDebounce = new Subject<BBAnimation>();
 
   constructor(private endpoints: EndpointsService,
               private httpClient: HttpClient) {
     this.animation = new BehaviorSubject(undefined);
+    this.animationSaveDebounce.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      tap(() => console.log('Bla')),
+      switchMap((animation: BBAnimation) => {
+        console.log('Persist ', animation);
+        return this.persist(animation);
+      })
+    );
   }
 
   all(options: Partial<GetAnimationOptions>): Observable<AnimationPagedCollection> {
@@ -132,8 +147,8 @@ export class AnimationService {
       .set('pageSize', options.pageSize.toString())
       .set('sort', options.sort)
       .set('direction', options.direction);
-    return this.httpClient.get<AnimationPagedCollection>(this.endpoints.get(ANIMATION_ALL), { params: params })
-      .pipe(catchError(err => Observable.throw(err.json())));
+    return this.httpClient.get<AnimationPagedCollection>(this.endpoints.get(ANIMATION_ALL), {params: params})
+      .pipe(catchError(err => throwError(err.json())));
   }
 
   get(id: string): Observable<BBAnimation> {
@@ -141,10 +156,16 @@ export class AnimationService {
       .pipe(map((response) => {
         this.animation.next(response);
         return response;
-    }));
+      }));
   }
 
   save(animation: BBAnimation): Observable<BBAnimation> {
+    // console.log('Save ', animation);
+    this.animationSaveDebounce.next(animation);
+    return this.animationSaveDebounce.asObservable();
+  }
+
+  private persist(animation: BBAnimation): Observable<BBAnimation> {
     return this.httpClient.post<BBAnimation>(this.endpoints.get(ANIMATION_SAVE), animation).pipe(map((response) => {
       this.animation.next(response);
       return response;
@@ -166,16 +187,10 @@ export class AnimationService {
       }
       delete shape['id'];
       delete shape['type'];
-      console.log('shape ', shape);
       return shape.color.red.toString(16) + shape.color.green.toString(16) + shape.color.blue.toString(16)
         + shape.points.map(point => point.x.toString(16) + point.y.toString(16))
           .reduce((previousValue, currentValue) => previousValue + currentValue);
     });
-    // const httpOptions = {
-    //   headers: new HttpHeaders({
-    //     'Content-Type':  'text/plain'
-    //   })
-    // };
     return this.httpClient.post<any>(this.endpoints.get(LASER), {shapes: stripped}).pipe(
       map(result => result)
     );

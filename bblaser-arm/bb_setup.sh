@@ -3,6 +3,7 @@
 echo Update ubuntu
 apt-get update
 apt-get -y upgrade
+apt-get -y install cmake
 
 # Format sd card
 
@@ -33,15 +34,15 @@ mkdir /media/card/notouch/var/cache
 cp -R /home /media/card/notouch/home
 cp -R /root /media/card/notouch/root
 cp -R /var/cache /media/card/notouch/var/cache
+rm -rf /home
+rm -rf /root
+rm -rf /var/cache
 ln -s /media/card/notouch/home /home
 ln -s /media/card/notouch/root /root
 ln -s /media/card/notouch/var/cache /var/cache
 mount --bind /media/card/notouch/home /home
 mount --bind /media/card/notouch/root /root
 mount --bind /media/card/notouch/var/cache /var/cache
-rm -rf /home
-rm -rf /root
-rm -rf /var/cache
 
 echo Installing restbed
 

@@ -2,30 +2,28 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'bb-edit-value',
-  templateUrl: './edit-value.component.html',
-  styleUrls: ['./edit-value.component.scss']
+  template: `
+    <span *ngIf="!edit"><span [innerHTML]="name" (click)="nameCLicked()"></span><mat-icon (click)="edit = true">edit</mat-icon></span>
+    <span *ngIf="edit"><mat-form-field><input matInput [value]="name" (keyup)="save($event)"></mat-form-field></span>
+  `,
+  styles: [``]
 })
-export class EditValueComponent implements OnInit {
-  @Input('name')
+export class EditValueComponent {
+  @Input()
   name: string;
-  private edit: false;
+  edit: false;
   @Output()
-  onClick = new EventEmitter();
+  click = new EventEmitter();
   @Output()
-  onChange = new EventEmitter();
-
-  constructor() { }
-
-  ngOnInit() {
-  }
+  change = new EventEmitter();
 
   nameCLicked() {
-    this.onClick.emit();
+    this.click.emit();
   }
 
   save($event: any) {
     if ($event.keyCode === 13) {
-      this.onChange.emit(($event.srcElement as any).value);
+      this.change.emit(($event.srcElement as any).value);
       this.edit = false;
     }
   }

@@ -15,6 +15,8 @@ import { reducers } from './store/bblaser.reducers';
 import { EditValueModule } from './edit-value/edit-value.module';
 import { PaperService } from './paper/paper.service';
 import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
+import { StoreDevtools, StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from '../environments/environment';
 
 const routes = [
   { path: '', redirectTo: '/animations', pathMatch: 'full' },
@@ -43,6 +45,10 @@ export function createTranslateLoader(http: HttpClient) {
     StoreModule.forRoot({}),
     EffectsModule.forRoot([]),
     StoreModule.forFeature('bblaser', reducers),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25, // Retains last 25 states
+      logOnly: environment.production, // Restrict extension to log-only mode
+    }),
     RouterModule.forRoot(routes),
     TranslateModule.forRoot({
       loader: {

@@ -10,8 +10,8 @@ export const timelineState = createSelector(bblaserState, (state: BBState) => {
 export const rows = createSelector(timelineState, (state: TimelineState) => {
   return state.rows;
 });
-export const highlighted = createSelector(timelineState, (state: TimelineState) => {
-  return state.highlighted;
+export const selected = createSelector(timelineState, (state: TimelineState) => {
+  return [...state.selected];
 });
 export const indicatorPosition = createSelector(timelineState, (state: TimelineState) => {
   return state.indicatorPosition;

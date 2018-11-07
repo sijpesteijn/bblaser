@@ -18,24 +18,24 @@ import {
   BBResizeEffect,
   BBRotateEffect
 } from '../../animations/animation.service';
+import { Store } from '@ngrx/store';
+import * as timelineStore from '../store';
 
 @Component({
   selector: 'bb-timeline-row-object',
   template: `
     <div class="timeline-row-object-container"
-         (dblclick)="showContextMenu($event)">
+         (dblclick)="showContextMenu($event)"
+         (click)="hideContextMenu($event)">
       <div class="timeline-row-object"
            #timelineRowObject
-           [ngClass]="{'selected': timelineObject.selected, 'highlight': timelineObject.highlight}"
            [ngStyle]="{'left.px': (timelineObject.start / timeScale.pixelsPerTick) / timeScale.scale,
            'width.px': (timelineObject.duration / timeScale.pixelsPerTick) / timeScale.scale}"
-           (mouseover)="handleMouseOver()"
            (mouseout)="handleMouseOut()">
       <span class="left cursor"
             (mousedown)="leftDown($event)"
             (mouseup)="leftUp($event)"></span>
         <span class="center cursor"
-              (mouseout)="outCenter($event)"
               (mousedown)="downCenter($event)"
               (mousemove)="moveCenter($event)"
               (mouseup)="upCenter($event)">
@@ -63,7 +63,7 @@ import {
   `,
   styleUrls: ['timeline-row-object.scss']
 })
-export class TimelineRowObjectComponent implements OnChanges {
+export class TimelineRowObjectComponent implements OnChanges, OnInit {
   @Input()
   timelineObject: TimelineObject;
   @Input()
@@ -76,18 +76,35 @@ export class TimelineRowObjectComponent implements OnChanges {
   rightEvent = new EventEmitter();
   @Output()
   timelineObjectChanged = new EventEmitter();
-  @Output()
-  timelineObjectMove = new EventEmitter();
   @ViewChild('timelineRowObject')
-  private timelineRowObject: ElementRef;
+  private elementRef: ElementRef;
   private center_down = false;
   private center_down_x: number;
   private center_down_y: number;
-  private wasHighlighted = false;
   contextMenu = false;
   point: BBPoint;
 
+  constructor(private store: Store<timelineStore.TimelineState>) {
+  }
+
+  ngOnInit() {
+    this.store.select(timelineStore.selected)
+      .subscribe(rowObjects => {
+        if (rowObjects.filter(ro => ro.id === this.timelineObject.id).length > 0) {
+          this.timelineObject.selected = true;
+          this.elementRef.nativeElement.classList.add('selected');
+          console.log('On ', this.timelineObject);
+        } else {
+          this.contextMenu = false;
+          this.timelineObject.selected = false;
+          this.elementRef.nativeElement.classList.remove('selected');
+          console.log('Off ', this.timelineObject);
+        }
+      });
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('Changes ', changes);
     if (changes['timeScale']) {
       this.timeScale = changes['timeScale'].currentValue;
     }
@@ -122,9 +139,12 @@ export class TimelineRowObjectComponent implements OnChanges {
     this.center_down_x = event.x;
     this.center_down_y = event.y;
     this.center_down = true;
-    this.contextMenu = false;
+    this.timelineObject.selected = true;
     if (event.shiftKey) {
       console.log('Select multiple');
+      this.store.dispatch(new timelineStore.TimelineAddToSelected(this.timelineObject));
+    } else {
+      this.store.dispatch(new timelineStore.TimelineSetSelected([this.timelineObject]));
     }
   }
 
@@ -133,16 +153,7 @@ export class TimelineRowObjectComponent implements OnChanges {
       this.timelineObject.selected = !this.timelineObject.selected;
     }
     this.center_down = false;
-    this.timelineObjectChanged.emit(this.timelineObject);
   }
-
-  outCenter(event: MouseEvent) {
-    if (this.center_down) {
-      this.center_down = false;
-      this.timelineObjectMove.emit(this.timelineRowObject);
-    }
-  }
-
 
   moveCenter(event: MouseEvent) {
     if (this.center_down) {
@@ -150,35 +161,24 @@ export class TimelineRowObjectComponent implements OnChanges {
       this.timelineObject.start = this.timelineObject.start + (event.clientX - this.center_down_x) * this.timeScale.pixelsPerTick;
       this.center_down_y = -1;
       this.center_down_x = event.clientX;
-      this.timelineObjectMove.emit(this.timelineRowObject);
-    }
-  }
-
-  highlightObject(highlight: boolean) {
-    if (highlight) {
-      this.wasHighlighted = this.timelineObject.highlight;
-      this.timelineObject.highlight = highlight;
-    } else {
-      this.timelineObject.highlight = this.wasHighlighted;
+      this.timelineObjectChanged.emit(this.timelineObject);
     }
   }
 
   showContextMenu(event: MouseEvent) {
-    event.preventDefault();
+    event.stopPropagation();
     this.contextMenu = true;
     this.point = {x: event.layerX, y: event.layerY};
+    this.store.dispatch(new timelineStore.TimelineSetSelected([this.timelineObject]));
   }
 
-  handleMouseOver() {
-    this.highlightObject(true);
+  hideContextMenu(event: MouseEvent) {
+    event.stopPropagation();
+    this.contextMenu = false;
   }
 
   handleMouseOut() {
-    this.highlightObject(false);
-    // if (this.center_down) {
-      this.center_down = false;
-      this.timelineObjectChanged.emit(this.timelineObject);
-    // }
+    this.center_down = false;
   }
 
   addEffect(type: string) {
@@ -199,7 +199,7 @@ export class TimelineRowObjectComponent implements OnChanges {
         name: 'move',
         start: this.timelineObject.start + 40,
         duration: this.timelineObject.duration,
-        startPosition: { x: 0, y: 0},
+        startPosition: {x: 0, y: 0},
         endPosition: {x: 65535, y: 65535}
       }) as BBMoveEffect);
     } else if (type === 'shape_resize') {

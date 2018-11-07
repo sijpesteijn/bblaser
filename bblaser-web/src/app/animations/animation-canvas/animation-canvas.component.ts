@@ -69,7 +69,6 @@ export class AnimationCanvasComponent implements OnInit, OnDestroy {
     this.aStore.select(animationStore.selectTimerPosition)
       .subscribe(position => {
         this.lStore.select(laserStore.laserConnected).subscribe(connected => {
-          console.log('Position ', connected);
           if (connected) {
             const bbShapes = this.paperService.showCurrentPosition(position);
             this.aStore.dispatch(new animationStore.SendToLaser(bbShapes));
@@ -98,7 +97,6 @@ export class AnimationCanvasComponent implements OnInit, OnDestroy {
   private stopPreview() {
     clearInterval(this.previewHandle);
     this.lStore.select(laserStore.laserConnected).subscribe(connected => {
-      console.log('Stop ', connected);
       if (connected) {
         this.aStore.dispatch(new animationStore.SendToLaser([]));
       }

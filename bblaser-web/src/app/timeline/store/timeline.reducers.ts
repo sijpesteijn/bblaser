@@ -1,12 +1,12 @@
 import { BBEffect } from '../../animations/animation.service';
 import * as fromTimeline from './timeline.actions';
 import * as fromAnimation from '../../animations/animation-store/animation.actions';
+import { selected } from './timeline.selectors';
 
 export interface TimelineObject {
   id: number;
   start: number;
   duration: number;
-  highlight: boolean;
   selected: boolean;
   effects: BBEffect[];
 }
@@ -14,7 +14,6 @@ export interface TimelineObject {
 export interface TimelineRow {
   id: number;
   name: string;
-  highlight: boolean;
   selected: boolean;
   expanded: boolean;
   timelineObjects: TimelineObject[];
@@ -22,13 +21,13 @@ export interface TimelineRow {
 
 export interface TimelineState {
   rows: TimelineRow[];
-  highlighted: TimelineObject[];
+  selected: TimelineObject[];
   indicatorPosition: number;
 }
 
 export const initialTimelineState: TimelineState = {
   rows: undefined,
-  highlighted: [],
+  selected: [],
   indicatorPosition: 0
 };
 
@@ -42,9 +41,42 @@ export function timelineReducer(state = initialTimelineState, action: fromTimeli
       };
     }
     case fromTimeline.TIMELINE_HIGHLIGHT: {
-      state.highlighted = action.highligthed;
+      state.selected = action.highligthed;
       return {
         ...state
+      };
+    }
+    case fromTimeline.TIMELINE_ADD_TO_SELECTED: {
+      console.log('Adding ', action.timelineObject);
+      return {
+        ...state,
+        selected: [
+          ...state.selected,
+          action.timelineObject
+        ]
+      };
+    }
+    case fromTimeline.TIMELINE_DELETE_FROM_SELECTED: {
+      console.log('Deleting ', action.timelineObject);
+      return {
+        ...state,
+        selected: [
+          ...state.selected.filter(ro => ro.id !== action.timelineObject.id)
+        ]
+      };
+    }
+    case fromTimeline.TIMELINE_SET_SELECTED: {
+      console.log('Set selected ', action.timelineObjects);
+      return {
+        ...state,
+        selected: action.timelineObjects
+      };
+    }
+    case fromTimeline.TIMELINE_CONTAINER_CLICK: {
+      console.log('Container click');
+      return {
+        ...state,
+        selected: []
       };
     }
   }

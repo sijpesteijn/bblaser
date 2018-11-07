@@ -32,14 +32,14 @@ import { BBPoint } from '../../../animations/animation.service';
     }
   `]
 })
-export class TimelineRowObjectContextmenuComponent {
+export class TimelineRowObjectContextMenuComponent {
   @Input()
   point: BBPoint;
 
   @Output()
-  onTypeChange = new EventEmitter();
+  typeChanged = new EventEmitter();
 
   addEffect(type: string) {
-    this.onTypeChange.emit(type);
+    this.typeChanged.emit(type);
   }
 }

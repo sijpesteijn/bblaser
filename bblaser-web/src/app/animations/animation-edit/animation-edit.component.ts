@@ -7,6 +7,8 @@ import * as animationStore from '../animation-store';
 import * as paperStore from '../../paper';
 import { PaperState } from '../../paper';
 import { TimelineRow } from '../../timeline/store';
+import { Subject } from 'rxjs';
+import { debounce, debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'bb-animation-edit',
@@ -30,7 +32,7 @@ export class AnimationEditComponent implements OnInit {
     this.pStore.select(paperStore.newShape).subscribe(shape => {
       if (shape !== undefined && this.animation) {
         const appearance = {
-          id: 0,
+          id: shape.id,
           start: this.indicatorPosition,
           duration: 1000,
           effects: []
@@ -42,18 +44,17 @@ export class AnimationEditComponent implements OnInit {
           appearances: [appearance]
         };
         this.animation.elements.push(element);
+
         this.timelineRows.push({
           id: element.id,
           name: element.name,
-          highlight: false,
           selected: false,
           expanded: false,
           timelineObjects: [{
-            id: 0,
+            id: shape.id,
             start: appearance.start,
             duration: appearance.duration,
-            highlight: false,
-            selected: false,
+            selected: true,
             effects: appearance.effects
           }]
         });
@@ -70,7 +71,7 @@ export class AnimationEditComponent implements OnInit {
     this.aStore.select(paperStore.animationLoaded).subscribe(animation => {
       if (animation) {
         // if (!this.animation) { // || this.animation.last_update !== animation.last_update) {
-          // console.log('Create timeline timelineRows ', animation);
+        //   console.log('Create timeline timelineRows ', animation);
           this.animation = animation;
           this.timelineRows = [];
           this.createTimeline();
@@ -86,14 +87,12 @@ export class AnimationEditComponent implements OnInit {
         this.timelineRows.push({
           id: element.id,
           name: element.name,
-          highlight: false,
           selected: false,
           expanded: false,
           timelineObjects: [{
             id: appearance.id,
             start: appearance.start,
             duration: appearance.duration,
-            highlight: false,
             selected: false,
             effects: appearance.effects
           }]

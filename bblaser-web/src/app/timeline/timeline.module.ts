@@ -12,7 +12,9 @@ import { ColorGradientEffectComponent } from './timeline-row-object-effect/effec
 import { ShapeMoveEffectComponent } from './timeline-row-object-effect/effects/shape-move-effect.compoent';
 import { ShapeRotateEffectComponent } from './timeline-row-object-effect/effects/shape-rotate-effect.compoent';
 import { ShapeResizeEffectComponent } from './timeline-row-object-effect/effects/shape-resize-effect.compoent';
-import { TimelineRowObjectContextmenuComponent } from './timeline-row-object/timeline-row-object-contextmenu/timeline-row-object-contextmenu.component';
+import {
+  TimelineRowObjectContextMenuComponent
+} from './timeline-row-object/timeline-row-object-contextmenu/timeline-row-object-context-menu.component';
 
 @NgModule({
   imports: [
@@ -31,7 +33,7 @@ import { TimelineRowObjectContextmenuComponent } from './timeline-row-object/tim
     ShapeMoveEffectComponent,
     ShapeRotateEffectComponent,
     ShapeResizeEffectComponent,
-    TimelineRowObjectContextmenuComponent
+    TimelineRowObjectContextMenuComponent
   ],
   exports: [
     TimelineComponent

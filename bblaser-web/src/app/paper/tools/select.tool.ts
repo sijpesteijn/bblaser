@@ -1,7 +1,7 @@
 import * as paper from 'paper';
 import { PaperService, Tool } from '../paper.service';
 
-export class SelectTool implements Tool{
+export class SelectTool implements Tool {
   private tool: paper.Tool;
 
   constructor(private paperService: PaperService) {
