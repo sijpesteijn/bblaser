@@ -2,21 +2,21 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { BBPoint } from '../../../animations/animation.service';
 
 @Component({
-  selector: 'bb-timeline-row-object-contextmenu',
+  selector: 'bb-timeline-row-object-context-menu',
   template: `
-    <div class="contextmenu" [ngStyle]="{'left.px': point.x, 'top.px': point.y}">
+    <div class="context-menu" [ngStyle]="{'left.px': point.x, 'top.px': point.y}">
       <mat-card>
         <ul>
-          <li><button mat-button (click)="addEffect('color_gradient')">Gradient</button></li>
-          <li><button mat-button (click)="addEffect('shape_move')">Move</button></li>
-          <li><button mat-button (click)="addEffect('shape_resize')">Resize</button></li>
-          <li><button mat-button (click)="addEffect('shape_rotate')">Rotate</button></li>
+          <li><button mat-button (click)="addEffect($event, 'color_gradient')">Gradient</button></li>
+          <li><button mat-button (click)="addEffect($event, 'shape_move')">Move</button></li>
+          <li><button mat-button (click)="addEffect($event, 'shape_resize')">Resize</button></li>
+          <li><button mat-button (click)="addEffect($event, 'shape_rotate')">Rotate</button></li>
         </ul>
       </mat-card>
     </div>
   `,
   styles: [`
-    .contextmenu {
+    .context-menu {
       position: absolute;
       z-index: 100;
     }
@@ -37,9 +37,11 @@ export class TimelineRowObjectContextMenuComponent {
   point: BBPoint;
 
   @Output()
-  typeChanged = new EventEmitter();
+  typeChanged: EventEmitter<string> = new EventEmitter();
 
-  addEffect(type: string) {
+  addEffect(event: MouseEvent, type: string) {
+    event.stopPropagation();
+    console.log('Add effect ', type);
     this.typeChanged.emit(type);
   }
 }

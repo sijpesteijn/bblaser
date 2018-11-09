@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { TimelineRowObjectComponent } from './timeline-row-object/timeline-row-object.component';
-import { TimelineComponent } from './timeline.component';
-import { TimelineRowComponent } from './timeline-row/timeline-row.component';
+import { LABEL_WIDTH, TimelineComponent, TimeScale } from './timeline.component';
+import { TimelineRowComponent, TimelineRowDeleteDialogComponent } from './timeline-row/timeline-row.component';
 import { TimelineLabelTickComponent } from './timeline-label-tick/timeline-label-tick.component';
 import { TimelineMajorTickComponent } from './timeline-major-tick/timeline-major-tick.component';
 import { TimelineMinorTickComponent } from './timeline-minor-tick/timeline-minor-tick.component';
@@ -15,6 +15,28 @@ import { ShapeResizeEffectComponent } from './timeline-row-object-effect/effects
 import {
   TimelineRowObjectContextMenuComponent
 } from './timeline-row-object/timeline-row-object-contextmenu/timeline-row-object-context-menu.component';
+
+
+const TIMESCALES: TimeScale[] = [
+  {
+    name: 'seconds',
+    postfix: 's',
+    scale: 1,
+    pixelsPerTick: 1000 / LABEL_WIDTH
+  },
+  {
+    name: 'tenseconds',
+    postfix: '0s',
+    scale: 10,
+    pixelsPerTick: 1000 / LABEL_WIDTH
+  },
+  {
+    name: 'minutes',
+    postfix: 'min',
+    scale: 60,
+    pixelsPerTick: 1000 / LABEL_WIDTH
+  }
+];
 
 @NgModule({
   imports: [
@@ -33,10 +55,17 @@ import {
     ShapeMoveEffectComponent,
     ShapeRotateEffectComponent,
     ShapeResizeEffectComponent,
-    TimelineRowObjectContextMenuComponent
+    TimelineRowObjectContextMenuComponent,
+    TimelineRowDeleteDialogComponent
   ],
   exports: [
     TimelineComponent
+  ],
+  entryComponents: [
+    TimelineRowDeleteDialogComponent
+  ],
+  providers: [
+    {provide: 'timeScales', useValue: TIMESCALES}
   ]
 })
 export class TimelineModule {}

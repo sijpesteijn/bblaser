@@ -1,19 +1,23 @@
 import {
   Component,
   ElementRef,
-  EventEmitter,
+  EventEmitter, Inject,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
-  Output, SimpleChanges,
+  Output,
+  SimpleChanges,
   ViewChild
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as timelineReducers from './store';
 import * as timelineStore from './store';
 import { TimelineObject, TimelineRow } from './store';
-import { interval, timer } from 'rxjs';
+import { MatDialog } from '@angular/material';
+import { AnimationDeleteDialogComponent } from '../animations/animation-delete-dialog/animation-delete-dialog.component';
+import * as animationStore from '../animations/animation-store';
+import { TimelineRowDeleteDialogComponent } from './timeline-row/timeline-row.component';
 
 export const TIMEOUT_TIME = 50;
 
@@ -46,7 +50,9 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
   @Output()
   private indicatorPosition: EventEmitter<number> = new EventEmitter();
   @Output()
-  private timelineRowChanged = new EventEmitter();
+  private timelineRowChanged: EventEmitter<TimelineRow> = new EventEmitter();
+  @Output()
+  private timelineRowDeleted: EventEmitter<TimelineRow> = new EventEmitter();
 
   @ViewChild('timelineRulerIndicator')
   private rulerIndicator: ElementRef;
@@ -65,29 +71,12 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
   position = 0;
   leftDown: any;
   rightDown: any;
-  timeScales: TimeScale[] = [
-    {
-      name: 'seconds',
-      postfix: 's',
-      scale: 1,
-      pixelsPerTick: 1000 / LABEL_WIDTH
-    },
-    {
-      name: 'tenseconds',
-      postfix: '0s',
-      scale: 10,
-      pixelsPerTick: 1000 / LABEL_WIDTH
-    },
-    {
-      name: 'minutes',
-      postfix: 'min',
-      scale: 60,
-      pixelsPerTick: 1000 / LABEL_WIDTH
-    }
-  ];
   timeScaleIndex = 0;
+  dialogRef;
 
-  constructor(private store: Store<timelineReducers.TimelineState>) {
+  constructor(private store: Store<timelineReducers.TimelineState>,
+              public dialog: MatDialog,
+              @Inject('timeScales') public timeScales: TimeScale[]) {
   }
 
   ngOnInit() {
@@ -116,7 +105,6 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
         this.ticks.push({type: 'minor', offset: i});
       }
     }
-    // this.ticks.forEach(tick => console.log(tick));
   }
 
   ngOnDestroy() {
@@ -126,13 +114,13 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
   private setIndicator() {
     this.rulerIndicator.nativeElement.style.setProperty('left', (this.getIndicatorPosition() - 9) + 'px');
     this.indicator.nativeElement.style.setProperty('left', (this.getIndicatorPosition()) + 'px');
-    this.indicatorPosition.emit(this.getIndicatorPosition() * this.timeScales[this.timeScaleIndex].pixelsPerTick);
+    this.indicatorPosition.emit(this.getIndicatorPosition() * this.timeScales[this.timeScaleIndex].pixelsPerTick * this.timeScales[this.timeScaleIndex].scale);
   }
 
   mousedownIndicator(event: MouseEvent) {
     if (event.x - OBJECT_NAMES_WIDTH <= this.getMaxPosition()) {
       this.moveIndicator = true;
-      this.position = event.x - OBJECT_NAMES_WIDTH;
+      this.position = (event.x - OBJECT_NAMES_WIDTH) * this.timeScales[this.timeScaleIndex].scale;
       this.setIndicator();
       event.preventDefault();
     }
@@ -144,8 +132,8 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
 
   moveEvent(event: MouseEvent) {
     if (this.moveIndicator && event.x - OBJECT_NAMES_WIDTH > 0 &&
-      event.x - OBJECT_NAMES_WIDTH <= this.getMaxPosition()) { // / this.timeScales[this.timeScaleIndex].pixelsPerTick) {
-      this.position = event.x - OBJECT_NAMES_WIDTH;
+      event.x - OBJECT_NAMES_WIDTH <= this.getMaxPosition()) {
+      this.position = (event.x - OBJECT_NAMES_WIDTH) * this.timeScales[this.timeScaleIndex].scale;
       this.setIndicator();
     }
     event.preventDefault();
@@ -181,23 +169,17 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
     this.rightDown = undefined;
   }
 
-  isPlaying() {
-    return this.playing;
-  }
-
   private playPosition() {
     if (this.playing) {
       const current = new Date().getTime();
-      // console.log('Pos ', this.getIndicatorPosition());
-      // console.log('Max ', this.getMaxPosition());
       const diff = TIMEOUT_TIME - (current - this.startTime);
-      if (this.repeat && this.getIndicatorPosition() === this.getMaxPosition()) {
+      if (this.repeat && this.position === this.maxPosition) {
         this.position = 0;
-      } else if (this.getIndicatorPosition() < this.getMaxPosition()) {
-        if (this.getIndicatorPosition() + TIMEOUT_TIME < this.getMaxPosition()) {
+      } else if (this.position < this.maxPosition) {
+        if (this.position + TIMEOUT_TIME < this.maxPosition) {
           this.position += TIMEOUT_TIME;
         } else {
-          this.position = this.getMaxPosition();
+          this.position = this.maxPosition;
         }
       } else if (this.repeat) {
         this.position = 0;
@@ -208,6 +190,63 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
       this.startTime = current;
       setTimeout(() => this.playPosition(), TIMEOUT_TIME + diff);
     }
+  }
+
+  private getMaxPosition(): number {
+    return this.maxPosition / this.timeScales[this.timeScaleIndex].scale / this.timeScales[this.timeScaleIndex].pixelsPerTick;
+  }
+
+  private getIndicatorPosition(): number {
+    return this.position / this.timeScales[this.timeScaleIndex].scale;
+  }
+
+  private calculateMaxTimePosition() {
+    const biggest: TimelineObject[] = this.timelineRows
+      .map(value => value.timelineObjects)
+      .reduce((previousValue, currentValue) => previousValue.concat(currentValue), [])
+      .sort((a: TimelineObject, b: TimelineObject) => (a.start + a.duration) - (b.start + b.duration))
+      .reverse();
+    if (biggest.length > 0) {
+      this.maxPosition = (biggest[0].start + biggest[0].duration);
+    } else {
+      this.maxPosition = 0;
+    }
+  }
+
+  handleTimelineRowChanged(row: TimelineRow) {
+    const biggest = row.timelineObjects.reduce((previousValue, currentValue) => previousValue.concat(currentValue), [])
+      .sort((a: TimelineObject, b: TimelineObject) => (a.start + a.duration) - (b.start + b.duration))
+      .reverse();
+    if (biggest.length > 0) {
+      if (this.maxPosition < (biggest[0].start + biggest[0].duration)) {
+        this.maxPosition = (biggest[0].start + biggest[0].duration);
+        this.setTimeIndication();
+      } else if (this.maxPosition > (biggest[0].start + biggest[0].duration)) {
+        this.calculateMaxTimePosition();
+        this.setTimeIndication();
+      }
+    }
+    this.timelineRowChanged.emit(row);
+  }
+
+  hasEffects(timelineRow: TimelineRow) {
+    return timelineRow.timelineObjects.filter(timelineObject => timelineObject.effects.length > 0).length > 0;
+  }
+
+  deleteRow(timelineRow: TimelineRow) {
+    this.dialogRef = this.dialog.open(TimelineRowDeleteDialogComponent, {
+      data: timelineRow
+    });
+
+    this.dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        this.timelineRowDeleted.emit(timelineRow);
+      }
+    });
+  }
+
+  isPlaying() {
+    return this.playing;
   }
 
   startPlaying() {
@@ -246,50 +285,8 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  private getMaxPosition(): number {
-    return this.maxPosition / this.timeScales[this.timeScaleIndex].scale / this.timeScales[this.timeScaleIndex].pixelsPerTick;
-  }
-
-  private getIndicatorPosition(): number {
-    return this.position / this.timeScales[this.timeScaleIndex].scale;
-  }
-
   handleClick(event) {
     this.store.dispatch(new timelineStore.TimeLineContainerClick());
-    console.log('Timeline click: ', event);
-  }
-
-  private calculateMaxTimePosition() {
-    const biggest: TimelineObject[] = this.timelineRows
-      .map(value => value.timelineObjects)
-      .reduce((previousValue, currentValue) => previousValue.concat(currentValue), [])
-      .sort((a: TimelineObject, b: TimelineObject) => (a.start + a.duration) - (b.start + b.duration))
-      .reverse();
-    if (biggest.length > 0) {
-      this.maxPosition = (biggest[0].start + biggest[0].duration);
-    } else {
-      this.maxPosition = 0;
-    }
-  }
-
-  handleTimelineRowChanged(row: TimelineRow) {
-    const biggest = row.timelineObjects.reduce((previousValue, currentValue) => previousValue.concat(currentValue), [])
-      .sort((a: TimelineObject, b: TimelineObject) => (a.start + a.duration) - (b.start + b.duration))
-      .reverse();
-    if (biggest.length > 0) {
-      if (this.maxPosition < (biggest[0].start + biggest[0].duration)) {
-        this.maxPosition = (biggest[0].start + biggest[0].duration);
-        this.setTimeIndication();
-      } else if (this.maxPosition > (biggest[0].start + biggest[0].duration)) {
-        this.calculateMaxTimePosition();
-        this.setTimeIndication();
-      }
-    }
-    this.timelineRowChanged.emit(row);
-  }
-
-  hasEffects(timelineRow: TimelineRow) {
-    return timelineRow.timelineObjects.filter(timelineObject => timelineObject.effects.length > 0).length > 0;
   }
 
 }

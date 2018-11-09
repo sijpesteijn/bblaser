@@ -57,8 +57,8 @@ import * as timelineStore from '../store';
           </li>
         </ul>
       </div>
-      <bb-timeline-row-object-contextmenu [point]="point" *ngIf="contextMenu === true"
-                                          (onTypeChange)="addEffect($event)"></bb-timeline-row-object-contextmenu>
+      <bb-timeline-row-object-context-menu [point]="point" *ngIf="contextMenu === true"
+                                          (onTypeChange)="addEffect($event)"></bb-timeline-row-object-context-menu>
     </div>
   `,
   styleUrls: ['timeline-row-object.scss']
@@ -93,12 +93,10 @@ export class TimelineRowObjectComponent implements OnChanges, OnInit {
         if (rowObjects.filter(ro => ro.id === this.timelineObject.id).length > 0) {
           this.timelineObject.selected = true;
           this.elementRef.nativeElement.classList.add('selected');
-          console.log('On ', this.timelineObject);
         } else {
           this.contextMenu = false;
           this.timelineObject.selected = false;
           this.elementRef.nativeElement.classList.remove('selected');
-          console.log('Off ', this.timelineObject);
         }
       });
   }
@@ -182,6 +180,7 @@ export class TimelineRowObjectComponent implements OnChanges, OnInit {
   }
 
   addEffect(type: string) {
+    console.log('Row changed ');
     if (type === 'color_gradient') {
       this.timelineObject.effects.push(({
         id: 1,

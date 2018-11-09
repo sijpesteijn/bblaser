@@ -125,20 +125,10 @@ export interface AnimationPagedCollection extends PagedCollection {
 })
 export class AnimationService {
   private animation: Subject<BBAnimation>;
-  private animationSaveDebounce = new Subject<BBAnimation>();
 
   constructor(private endpoints: EndpointsService,
               private httpClient: HttpClient) {
     this.animation = new BehaviorSubject(undefined);
-    this.animationSaveDebounce.pipe(
-      debounceTime(500),
-      distinctUntilChanged(),
-      tap(() => console.log('Bla')),
-      switchMap((animation: BBAnimation) => {
-        console.log('Persist ', animation);
-        return this.persist(animation);
-      })
-    );
   }
 
   all(options: Partial<GetAnimationOptions>): Observable<AnimationPagedCollection> {
@@ -160,12 +150,6 @@ export class AnimationService {
   }
 
   save(animation: BBAnimation): Observable<BBAnimation> {
-    // console.log('Save ', animation);
-    this.animationSaveDebounce.next(animation);
-    return this.animationSaveDebounce.asObservable();
-  }
-
-  private persist(animation: BBAnimation): Observable<BBAnimation> {
     return this.httpClient.post<BBAnimation>(this.endpoints.get(ANIMATION_SAVE), animation).pipe(map((response) => {
       this.animation.next(response);
       return response;

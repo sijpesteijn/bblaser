@@ -2,4 +2,5 @@
 <bb-animation-draw-tools></bb-animation-draw-tools>
 <bb-timeline [timelineRows]="timelineRows"
              (indicatorPosition)="setIndicatorPosition($event)"
-             (timelineRowChanged)="handleTimelineRowChanged($event)"></bb-timeline>
+             (timelineRowChanged)="handleTimelineRowChanged($event)"
+             (timelineRowDeleted)="handleTimelineRowDeleted($event)"></bb-timeline>

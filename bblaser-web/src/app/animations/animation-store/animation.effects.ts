@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
 import { AnimationService } from '../animation.service';
 import * as animationActions from './animation.actions';
-import { catchError, map, switchMap, tap } from 'rxjs/internal/operators';
+import { catchError, debounceTime, map, switchMap, tap } from 'rxjs/internal/operators';
 import { of } from 'rxjs/index';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
@@ -34,6 +34,7 @@ export class AnimationEffects {
 
   @Effect()
   saveAnimation$ = this.actions$.ofType(animationActions.SAVE_ANIMATION).pipe(
+    debounceTime(500),
     switchMap((action: animationActions.SaveAnimationAction) => {
       action.animation.last_update = moment().valueOf();
       return this.animationService.save(action.animation).pipe(

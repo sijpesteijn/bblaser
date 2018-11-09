@@ -103,6 +103,7 @@ export class AnimationEditComponent implements OnInit {
   }
 
   handleTimelineRowChanged(row: TimelineRow) {
+    console.log('Row changed ', row);
     const bbElement = this.animation.elements.find(element => element.id === row.id);
     bbElement.name = row.name;
     const appearances: BBAppearance[] = [];
@@ -122,5 +123,11 @@ export class AnimationEditComponent implements OnInit {
   setIndicatorPosition(position: number) {
     this.indicatorPosition = position;
     this.aStore.dispatch(new animationStore.SetTimerPosition(position));
+  }
+
+  handleTimelineRowDeleted(timelineRow: TimelineRow) {
+    this.timelineRows = this.timelineRows.filter(row => row.id !== timelineRow.id);
+    this.animation.elements = this.animation.elements.filter(element => element.id !== timelineRow.id);
+    this.aStore.dispatch(new animationStore.SaveAnimationAction(this.animation, false));
   }
 }
