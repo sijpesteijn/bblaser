@@ -9,10 +9,10 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import { OBJECT_NAMES_WIDTH, TimeScale } from '../timeline.component';
+import { OBJECT_NAMES_WIDTH, SideEvent, TimeScale } from '../timeline.component';
 import { TimelineObject } from '../store/index';
 import {
-  BBColorEffect,
+  BBColorGradientEffect, BBEffect,
   BBMoveEffect,
   BBPoint,
   BBResizeEffect,
@@ -20,6 +20,7 @@ import {
 } from '../../animations/animation.service';
 import { Store } from '@ngrx/store';
 import * as timelineStore from '../store';
+import { ResizeEvent } from 'angular-resizable-element';
 
 @Component({
   selector: 'bb-timeline-row-object',
@@ -28,37 +29,44 @@ import * as timelineStore from '../store';
          (dblclick)="showContextMenu($event)"
          (click)="hideContextMenu($event)">
       <div class="timeline-row-object"
+           mwlResizable
+           (resizing)="handleResizing($event)"
+           [resizeEdges]="{left: true, right: true}"
            #timelineRowObject
-           [ngStyle]="{'left.px': (timelineObject.start / timeScale.pixelsPerTick) / timeScale.scale,
-           'width.px': (timelineObject.duration / timeScale.pixelsPerTick) / timeScale.scale}"
+           [ngStyle]="{'left.px': (timelineObject.start / timeScale.pixelsPerMillisecond) / timeScale.scale,
+           'width.px': (timelineObject.duration / timeScale.pixelsPerMillisecond) / timeScale.scale}"
            (mouseout)="handleMouseOut()">
-      <span class="left cursor"
-            (mousedown)="leftDown($event)"
-            (mouseup)="leftUp($event)"></span>
-        <span class="center cursor"
+        <span class="center"
               (mousedown)="downCenter($event)"
               (mousemove)="moveCenter($event)"
               (mouseup)="upCenter($event)">
-      </span>
-        <span class="right cursor"
-              (mousedown)="rightDown($event)"
-              (mouseup)="rightUp($event)"></span>
+        </span>
       </div>
       <div class="timeline-row-object-effects" *ngIf="expanded"
-           [ngStyle]="{'left.px': timelineObject.start, 'width.px': timelineObject.duration}">
+           [ngStyle]="{'left.px': (timelineObject.start / timeScale.pixelsPerMillisecond) / timeScale.scale, 
+           'width.px': (timelineObject.duration / timeScale.pixelsPerMillisecond) / timeScale.scale}">
         <ul>
           <li *ngFor="let effect of timelineObject.effects">
-            <bb-timeline-row-object-effect [effect]="effect">
-              <bb-color-gradient-effect *ngIf="effect.type === 'color_gradient'"></bb-color-gradient-effect>
-              <bb-shape-move-effect *ngIf="effect.type === 'shape_move'"></bb-shape-move-effect>
-              <bb-shape-rotate-effect *ngIf="effect.type === 'shape_rotate'"></bb-shape-rotate-effect>
-              <bb-shape-resize-effect *ngIf="effect.type === 'shape_resize'"></bb-shape-resize-effect>
+            <bb-timeline-row-object-effect
+              [effect]="effect"
+              [scale]="timeScale"
+              [maxDuration]="timelineObject.duration"
+              (effectChanged)="handleEffectChanged($event)"
+            >
+              <bb-color-gradient-effect [scale]="timeScale" [effect]="effect"
+                                        *ngIf="effect.type === 'color_gradient'"></bb-color-gradient-effect>
+              <bb-shape-move-effect [scale]="timeScale" [effect]="effect"
+                                    *ngIf="effect.type === 'shape_move'"></bb-shape-move-effect>
+              <bb-shape-rotate-effect [scale]="timeScale" [effect]="effect"
+                                      *ngIf="effect.type === 'shape_rotate'"></bb-shape-rotate-effect>
+              <bb-shape-resize-effect [scale]="timeScale" [effect]="effect"
+                                      *ngIf="effect.type === 'shape_resize'"></bb-shape-resize-effect>
             </bb-timeline-row-object-effect>
           </li>
         </ul>
       </div>
       <bb-timeline-row-object-context-menu [point]="point" *ngIf="contextMenu === true"
-                                          (onTypeChange)="addEffect($event)"></bb-timeline-row-object-context-menu>
+                                           (typeChanged)="addEffect($event)"></bb-timeline-row-object-context-menu>
     </div>
   `,
   styleUrls: ['timeline-row-object.scss']
@@ -70,10 +78,6 @@ export class TimelineRowObjectComponent implements OnChanges, OnInit {
   expanded = false;
   @Input()
   timeScale: TimeScale;
-  @Output()
-  leftEvent = new EventEmitter();
-  @Output()
-  rightEvent = new EventEmitter();
   @Output()
   timelineObjectChanged = new EventEmitter();
   @ViewChild('timelineRowObject')
@@ -102,34 +106,20 @@ export class TimelineRowObjectComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('Changes ', changes);
     if (changes['timeScale']) {
       this.timeScale = changes['timeScale'].currentValue;
     }
   }
 
-  leftDown(event: MouseEvent) {
-    this.leftEvent.emit({
-      event: event,
-      leftOffset: (event.x - OBJECT_NAMES_WIDTH) - this.timelineObject.start,
-      timelineObject: this.timelineObject
-    });
-  }
-
-  leftUp(event: MouseEvent) {
-    this.leftEvent.emit();
-  }
-
-  rightDown(event: MouseEvent) {
-    this.rightEvent.emit({
-      event: event,
-      rightOffset: (event.x - OBJECT_NAMES_WIDTH) - this.timelineObject.duration,
-      timelineObject: this.timelineObject
-    });
-  }
-
-  rightUp(event: MouseEvent) {
-    this.rightEvent.emit();
+  handleResizing(event: ResizeEvent) {
+    console.log(event);
+    if (event.edges.left) {
+      this.timelineObject.start += (event.edges.left) as number * this.timeScale.pixelsPerMillisecond;
+      this.timelineObject.duration -= (event.edges.left) as number / this.timeScale.pixelsPerMillisecond;
+    } else if (event.edges.right) {
+      this.timelineObject.duration = (event.rectangle.right - event.rectangle.left) * this.timeScale.pixelsPerMillisecond;
+    }
+    this.timelineObjectChanged.emit(this.timelineObject);
   }
 
   downCenter(event: MouseEvent) {
@@ -156,7 +146,7 @@ export class TimelineRowObjectComponent implements OnChanges, OnInit {
   moveCenter(event: MouseEvent) {
     if (this.center_down) {
       event.preventDefault();
-      this.timelineObject.start = this.timelineObject.start + (event.clientX - this.center_down_x) * this.timeScale.pixelsPerTick;
+      this.timelineObject.start = this.timelineObject.start + (event.clientX - this.center_down_x) * this.timeScale.pixelsPerMillisecond;
       this.center_down_y = -1;
       this.center_down_x = event.clientX;
       this.timelineObjectChanged.emit(this.timelineObject);
@@ -166,7 +156,10 @@ export class TimelineRowObjectComponent implements OnChanges, OnInit {
   showContextMenu(event: MouseEvent) {
     event.stopPropagation();
     this.contextMenu = true;
-    this.point = {x: event.layerX, y: event.layerY};
+    this.point = {
+      x: (this.timelineObject.start / this.timeScale.pixelsPerMillisecond / this.timeScale.scale) + event.layerX,
+      y: event.layerY
+    };
     this.store.dispatch(new timelineStore.TimelineSetSelected([this.timelineObject]));
   }
 
@@ -180,23 +173,22 @@ export class TimelineRowObjectComponent implements OnChanges, OnInit {
   }
 
   addEffect(type: string) {
-    console.log('Row changed ');
     if (type === 'color_gradient') {
       this.timelineObject.effects.push(({
         id: 1,
         type: 'color_gradient',
         name: 'gradient',
-        start: this.timelineObject.start,
+        start: 0,
         duration: this.timelineObject.duration,
         startColor: {red: 255, green: 0, blue: 0},
         endColor: {red: 255, green: 0, blue: 255}
-      }) as BBColorEffect);
+      }) as BBColorGradientEffect);
     } else if (type === 'shape_move') {
       this.timelineObject.effects.push(({
         id: 1,
         type: 'shape_move',
         name: 'move',
-        start: this.timelineObject.start + 40,
+        start: 0,
         duration: this.timelineObject.duration,
         startPosition: {x: 0, y: 0},
         endPosition: {x: 65535, y: 65535}
@@ -206,7 +198,7 @@ export class TimelineRowObjectComponent implements OnChanges, OnInit {
         id: 1,
         type: 'shape_resize',
         name: 'resize',
-        start: this.timelineObject.start + 40,
+        start: 0,
         duration: this.timelineObject.duration,
         scale: 1
       }) as BBResizeEffect);
@@ -215,11 +207,15 @@ export class TimelineRowObjectComponent implements OnChanges, OnInit {
         id: 1,
         type: 'shape_rotate',
         name: 'rotate',
-        start: this.timelineObject.start + 40,
+        start: 0,
         duration: this.timelineObject.duration,
-        degrees: 165
+        degrees: 360
       }) as BBRotateEffect);
     }
+    this.timelineObjectChanged.emit(this.timelineObject);
+  }
+
+  handleEffectChanged(effect: BBEffect) {
     this.timelineObjectChanged.emit(this.timelineObject);
   }
 }

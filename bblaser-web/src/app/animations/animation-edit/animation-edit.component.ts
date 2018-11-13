@@ -103,7 +103,6 @@ export class AnimationEditComponent implements OnInit {
   }
 
   handleTimelineRowChanged(row: TimelineRow) {
-    console.log('Row changed ', row);
     const bbElement = this.animation.elements.find(element => element.id === row.id);
     bbElement.name = row.name;
     const appearances: BBAppearance[] = [];

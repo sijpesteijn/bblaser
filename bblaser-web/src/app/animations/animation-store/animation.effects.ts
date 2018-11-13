@@ -39,7 +39,6 @@ export class AnimationEffects {
       action.animation.last_update = moment().valueOf();
       return this.animationService.save(action.animation).pipe(
         tap(animation => {
-          console.log('Saving animation over http');
           if (action.open) {
             this.router.navigate(['/animations/' + animation.id]);
           }

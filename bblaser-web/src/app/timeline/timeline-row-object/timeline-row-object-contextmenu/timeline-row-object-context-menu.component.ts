@@ -40,8 +40,7 @@ export class TimelineRowObjectContextMenuComponent {
   typeChanged: EventEmitter<string> = new EventEmitter();
 
   addEffect(event: MouseEvent, type: string) {
-    event.stopPropagation();
-    console.log('Add effect ', type);
     this.typeChanged.emit(type);
+    event.stopPropagation();
   }
 }

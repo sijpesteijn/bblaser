@@ -52,7 +52,7 @@ export interface BBEffect {
   duration: number;
 }
 
-export interface BBColorEffect extends BBEffect {
+export interface BBColorGradientEffect extends BBEffect {
   startColor: BBColor;
   endColor: BBColor;
 }

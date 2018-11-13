@@ -53,6 +53,7 @@ git submodule init
 git submodule update
 mkdir build
 cd build
+cmake -DBUILD_TESTS=NO -DBUILD_EXAMPLES=NO -DBUILD_SSL=YES -DBUILD_SHARED=YES -DCMAKE_INSTALL_PREFIX=static ..
 cmake -DBUILD_SHARED=YES -DBUILD_EXAMPLES=NO -DBUILD_TESTS=NO -DBUILD_SSL=YES ..
 make install
 

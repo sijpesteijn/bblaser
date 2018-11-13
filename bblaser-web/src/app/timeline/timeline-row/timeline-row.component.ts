@@ -39,8 +39,6 @@ export class TimelineRowDeleteDialogComponent {
                                   [timelineObject]="timelineObject"
                                   [timeScale]="timeScale"
                                   [expanded]="timelineRow.expanded"
-                                  (leftEvent)="handleLeftTimelineObjectEvent($event)"
-                                  (rightEvent)="handleRightTimelineObjectEvent($event)"
                                   (timelineObjectChanged)="handleTimelineObjectChanged($event)">
           </bb-timeline-row-object>
         </div>
@@ -80,10 +78,6 @@ export class TimelineRowComponent implements OnChanges {
   timelineRowChanged = new EventEmitter();
   @Output()
   timelineObjectMove = new EventEmitter();
-  @Output()
-  leftEvent = new EventEmitter();
-  @Output()
-  rightEvent = new EventEmitter();
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['timelineRow']) {
@@ -95,16 +89,7 @@ export class TimelineRowComponent implements OnChanges {
     }
   }
 
-  handleLeftTimelineObjectEvent(event: any) {
-    this.leftEvent.emit(event);
-  }
-
-  handleRightTimelineObjectEvent(event: any) {
-    this.rightEvent.emit(event);
-  }
-
   handleTimelineObjectChanged(event: TimelineObject) {
-    console.log('Row changed ', event);
     this.timelineRowChanged.emit(this.timelineRow);
   }
 }

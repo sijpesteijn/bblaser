@@ -5,8 +5,7 @@ import {
   BBAnimation,
   BBBox,
   BBColor,
-  BBColorEffect,
-  BBEffect,
+  BBColorGradientEffect,
   BBElement,
   BBLine,
   BBMoveEffect,
@@ -19,6 +18,7 @@ import { EventService } from '../event.service';
 import { Store } from '@ngrx/store';
 import * as paperStore from './';
 import { BoxTool, LineTool, SelectTool, STROKE_WIDTH } from './tools';
+import { MoveTool } from './tools/move.tool';
 
 export interface Tool {
   activate();
@@ -65,6 +65,8 @@ export class PaperService {
         this.activeTool = new BoxTool(this);
       } else if (tool === 'lineTool') {
         this.activeTool = new LineTool(this);
+      } else if (tool === 'moveTool') {
+        this.activeTool = new MoveTool(this);
       }
       this.activeTool.activate();
     }
@@ -93,7 +95,7 @@ export class PaperService {
       if (path.fullySelected) {
         something = true;
       } else {
-        something = Array.from(path.segments).filter((segment: paper.Path.Segment) => segment.selected).length > 0 ? true : false;
+        something = Array.from(path.segments).filter((segment: paper.Segment) => segment.selected).length > 0 ? true : false;
       }
     }
     return something;
@@ -126,7 +128,11 @@ export class PaperService {
     return {
       id: path.id,
       type: 'line',
-      color: {red: path.strokeColor.red, green: path.strokeColor.green, blue: path.strokeColor.blue},
+      color: {
+        red: (path.strokeColor as paper.Color).red,
+        green: (path.strokeColor as paper.Color).green,
+        blue: (path.strokeColor as paper.Color).blue
+      },
       points: points
     };
   }
@@ -137,7 +143,11 @@ export class PaperService {
     return {
       id: path.id,
       type: 'box',
-      color: {red: path.strokeColor.red, green: path.strokeColor.green, blue: path.strokeColor.blue},
+      color: {
+        red: (path.strokeColor as paper.Color).red,
+        green: (path.strokeColor as paper.Color).green,
+        blue: (path.strokeColor as paper.Color).blue
+      },
       points: points
     };
   }
@@ -149,7 +159,6 @@ export class PaperService {
   }
 
   private drawShapeWithEffects(element: BBElement, position: number) {
-    const effects: BBEffect[] = this.getCurrentEffects(element, position);
     const path = this.createPath(element.shape.points.map(point => {
       return {x: point.x * this.scale, y: point.y * this.scale};
     }), {
@@ -167,47 +176,53 @@ export class PaperService {
       path.data.closed = true;
     }
     path.visible = true;
-    effects.forEach(effect => {
-      switch (effect.type) {
-        case 'color_gradient': {
-          const colorGradient = (effect as BBColorEffect);
-          const startColor = onecolor('rgb(' + colorGradient.startColor.red + ',' + colorGradient.startColor.green
-            + ',' + colorGradient.startColor.blue + ')');
-          const endColor = onecolor('rgb(' + colorGradient.endColor.red + ',' + colorGradient.endColor.green
-            + ',' + colorGradient.endColor.blue + ')');
-          const rDelta = (endColor.red() - startColor.red()) / (effect.duration + 1);
-          const gDelta = (endColor.green() - startColor.green()) / (effect.duration + 1);
-          const bDelta = (endColor.blue() - startColor.blue()) / (effect.duration + 1);
-          const aDelta = (endColor.alpha() - startColor.alpha()) / (effect.duration + 1);
-          const uColor = startColor
-            .red(rDelta * position, true)
-            .green(gDelta * position, true)
-            .blue(bDelta * position, true)
-            .alpha(aDelta * position, true).hex();
-          path.strokeColor = uColor;
-        }
-          break;
-        case 'shape_move': {
-          const shapeMove = (effect as BBMoveEffect);
-          const xStep = Math.abs(shapeMove.startPosition.x - shapeMove.endPosition.x) * this.scale / shapeMove.duration;
-          const yStep = Math.abs(shapeMove.startPosition.y - shapeMove.endPosition.y) * this.scale / shapeMove.duration;
-          path.translate(new paper.Point(xStep * position, yStep * position));
-        }
-          break;
-        case 'shape_rotate': {
-          const shapRotate = (effect as BBRotateEffect);
-          const degreeStep = shapRotate.degrees / shapRotate.duration;
-          path.rotate(degreeStep * position);
-        }
-          break;
-        case 'shape_resize': {
-          const shapeResize = (effect as BBResizeEffect);
-          const scaleStep = shapeResize.scale / shapeResize.duration;
-          path.scale(scaleStep * position);
-        }
-          break;
-      }
-    });
+    element.appearances
+      .filter(app => app.start <= position && position < app.start + app.duration)
+      .forEach(app => {
+        app.effects.filter(effect => app.start + effect.start <= position && position < app.start + effect.start + effect.duration)
+          .forEach(effect => {
+            switch (effect.type) {
+              case 'color_gradient': {
+                const colorGradient = (effect as BBColorGradientEffect);
+                const startColor = onecolor('rgb(' + colorGradient.startColor.red + ',' + colorGradient.startColor.green
+                  + ',' + colorGradient.startColor.blue + ')');
+                const endColor = onecolor('rgb(' + colorGradient.endColor.red + ',' + colorGradient.endColor.green
+                  + ',' + colorGradient.endColor.blue + ')');
+                const rDelta = (endColor.red() - startColor.red()) / (effect.duration + 1);
+                const gDelta = (endColor.green() - startColor.green()) / (effect.duration + 1);
+                const bDelta = (endColor.blue() - startColor.blue()) / (effect.duration + 1);
+                const aDelta = (endColor.alpha() - startColor.alpha()) / (effect.duration + 1);
+                const uColor = startColor
+                  .red(rDelta * (position - app.start - effect.start), true)
+                  .green(gDelta * (position - app.start - effect.start), true)
+                  .blue(bDelta * (position - app.start - effect.start), true)
+                  .alpha(aDelta * (position - app.start - effect.start), true).hex();
+                path.strokeColor = uColor;
+              }
+                break;
+              case 'shape_move': {
+                const shapeMove = (effect as BBMoveEffect);
+                const xStep = Math.abs(shapeMove.startPosition.x - shapeMove.endPosition.x) * this.scale / shapeMove.duration;
+                const yStep = Math.abs(shapeMove.startPosition.y - shapeMove.endPosition.y) * this.scale / shapeMove.duration;
+                path.translate(new paper.Point(xStep * (position - app.start - effect.start), yStep * (position - app.start - effect.start)));
+              }
+                break;
+              case 'shape_rotate': {
+                const shapRotate = (effect as BBRotateEffect);
+                const degreeStep = shapRotate.degrees / shapRotate.duration;
+                path.rotate(degreeStep * (position - app.start - effect.start));
+              }
+                break;
+              case 'shape_resize': {
+                const shapeResize = (effect as BBResizeEffect);
+                const scaleStep = shapeResize.scale / shapeResize.duration;
+                path.scale(scaleStep * (position - app.start - effect.start));
+              }
+                break;
+            }
+          });
+
+      });
   }
 
   showCurrentPosition(position: number): BBShape[] {
@@ -243,13 +258,6 @@ export class PaperService {
       });
     }
     return bbShapes;
-  }
-
-  getCurrentEffects(element: BBElement, timePosition: number) {
-    return element.appearances
-      .filter(app => app.start <= timePosition && timePosition < app.start + app.duration)
-      .map(apperance => apperance.effects)
-      .reduce((previousValue, currentValue) => [...previousValue, ...currentValue]);
   }
 
   getDuration(): number {

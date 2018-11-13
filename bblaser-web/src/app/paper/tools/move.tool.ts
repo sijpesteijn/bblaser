@@ -1,7 +1,7 @@
 import * as paper from 'paper';
 import { PaperService, Tool } from '../paper.service';
 
-export class SelectTool implements Tool {
+export class MoveTool implements Tool {
   private tool: paper.Tool;
 
   constructor(private paperService: PaperService) {
@@ -16,7 +16,7 @@ export class SelectTool implements Tool {
 
   activate() {
     this.tool.activate();
-    console.log('select tool activated.');
+    console.log('move tool activated.');
   }
 
   remove() {

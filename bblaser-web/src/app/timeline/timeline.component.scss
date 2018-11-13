@@ -46,7 +46,7 @@
         .timeline-ruler-indicator {
           position: absolute;
           top: 0px;
-          z-index: 2001;
+          z-index: 10;
           width: 0;
           height: 0;
           border-left: 10px solid transparent;
@@ -155,7 +155,7 @@
       min-height: 100%;
 
       .timeline-ruler-indicator {
-        z-index: 2000;
+        z-index: 10;
         height: 100%;
         position: absolute;
         width: 1px;
@@ -193,7 +193,5 @@
       width: 1px;
       height: 100%;
     }
-
-
   }
 }

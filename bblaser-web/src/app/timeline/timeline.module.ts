@@ -15,6 +15,9 @@ import { ShapeResizeEffectComponent } from './timeline-row-object-effect/effects
 import {
   TimelineRowObjectContextMenuComponent
 } from './timeline-row-object/timeline-row-object-contextmenu/timeline-row-object-context-menu.component';
+import { ResizableModule } from 'angular-resizable-element';
+import { ColorPickerModule } from '../color-picker/color-picker/color-picker.module';
+import { DndModule } from 'ngx-drag-drop';
 
 
 const TIMESCALES: TimeScale[] = [
@@ -22,26 +25,29 @@ const TIMESCALES: TimeScale[] = [
     name: 'seconds',
     postfix: 's',
     scale: 1,
-    pixelsPerTick: 1000 / LABEL_WIDTH
+    pixelsPerMillisecond: 1000 / LABEL_WIDTH
   },
   {
     name: 'tenseconds',
     postfix: '0s',
     scale: 10,
-    pixelsPerTick: 1000 / LABEL_WIDTH
+    pixelsPerMillisecond: 1000 / LABEL_WIDTH
   },
   {
     name: 'minutes',
     postfix: 'min',
     scale: 60,
-    pixelsPerTick: 1000 / LABEL_WIDTH
+    pixelsPerMillisecond: 1000 / LABEL_WIDTH
   }
 ];
 
 @NgModule({
   imports: [
     CommonModule,
+    ColorPickerModule,
     MaterialModule,
+    ResizableModule,
+    DndModule
   ],
   declarations: [
     TimelineRowObjectComponent,

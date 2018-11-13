@@ -1,7 +1,6 @@
 <div class="timeline-content"
      (mousemove)="moveEvent($event)"
-     (mouseup)="mouseupIndicator($event)"
-     (mouseout)="stopMove($event)">
+     (mouseup)="mouseupIndicator($event)">
   <div class="timeline-navigator">
     <div class="timeline-header"></div>
     <div class="timeline-ruler-scroll-container" #timelineRulerScrollContainer
@@ -23,9 +22,7 @@
       </div>
     </div>
   </div>
-  <div class="timeline-group"
-       (mousemove)="handleMoveEvent($event)"
-       (mouseup)="stopMove($event)">
+  <div class="timeline-group">
     <div class="timeline-group-headers">
       <div class="timeline-group-header" *ngFor="let timelineRow of timelineRows"
            [ngClass]="{'selected': timelineRow.selected, 'highlight': timelineRow.highlight}"
@@ -35,7 +32,7 @@
         <i class="fa fa-chevron-right" *ngIf="!timelineRow.expanded && hasEffects(timelineRow)"></i>
         <i class="fa fa-chevron-down" *ngIf="timelineRow.expanded && hasEffects(timelineRow)"></i>
         <span class="timeline-group-header-track" [innerHTML]="timelineRow.name"></span>
-        <i class="fa fa-trash" (click)="deleteRow(timelineRow)"></i>
+        <i class="fa fa-trash" (click)="deleteRow($event, timelineRow)"></i>
       </div>
     </div>
     <div class="timeline-group-container" (scroll)="scrollIndicator($event, indicatorContainer)"
@@ -44,8 +41,6 @@
       <bb-timeline-row *ngFor="let timelineRow of timelineRows" [timelineRow]="timelineRow"
                        [timeScale]="timeScales[timeScaleIndex]"
                        (timelineRowChanged)="handleTimelineRowChanged($event)"
-                       (leftEvent)="handleLeftTimelineObjectEvent($event)"
-                       (rightEvent)="handleRightTimelineObjectEvent($event)"
       ></bb-timeline-row>
     </div>
   </div>

@@ -18,6 +18,7 @@ import { MatDialog } from '@angular/material';
 import { AnimationDeleteDialogComponent } from '../animations/animation-delete-dialog/animation-delete-dialog.component';
 import * as animationStore from '../animations/animation-store';
 import { TimelineRowDeleteDialogComponent } from './timeline-row/timeline-row.component';
+import { DndDropEvent } from 'ngx-drag-drop';
 
 export const TIMEOUT_TIME = 50;
 
@@ -31,7 +32,13 @@ export interface TimeScale {
   name: string;
   postfix: string;
   scale: number; // in seconds
-  pixelsPerTick: number;
+  pixelsPerMillisecond: number;
+}
+
+export interface SideEvent {
+  timelineObject: TimelineObject,
+  event: MouseEvent,
+  offset: number
 }
 
 export const OBJECT_NAMES_WIDTH = 152;
@@ -69,8 +76,6 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
   private moveIndicator = false;
   ticks: Tick[] = [];
   position = 0;
-  leftDown: any;
-  rightDown: any;
   timeScaleIndex = 0;
   dialogRef;
 
@@ -114,7 +119,8 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
   private setIndicator() {
     this.rulerIndicator.nativeElement.style.setProperty('left', (this.getIndicatorPosition() - 9) + 'px');
     this.indicator.nativeElement.style.setProperty('left', (this.getIndicatorPosition()) + 'px');
-    this.indicatorPosition.emit(this.getIndicatorPosition() * this.timeScales[this.timeScaleIndex].pixelsPerTick * this.timeScales[this.timeScaleIndex].scale);
+    this.indicatorPosition.emit(this.getIndicatorPosition()
+      * this.timeScales[this.timeScaleIndex].pixelsPerMillisecond * this.timeScales[this.timeScaleIndex].scale);
   }
 
   mousedownIndicator(event: MouseEvent) {
@@ -143,39 +149,13 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
     slave.nativeElement.scrollLeft = event.srcElement.scrollLeft;
   }
 
-  handleLeftTimelineObjectEvent(event: any) {
-    this.leftDown = event;
-  }
-
-  handleRightTimelineObjectEvent(event: any) {
-    this.rightDown = event;
-  }
-
-  handleMoveEvent(event: MouseEvent) {
-    if (this.leftDown) {
-      const leftStart = (event.x - OBJECT_NAMES_WIDTH - this.leftDown.leftOffset);
-      this.leftDown.timelineObject.duration +=
-        this.leftDown.timelineObject.start - leftStart;
-      this.leftDown.timelineObject.start = leftStart;
-    } else if (this.rightDown) {
-      const rightStart = (event.x - OBJECT_NAMES_WIDTH - this.rightDown.rightOffset);
-      this.rightDown.timelineObject.duration +=
-        rightStart - this.rightDown.timelineObject.duration;
-    }
-  }
-
-  stopMove(event: MouseEvent) {
-    this.leftDown = undefined;
-    this.rightDown = undefined;
-  }
-
   private playPosition() {
     if (this.playing) {
       const current = new Date().getTime();
       const diff = TIMEOUT_TIME - (current - this.startTime);
-      if (this.repeat && this.position === this.maxPosition) {
+      if (this.repeat && this.getIndicatorPosition() === this.getMaxPosition()) {
         this.position = 0;
-      } else if (this.position < this.maxPosition) {
+      } else if (this.getIndicatorPosition() < this.getMaxPosition()) {
         if (this.position + TIMEOUT_TIME < this.maxPosition) {
           this.position += TIMEOUT_TIME;
         } else {
@@ -184,6 +164,7 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
       } else if (this.repeat) {
         this.position = 0;
       } else {
+        this.position = this.getMaxPosition();
         this.stopPlaying();
       }
       this.setIndicator();
@@ -193,7 +174,7 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private getMaxPosition(): number {
-    return this.maxPosition / this.timeScales[this.timeScaleIndex].scale / this.timeScales[this.timeScaleIndex].pixelsPerTick;
+    return this.maxPosition / this.timeScales[this.timeScaleIndex].scale / this.timeScales[this.timeScaleIndex].pixelsPerMillisecond;
   }
 
   private getIndicatorPosition(): number {
@@ -214,9 +195,8 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   handleTimelineRowChanged(row: TimelineRow) {
-    const biggest = row.timelineObjects.reduce((previousValue, currentValue) => previousValue.concat(currentValue), [])
-      .sort((a: TimelineObject, b: TimelineObject) => (a.start + a.duration) - (b.start + b.duration))
-      .reverse();
+    const biggest: TimelineObject[] = row.timelineObjects
+      .sort((a: TimelineObject, b: TimelineObject) => (a.start + a.duration) - (b.start + b.duration)).reverse();
     if (biggest.length > 0) {
       if (this.maxPosition < (biggest[0].start + biggest[0].duration)) {
         this.maxPosition = (biggest[0].start + biggest[0].duration);
@@ -233,7 +213,8 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
     return timelineRow.timelineObjects.filter(timelineObject => timelineObject.effects.length > 0).length > 0;
   }
 
-  deleteRow(timelineRow: TimelineRow) {
+  deleteRow(event: MouseEvent, timelineRow: TimelineRow) {
+    event.stopPropagation();
     this.dialogRef = this.dialog.open(TimelineRowDeleteDialogComponent, {
       data: timelineRow
     });

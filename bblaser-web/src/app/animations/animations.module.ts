@@ -12,7 +12,6 @@ import { AnimationsEffects } from './animation-store/animations.effects';
 import { EffectsModule } from '@ngrx/effects';
 import { AnimationEffects } from './animation-store/animation.effects';
 import { EditValueModule } from '../edit-value/edit-value.module';
-import { NgDragDropModule } from 'ng-drag-drop';
 import { TimelineModule } from '../timeline/timeline.module';
 
 const routes = [
@@ -27,7 +26,6 @@ const routes = [
     MaterialModule,
     RouterModule.forChild(routes),
     MaterialModule,
-    NgDragDropModule.forRoot(),
     EffectsModule.forFeature([AnimationsEffects, AnimationEffects]),
     NgxUploaderModule,
     TimelineModule

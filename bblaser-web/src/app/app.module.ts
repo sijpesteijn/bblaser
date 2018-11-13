@@ -17,6 +17,8 @@ import { PaperService } from './paper/paper.service';
 import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
 import { StoreDevtools, StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
+import { ResizableModule } from 'angular-resizable-element';
+import { DndModule } from 'ngx-drag-drop';
 
 const routes = [
   { path: '', redirectTo: '/animations', pathMatch: 'full' },
@@ -38,6 +40,7 @@ export function createTranslateLoader(http: HttpClient) {
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    DndModule,
     // FlexLayoutModule,
     EditValueModule,
     MaterialModule,
