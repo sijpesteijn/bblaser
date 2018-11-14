@@ -4,6 +4,7 @@ echo Update ubuntu
 apt-get update
 apt-get -y upgrade
 apt-get -y install cmake
+apt-get -y install libssl-dev
 
 # Format sd card
 
@@ -18,36 +19,40 @@ mkdir /media/card
 sudo mount -t ext4 -o rw /dev/mmcblk0p1 /media/card
 
 touch /media/card/uEnv.txt
-# mmcdev=1
-# bootpart=1:2
-# mmcroot=/dev/mmcblk1p2 ro
-# optargs=quiet
+mmcdev=1
+bootpart=1:2
+mmcroot=/dev/mmcblk1p2 ro
+optargs=quiet
 
-# add to /etc/fstab /dev/mmcblk0p1    /media/card      auto   rw   0 0
+# add to /etc/fstab /dev/mmcblk0p1 /media/card auto rw 0 0
 
 echo Moving stuff to sdcard
 mkdir /media/card/notouch
 mkdir /media/card/notouch/home
+mkdir /media/card/notouch/usr
 mkdir /media/card/notouch/root
 mkdir /media/card/notouch/var
 mkdir /media/card/notouch/var/cache
 cp -R /home /media/card/notouch/home
+cp -R /usr /media/card/notouch/usr
 cp -R /root /media/card/notouch/root
 cp -R /var/cache /media/card/notouch/var/cache
 rm -rf /home
+rm -rf /usr
 rm -rf /root
 rm -rf /var/cache
 ln -s /media/card/notouch/home /home
+ln -s /media/card/notouch/usr /usr
 ln -s /media/card/notouch/root /root
 ln -s /media/card/notouch/var/cache /var/cache
 mount --bind /media/card/notouch/home /home
+mount --bind /media/card/notouch/usr /usr
 mount --bind /media/card/notouch/root /root
 mount --bind /media/card/notouch/var/cache /var/cache
 
 echo Installing restbed
 
 git clone https://github.com/Corvusoft/restbed.git
-apt-get -y install libssl-dev
 cd restbed
 git submodule init
 git submodule update
