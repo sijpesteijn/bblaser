@@ -16,14 +16,14 @@
 
 spi::spi(int nr, uint8_t bits_per_word, uint8_t mode, uint32_t speed, uint8_t flags) {
     this->nr = nr;
-    this->open();
+    this->connect();
     this->bits_per_word = bits_per_word;
     this->mode = mode;
     this->speed = speed;
     this->flags = flags;
 }
 
-void spi::open() {
+void spi::connect() {
 #ifndef __APPLE__
     char filename[20];
     sprintf(filename, "/dev/spidev1.%d", this->nr);

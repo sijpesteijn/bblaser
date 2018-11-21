@@ -21,7 +21,7 @@ private:
     uint8_t mode; /*!< @brief is used to hold the mode of SPI */
     uint32_t speed; /*!< @brief is used to hold the speed of SPI */
     uint8_t flags;
-    void open();
+    void connect();
     int send(unsigned char tx[], int length);
 };
 
