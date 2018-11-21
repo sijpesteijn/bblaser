@@ -11,7 +11,7 @@
 using namespace std;
 class spi {
 public:
-    spi(int nr, int bit_per_word, int mode, int speed, int flags);
+    spi(int nr, uint8_t bit_per_word, uint8_t mode, uint32_t speed, uint8_t flags);
     void write8Bits(unsigned char reg, unsigned char value);
     void write12Bits(unsigned char reg, unsigned char value);
 private:

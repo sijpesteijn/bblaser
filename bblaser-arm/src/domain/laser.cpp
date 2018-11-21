@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <sstream>
+#include <fcntl.h>
 #include "laser.h"
 #include "../log.h"
 #include "line.h"
@@ -14,7 +15,7 @@ laser::laser() {
     this->axis_ldac_gpio = new gpio(115);
     this->colors1_gpio = new gpio(15);
     this->colors2_gpio = new gpio(48);
-    this->spi_bus = new spi(0, 8, 0, 10000000, 0);
+    this->spi_bus = new spi(0, 8, 0, 10000000, O_RDWR);
     this->axis_gpio->setValue(1);
     this->axis_ldac_gpio->setValue(1);
     this->colors1_gpio->setValue(1);

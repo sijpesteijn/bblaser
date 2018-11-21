@@ -14,7 +14,7 @@
 #include <linux/spi/spidev.h>
 #endif
 
-spi::spi(int nr, int bits_per_word, int mode, int speed, int flags) {
+spi::spi(int nr, uint8_t bits_per_word, uint8_t mode, uint32_t speed, uint8_t flags) {
     this->nr = nr;
     this->open();
     this->bits_per_word = bits_per_word;
@@ -24,9 +24,7 @@ spi::spi(int nr, int bits_per_word, int mode, int speed, int flags) {
 }
 
 void spi::open() {
-#ifdef __APPLE__
-
-#else
+#ifndef __APPLE__
     string spi = SYSFS_SPI_DIR;
     spi += "spidev1." + to_string(this->nr);
     this->spi_fd.open(spi);
@@ -43,8 +41,7 @@ void spi::open() {
 }
 
 int spi::send(unsigned char tx[], int length) {
-#ifdef __APPLE__
-#else
+#ifndef __APPLE__
     unsigned char rx[length];
     struct spi_ioc_transfer transfer = {
             .tx_buf = tx,
