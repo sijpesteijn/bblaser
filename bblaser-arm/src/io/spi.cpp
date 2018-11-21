@@ -27,7 +27,7 @@ void spi::open() {
 #ifndef __APPLE__
     char filename[20];
     sprintf(filename, "/dev/spidev1.%d", this->nr);
-    this->spi_fd = open(filename, spi->flags);
+    this->spi_fd = open(filename, this->flags);
     if (ioctl(this->spi_fd, SPI_IOC_WR_MODE, this->mode) == -1) {
         perror("SPI: Can't set SPI mode.");
     }
