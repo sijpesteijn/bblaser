@@ -10,11 +10,6 @@
 #include <fstream>
 using namespace std;
 
-#ifdef __APPLE__
-    #define SYSFS_GPIO_DIR "/Users/gijssijpesteijn/programming/c/bb-laser/resources/gpios/"
-#else
-    #define SYSFS_GPIO_DIR "/sys/class/gpio/"
-#endif
 #define MAX_BUF 64
 
 

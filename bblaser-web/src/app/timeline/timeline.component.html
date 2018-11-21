@@ -1,11 +1,11 @@
 <div class="timeline-content"
      (mousemove)="moveEvent($event)"
-     (mouseup)="mouseupIndicator($event)">
+     (mouseup)="mouseUpIndicator($event)">
   <div class="timeline-navigator">
     <div class="timeline-header"></div>
     <div class="timeline-ruler-scroll-container" #timelineRulerScrollContainer
-         (mousedown)="mousedownIndicator($event)"
-         (mouseup)="mouseupIndicator($event)"
+         (mousedown)="mouseDownIndicator($event)"
+         (mouseup)="mouseUpIndicator($event)"
          (scroll)="scrollIndicator($event, groupContainer)">
       <div class="timeline-ruler-container">
         <div class="timeline-ruler">
@@ -18,7 +18,8 @@
                                     [tick]="tick"></bb-timeline-label-tick>
           </ng-container>
         </div>
-        <div class="timeline-ruler-indicator cursor" #timelineRulerIndicator></div>
+        <div class="timeline-ruler-indicator cursor"
+             #timelineRulerIndicator></div>
       </div>
     </div>
   </div>
@@ -40,8 +41,7 @@
       <div class="timeline-ruler-indicator" #timelineIndicator></div>
       <bb-timeline-row *ngFor="let timelineRow of timelineRows" [timelineRow]="timelineRow"
                        [timeScale]="timeScales[timeScaleIndex]"
-                       (timelineRowChanged)="handleTimelineRowChanged($event)"
-      ></bb-timeline-row>
+                       (timelineRowChanged)="handleTimelineRowChanged($event)"></bb-timeline-row>
     </div>
   </div>
   <div class="timeline-controls">

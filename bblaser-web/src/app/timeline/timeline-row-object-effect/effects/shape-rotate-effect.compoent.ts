@@ -1,34 +1,29 @@
-import { Component, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { BBRotateEffect } from '../../../animations/animation.service';
-import { TimeScale } from '../../timeline.component';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { BBEffectData, BBRotateEffect } from '../../../animations/animation.service';
+import { EffectComponent } from '../../store';
 
 @Component({
   selector: 'bb-shape-rotate-effect',
   template: `
     <div class="rotate-effect-container">
-      <span matTooltip="Degrees to rotate">{{effect.degrees}}</span>
+      <span matTooltip="Degrees to rotate" [innerHTML]="effectData.degrees"></span>
     </div>
   `,
   styles: [`
     .rotate-effect-container {
       display: flex;
+      cursor: move;
     }
-  `]
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ShapeRotateEffectComponent implements OnChanges {
+export class ShapeRotateEffectComponent implements EffectComponent {
   readonly type = 'shape_rotate';
-  @Input()
-  effect: BBRotateEffect;
-  @Input()
-  scale: TimeScale;
+  effectData: BBRotateEffect;
 
-  constructor(private element: ElementRef<HTMLElement>) {
+  constructor() {}
 
+  setEffectData(effectData: BBEffectData): void {
+    this.effectData = effectData as BBRotateEffect;
   }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    // this.element.nativeElement.style.setProperty('left', this.effect.start + 'px');
-    // this.element.nativeElement.style.setProperty('width', this.effect.duration + 'px');
-  }
-
 }

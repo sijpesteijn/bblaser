@@ -1,6 +1,7 @@
-import { Component, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { BBColorGradientEffect } from '../../../animations/animation.service';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { BBColorGradientEffect, BBEffectData, BBResizeEffect } from '../../../animations/animation.service';
 import { TimeScale } from '../../timeline.component';
+import { EffectComponent } from '../../store';
 
 @Component({
   selector: 'bb-shape-resize-effect',
@@ -17,22 +18,17 @@ import { TimeScale } from '../../timeline.component';
     .resize_end {
       margin-left: auto;
     }
-  `]
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ShapeResizeEffectComponent implements OnChanges {
+export class ShapeResizeEffectComponent implements EffectComponent {
   readonly type = 'shape_resize';
-  @Input()
-  effect: BBColorGradientEffect;
-  @Input()
-  scale: TimeScale;
+  effectData: BBResizeEffect;
 
-  constructor(private element: ElementRef<HTMLElement>) {
+  constructor() {}
 
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    this.element.nativeElement.style.setProperty('left', this.effect.start + 'px');
-    this.element.nativeElement.style.setProperty('width', this.effect.duration + 'px');
+  setEffectData(effectData: BBEffectData): void {
+    this.effectData = effectData as BBResizeEffect;
   }
 
 }

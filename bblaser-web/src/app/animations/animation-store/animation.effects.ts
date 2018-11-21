@@ -1,18 +1,20 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect } from '@ngrx/effects';
+import { Actions, Effect, ofType } from '@ngrx/effects';
 import { AnimationService } from '../animation.service';
 import * as animationActions from './animation.actions';
-import { catchError, debounceTime, map, switchMap, tap } from 'rxjs/internal/operators';
+import { catchError, debounceTime, map, mergeMap, switchMap, tap } from 'rxjs/internal/operators';
 import { of } from 'rxjs/index';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
+import { PaperService } from '../../paper/paper.service';
 
 @Injectable()
 export class AnimationEffects {
 
   constructor(private router: Router,
               private actions$: Actions,
-              private animationService: AnimationService) {
+              private animationService: AnimationService,
+              private paperService: PaperService) {
   }
 
   @Effect()
@@ -60,5 +62,13 @@ export class AnimationEffects {
       );
     })
   );
+
+  @Effect({dispatch: false})
+  setTool$ = this.actions$.pipe(
+    ofType(animationActions.SELECT_DRAW_TOOL),
+    tap((action: animationActions.SelectDrawToolAction) => {
+      this.paperService.setTool(action.tool);
+    })
+  )
 
 }

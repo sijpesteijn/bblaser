@@ -2,7 +2,7 @@
 
 .timeline-row-object-effects {
   display: flex;
-  position: absolute;
+  position: relative;
   top: 22px;
   background-color: $black;
 
@@ -12,7 +12,7 @@
     list-style: none;
 
     li {
-      height: 15px;
+      //height: 15px;
     }
   }
 }

@@ -15,10 +15,8 @@ import * as timelineReducers from './store';
 import * as timelineStore from './store';
 import { TimelineObject, TimelineRow } from './store';
 import { MatDialog } from '@angular/material';
-import { AnimationDeleteDialogComponent } from '../animations/animation-delete-dialog/animation-delete-dialog.component';
-import * as animationStore from '../animations/animation-store';
 import { TimelineRowDeleteDialogComponent } from './timeline-row/timeline-row.component';
-import { DndDropEvent } from 'ngx-drag-drop';
+import { ResizeEvent } from 'angular-resizable-element';
 
 export const TIMEOUT_TIME = 50;
 
@@ -41,7 +39,7 @@ export interface SideEvent {
   offset: number
 }
 
-export const OBJECT_NAMES_WIDTH = 152;
+const OBJECT_NAMES_WIDTH = 152;
 export const LABEL_WIDTH = 400;
 
 @Component({
@@ -52,7 +50,7 @@ export const LABEL_WIDTH = 400;
 export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
   private startTime: number;
   @Input()
-  timelineRows: TimelineRow[];
+  timelineRows: TimelineRow[] = [];
 
   @Output()
   private indicatorPosition: EventEmitter<number> = new EventEmitter();
@@ -86,14 +84,19 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnInit() {
     this.store.select(timelineStore.indicatorPosition).subscribe(indicator => this.position = indicator);
+    this.calculateMaxTimePosition();
+    this.setTimeIndication();
+    this.setIndicator();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    const rows = changes['timelineRows'].currentValue;
-    if (rows) {
-      this.calculateMaxTimePosition();
-      this.setTimeIndication();
-      this.setIndicator();
+    if (changes['timelineRows']) {
+      const rows = changes['timelineRows'].currentValue;
+      if (rows) {
+        this.calculateMaxTimePosition();
+        this.setTimeIndication();
+        this.setIndicator();
+      }
     }
   }
 
@@ -123,26 +126,25 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
       * this.timeScales[this.timeScaleIndex].pixelsPerMillisecond * this.timeScales[this.timeScaleIndex].scale);
   }
 
-  mousedownIndicator(event: MouseEvent) {
-    if (event.x - OBJECT_NAMES_WIDTH <= this.getMaxPosition()) {
+  mouseDownIndicator(event: MouseEvent) {
+    if (event.offsetX <= this.getMaxPosition()) {
       this.moveIndicator = true;
-      this.position = (event.x - OBJECT_NAMES_WIDTH) * this.timeScales[this.timeScaleIndex].scale;
+      this.position = event.offsetX * this.timeScales[this.timeScaleIndex].scale;
       this.setIndicator();
-      event.preventDefault();
     }
+    event.preventDefault();
   }
 
-  mouseupIndicator(event: MouseEvent) {
+  mouseUpIndicator() {
     this.moveIndicator = false;
   }
 
   moveEvent(event: MouseEvent) {
-    if (this.moveIndicator && event.x - OBJECT_NAMES_WIDTH > 0 &&
-      event.x - OBJECT_NAMES_WIDTH <= this.getMaxPosition()) {
-      this.position = (event.x - OBJECT_NAMES_WIDTH) * this.timeScales[this.timeScaleIndex].scale;
+    if (event.offsetY > 0 && this.moveIndicator && event.offsetX > 0 && event.offsetX <= this.getMaxPosition()) {
+      this.position = event.offsetX * this.timeScales[this.timeScaleIndex].scale;
+      console.log('move ', event);
       this.setIndicator();
     }
-    event.preventDefault();
   }
 
   scrollIndicator(event: Event, slave: ElementRef) {
@@ -200,11 +202,10 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
     if (biggest.length > 0) {
       if (this.maxPosition < (biggest[0].start + biggest[0].duration)) {
         this.maxPosition = (biggest[0].start + biggest[0].duration);
-        this.setTimeIndication();
       } else if (this.maxPosition > (biggest[0].start + biggest[0].duration)) {
         this.calculateMaxTimePosition();
-        this.setTimeIndication();
       }
+      this.setTimeIndication();
     }
     this.timelineRowChanged.emit(row);
   }
@@ -266,7 +267,7 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  handleClick(event) {
+  handleClick() {
     this.store.dispatch(new timelineStore.TimeLineContainerClick());
   }
 

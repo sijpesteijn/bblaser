@@ -49,10 +49,10 @@ export class AnimationCanvasComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.paperService.setup('animation');
-    this.aStore.select(animationStore.selectedTool).subscribe(tool => {
-      console.log('Selector found tool ', tool);
-      this.paperService.setTool(tool);
-    });
+    // this.aStore.select(animationStore.selectedTool).subscribe(tool => {
+    //   console.log('Selector found tool ', tool);
+    //   this.paperService.setTool(tool);
+    // });
     this.aStore.select(animationStore.selectSelectedAnimation).subscribe(animation => {
       if (animation) {
         if (this.animation === undefined || this.animation.id !== animation.id) {

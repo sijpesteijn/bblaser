@@ -20,7 +20,6 @@ export const initialAnimationState: AnimationState = {
 export function animationReducer(state = initialAnimationState, action: fromAnimation.AnimationActions): AnimationState {
   switch (action.type) {
     case fromAnimation.SELECT_DRAW_TOOL: {
-      console.log('Animation reducer set tool: ', action.tool);
       return {
         ...state,
         tool : action.tool

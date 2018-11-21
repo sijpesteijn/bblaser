@@ -18,6 +18,8 @@ import {
 import { ResizableModule } from 'angular-resizable-element';
 import { ColorPickerModule } from '../color-picker/color-picker/color-picker.module';
 import { DndModule } from 'ngx-drag-drop';
+import { EffectDirective } from './timeline-row-object/timeline-row-effects/effect.directive';
+import { TimelineRowEffectComponent } from './timeline-row-object/timeline-row-effects/timeline-row-effect.component';
 
 
 const TIMESCALES: TimeScale[] = [
@@ -62,13 +64,19 @@ const TIMESCALES: TimeScale[] = [
     ShapeRotateEffectComponent,
     ShapeResizeEffectComponent,
     TimelineRowObjectContextMenuComponent,
-    TimelineRowDeleteDialogComponent
+    TimelineRowDeleteDialogComponent,
+    EffectDirective,
+    TimelineRowEffectComponent
   ],
   exports: [
     TimelineComponent
   ],
   entryComponents: [
-    TimelineRowDeleteDialogComponent
+    TimelineRowDeleteDialogComponent,
+    ColorGradientEffectComponent,
+    ShapeRotateEffectComponent,
+    ShapeMoveEffectComponent,
+    ShapeResizeEffectComponent
   ],
   providers: [
     {provide: 'timeScales', useValue: TIMESCALES}

@@ -16,7 +16,7 @@ export class FileUploadComponent {
   constructor() {
     this.options = { concurrency: 1 };
     this.files = [];
-    this.uploadInput = new EventEmitter<UploadInput>(); // input events, we use this to emit data to ngx-uploader
+    this.uploadInput = new EventEmitter<UploadInput>(); // input events, we use this to emit effectData to ngx-uploader
     this.humanizeBytes = humanizeBytes;
   }
 
@@ -33,7 +33,7 @@ export class FileUploadComponent {
     } else if (output.type === 'addedToQueue'  && typeof output.file !== 'undefined') { // add file to array when added
       this.files.push(output.file);
     } else if (output.type === 'uploading' && typeof output.file !== 'undefined') {
-      // update current data in files array for uploading file
+      // update current effectData in files array for uploading file
       const index = this.files.findIndex(file => typeof output.file !== 'undefined' && file.id === output.file.id);
       this.files[index] = output.file;
     } else if (output.type === 'removed') {

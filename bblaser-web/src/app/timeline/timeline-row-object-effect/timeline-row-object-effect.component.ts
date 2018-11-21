@@ -9,7 +9,7 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import { BBEffect } from '../../animations/animation.service';
+import { BBEffectData } from '../../animations/animation.service';
 import { TimeScale } from '../timeline.component';
 import { ResizeEvent } from 'angular-resizable-element';
 
@@ -44,7 +44,7 @@ import { ResizeEvent } from 'angular-resizable-element';
 })
 export class TimelineRowObjectEffectComponent implements OnChanges {
   @Input()
-  effect: BBEffect;
+  effect: BBEffectData;
   @Input()
   scale: TimeScale;
   @Input()
@@ -55,7 +55,7 @@ export class TimelineRowObjectEffectComponent implements OnChanges {
   private center_down_x: number;
   private center_down_y: number;
   @Output()
-  private effectChanged: EventEmitter<BBEffect> = new EventEmitter();
+  private effectChanged: EventEmitter<BBEffectData> = new EventEmitter();
 
 
   constructor(private element: ElementRef<HTMLElement>) {
@@ -65,8 +65,8 @@ export class TimelineRowObjectEffectComponent implements OnChanges {
     if (changes['maxDuration']) {
       this.maxDuration = changes['maxDuration'].currentValue;
     }
-    // this.element.nativeElement.style.setProperty('background-image', 'linear-gradient(-90deg, ' + this.getRGBColor((this.effect as BBColorGradientEffect).startColor) + ', ' +
-    //   '' + this.getRGBColor((this.effect as BBColorGradientEffect).endColor) + ')');
+    // this.element.nativeElement.style.setProperty('background-image', 'linear-gradient(-90deg, ' + this.getRGBColor((this.effectData as BBColorGradientEffect).startColor) + ', ' +
+    //   '' + this.getRGBColor((this.effectData as BBColorGradientEffect).endColor) + ')');
     this.setPosition();
   }
 

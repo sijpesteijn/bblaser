@@ -1,14 +1,21 @@
-import { BBEffect } from '../../animations/animation.service';
+import { BBEffectData } from '../../animations/animation.service';
 import * as fromTimeline from './timeline.actions';
-import * as fromAnimation from '../../animations/animation-store/animation.actions';
-import { selected } from './timeline.selectors';
+import { Type } from '@angular/core';
+
+export class EffectItem {
+  constructor(public component: Type<any>, public effectData: any) {}
+}
+
+export interface EffectComponent {
+  setEffectData(effectData: BBEffectData): void;
+}
 
 export interface TimelineObject {
   id: number;
   start: number;
   duration: number;
   selected: boolean;
-  effects: BBEffect[];
+  effects: BBEffectData[];
 }
 
 export interface TimelineRow {
@@ -57,7 +64,6 @@ export function timelineReducer(state = initialTimelineState, action: fromTimeli
       };
     }
     case fromTimeline.TIMELINE_DELETE_FROM_SELECTED: {
-      console.log('Deleting ', action.timelineObject);
       return {
         ...state,
         selected: [
@@ -66,14 +72,12 @@ export function timelineReducer(state = initialTimelineState, action: fromTimeli
       };
     }
     case fromTimeline.TIMELINE_SET_SELECTED: {
-      console.log('Set selected ', action.timelineObjects);
       return {
         ...state,
         selected: action.timelineObjects
       };
     }
     case fromTimeline.TIMELINE_CONTAINER_CLICK: {
-      console.log('Container click');
       return {
         ...state,
         selected: []

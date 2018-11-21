@@ -1,6 +1,6 @@
-import { Component, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { BBColorGradientEffect } from '../../../animations/animation.service';
-import { TimeScale } from '../../timeline.component';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { BBEffectData, BBMoveEffect } from '../../../animations/animation.service';
+import { EffectComponent } from '../../store';
 
 @Component({
   selector: 'bb-shape-move-effect',
@@ -19,22 +19,17 @@ import { TimeScale } from '../../timeline.component';
   }
   .move-end {
     margin-left: auto;
-  }`]
+  }`],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ShapeMoveEffectComponent implements OnChanges {
+export class ShapeMoveEffectComponent implements EffectComponent {
   readonly type = 'shape_move';
-  @Input()
-  effect: BBColorGradientEffect;
-  @Input()
-  scale: TimeScale;
+  effectData: BBMoveEffect;
 
-  constructor(private element: ElementRef<HTMLElement>) {
+  constructor() {}
 
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    this.element.nativeElement.style.setProperty('left', this.effect.start + 'px');
-    this.element.nativeElement.style.setProperty('width', this.effect.duration + 'px');
+  setEffectData(effectData: BBEffectData): void {
+    this.effectData = effectData as BBMoveEffect;
   }
 
 }

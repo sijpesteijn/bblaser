@@ -8,12 +8,6 @@
 #include <unitypes.h>
 #include <fstream>
 
-#ifdef __APPLE__
-#define SYSFS_SPI_DIR "/Users/gijssijpesteijn/programming/c/bb-laser/resources/spis/"
-#else
-#define SYSFS_GPIO_DIR "/dev/spidev1."
-#endif
-
 using namespace std;
 class spi {
 public:

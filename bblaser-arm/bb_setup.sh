@@ -3,6 +3,7 @@
 echo Update ubuntu
 apt-get update
 apt-get -y upgrade
+apt-get -y install parted
 apt-get -y install cmake
 apt-get -y install libssl-dev
 
@@ -29,24 +30,19 @@ optargs=quiet
 echo Moving stuff to sdcard
 mkdir /media/card/notouch
 mkdir /media/card/notouch/home
-mkdir /media/card/notouch/usr
 mkdir /media/card/notouch/root
 mkdir /media/card/notouch/var
 mkdir /media/card/notouch/var/cache
-cp -R /home /media/card/notouch/home
-cp -R /usr /media/card/notouch/usr
-cp -R /root /media/card/notouch/root
-cp -R /var/cache /media/card/notouch/var/cache
+cp -R /home /media/card/notouch
+cp -R /root /media/card/notouch
+cp -R /var/cache /media/card/notouch/var
 rm -rf /home
-rm -rf /usr
 rm -rf /root
 rm -rf /var/cache
 ln -s /media/card/notouch/home /home
-ln -s /media/card/notouch/usr /usr
 ln -s /media/card/notouch/root /root
 ln -s /media/card/notouch/var/cache /var/cache
 mount --bind /media/card/notouch/home /home
-mount --bind /media/card/notouch/usr /usr
 mount --bind /media/card/notouch/root /root
 mount --bind /media/card/notouch/var/cache /var/cache
 

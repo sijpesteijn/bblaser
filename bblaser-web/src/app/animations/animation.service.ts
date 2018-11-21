@@ -44,7 +44,7 @@ export interface BBShape {
   color: BBColor;
 }
 
-export interface BBEffect {
+export interface BBEffectData {
   id: number;
   type: string;
   name: string;
@@ -52,21 +52,21 @@ export interface BBEffect {
   duration: number;
 }
 
-export interface BBColorGradientEffect extends BBEffect {
+export interface BBColorGradientEffect extends BBEffectData {
   startColor: BBColor;
   endColor: BBColor;
 }
 
-export interface BBMoveEffect extends BBEffect {
+export interface BBMoveEffect extends BBEffectData {
   startPosition: BBPoint;
   endPosition: BBPoint;
 }
 
-export interface BBRotateEffect extends BBEffect {
+export interface BBRotateEffect extends BBEffectData {
   degrees: number;
 }
 
-export interface BBResizeEffect extends BBEffect {
+export interface BBResizeEffect extends BBEffectData {
   scale: number;
 }
 
@@ -74,7 +74,7 @@ export interface BBAppearance {
   id: number;
   start: number;
   duration: number;
-  effects?: BBEffect[];
+  effects?: BBEffectData[];
 }
 
 export interface BBElement {

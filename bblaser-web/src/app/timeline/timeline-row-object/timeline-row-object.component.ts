@@ -9,10 +9,11 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import { OBJECT_NAMES_WIDTH, SideEvent, TimeScale } from '../timeline.component';
+import { TimeScale } from '../timeline.component';
 import { TimelineObject } from '../store/index';
 import {
-  BBColorGradientEffect, BBEffect,
+  BBColorGradientEffect,
+  BBEffectData,
   BBMoveEffect,
   BBPoint,
   BBResizeEffect,
@@ -20,7 +21,7 @@ import {
 } from '../../animations/animation.service';
 import { Store } from '@ngrx/store';
 import * as timelineStore from '../store';
-import { ResizeEvent } from 'angular-resizable-element';
+import { BoundingRectangle, ResizeEvent } from 'angular-resizable-element';
 
 @Component({
   selector: 'bb-timeline-row-object',
@@ -30,7 +31,9 @@ import { ResizeEvent } from 'angular-resizable-element';
          (click)="hideContextMenu($event)">
       <div class="timeline-row-object"
            mwlResizable
+           (resizeStart)="handleResizeStart($event)"
            (resizing)="handleResizing($event)"
+           (resizeEnd)="handleResizeEnd($event)"
            [resizeEdges]="{left: true, right: true}"
            #timelineRowObject
            [ngStyle]="{'left.px': (timelineObject.start / timeScale.pixelsPerMillisecond) / timeScale.scale,
@@ -44,24 +47,15 @@ import { ResizeEvent } from 'angular-resizable-element';
       </div>
       <div class="timeline-row-object-effects" *ngIf="expanded"
            [ngStyle]="{'left.px': (timelineObject.start / timeScale.pixelsPerMillisecond) / timeScale.scale, 
-           'width.px': (timelineObject.duration / timeScale.pixelsPerMillisecond) / timeScale.scale}">
+           'width.px': (timelineObject.duration / timeScale.pixelsPerMillisecond) / timeScale.scale,
+            'height.px': 24 + (timelineObject.effects.length * 22)}">
         <ul>
           <li *ngFor="let effect of timelineObject.effects">
-            <bb-timeline-row-object-effect
-              [effect]="effect"
+            <bb-timeline-row-effect
+              [effectData]="effect"
               [scale]="timeScale"
               [maxDuration]="timelineObject.duration"
-              (effectChanged)="handleEffectChanged($event)"
-            >
-              <bb-color-gradient-effect [scale]="timeScale" [effect]="effect"
-                                        *ngIf="effect.type === 'color_gradient'"></bb-color-gradient-effect>
-              <bb-shape-move-effect [scale]="timeScale" [effect]="effect"
-                                    *ngIf="effect.type === 'shape_move'"></bb-shape-move-effect>
-              <bb-shape-rotate-effect [scale]="timeScale" [effect]="effect"
-                                      *ngIf="effect.type === 'shape_rotate'"></bb-shape-rotate-effect>
-              <bb-shape-resize-effect [scale]="timeScale" [effect]="effect"
-                                      *ngIf="effect.type === 'shape_resize'"></bb-shape-resize-effect>
-            </bb-timeline-row-object-effect>
+              (effectChanged)="handleEffectChanged($event)"></bb-timeline-row-effect>
           </li>
         </ul>
       </div>
@@ -87,6 +81,7 @@ export class TimelineRowObjectComponent implements OnChanges, OnInit {
   private center_down_y: number;
   contextMenu = false;
   point: BBPoint;
+  private startRectangle: BoundingRectangle;
 
   constructor(private store: Store<timelineStore.TimelineState>) {
   }
@@ -111,14 +106,26 @@ export class TimelineRowObjectComponent implements OnChanges, OnInit {
     }
   }
 
+  handleResizeStart(event: ResizeEvent) {
+    console.log('Start ', event);
+    this.startRectangle = event.rectangle;
+  }
+
   handleResizing(event: ResizeEvent) {
-    console.log(event);
     if (event.edges.left) {
-      this.timelineObject.start += (event.edges.left) as number * this.timeScale.pixelsPerMillisecond;
-      this.timelineObject.duration -= (event.edges.left) as number / this.timeScale.pixelsPerMillisecond;
+      console.log('RStart ', this.timelineObject.start);
+      // console.log('Start ', this.startRectangle.left + event.edges.left);
+      // console.log('Event ', event.edges.left);
+      // this.timelineObject.start = (this.startRectangle.left + event.edges.left) / this.timeScale.pixelsPerMillisecond;
+      // const start = this.timelineObject.start;
+      // this.timelineObject.start = (event.rectangle.left - OBJECT_NAMES_WIDTH) * this.timeScale.pixelsPerMillisecond;
+      // this.timelineObject.duration -= this.timelineObject.start - start;
     } else if (event.edges.right) {
       this.timelineObject.duration = (event.rectangle.right - event.rectangle.left) * this.timeScale.pixelsPerMillisecond;
     }
+  }
+
+  handleResizeEnd(evnet: ResizeEvent) {
     this.timelineObjectChanged.emit(this.timelineObject);
   }
 
@@ -141,15 +148,19 @@ export class TimelineRowObjectComponent implements OnChanges, OnInit {
       this.timelineObject.selected = !this.timelineObject.selected;
     }
     this.center_down = false;
+    this.timelineObjectChanged.emit(this.timelineObject);
   }
 
   moveCenter(event: MouseEvent) {
     if (this.center_down) {
       event.preventDefault();
-      this.timelineObject.start = this.timelineObject.start + (event.clientX - this.center_down_x) * this.timeScale.pixelsPerMillisecond;
+      if (this.timelineObject.start + (event.clientX - this.center_down_x) * this.timeScale.pixelsPerMillisecond > 0) {
+        this.timelineObject.start = this.timelineObject.start + (event.clientX - this.center_down_x) * this.timeScale.pixelsPerMillisecond;
+      } else {
+        this.timelineObject.start = 0;
+      }
       this.center_down_y = -1;
       this.center_down_x = event.clientX;
-      this.timelineObjectChanged.emit(this.timelineObject);
     }
   }
 
@@ -215,7 +226,7 @@ export class TimelineRowObjectComponent implements OnChanges, OnInit {
     this.timelineObjectChanged.emit(this.timelineObject);
   }
 
-  handleEffectChanged(effect: BBEffect) {
+  handleEffectChanged(effect: BBEffectData) {
     this.timelineObjectChanged.emit(this.timelineObject);
   }
 }

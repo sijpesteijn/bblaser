@@ -33,10 +33,15 @@ export class PaperService {
   public scale = 1;
   public activeTool: Tool;
   private animation: BBAnimation;
+  private tools: {name:string; tool: Tool;}[] = [];
 
   constructor(private eventService: EventService,
               private pStore: Store<paperStore.PaperState>) {
     paper.install(window);
+    this.tools.push({name: 'selectTool', tool: new SelectTool(this)});
+    this.tools.push({name: 'boxTool', tool: new BoxTool(this)});
+    this.tools.push({name: 'lineTool', tool: new LineTool(this)});
+    this.tools.push({name: 'moveTool', tool: new MoveTool(this)});
   }
 
   setup(identifier: string) {
@@ -54,20 +59,8 @@ export class PaperService {
   }
 
   setTool(tool: string) {
-    if (this.activeTool) {
-      this.activeTool.remove();
-      this.activeTool = undefined;
-    }
     if (tool) {
-      if (tool === 'selectTool') {
-        this.activeTool = new SelectTool(this);
-      } else if (tool === 'boxTool') {
-        this.activeTool = new BoxTool(this);
-      } else if (tool === 'lineTool') {
-        this.activeTool = new LineTool(this);
-      } else if (tool === 'moveTool') {
-        this.activeTool = new MoveTool(this);
-      }
+      this.activeTool = this.tools.find(t => t.name === tool).tool;
       this.activeTool.activate();
     }
   }
