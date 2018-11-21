@@ -9,6 +9,7 @@
 #include "../log.h"
 #include <sys/ioctl.h>
 #include <cmath>
+#include <fcntl.h>
 
 #ifndef __APPLE__
 #include <linux/spi/spidev.h>
