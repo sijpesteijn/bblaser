@@ -29,6 +29,6 @@ void log::error(string message) {
 #ifdef __APPLE__
     cout << message << endl;
 #else
-    syslog (LOG_ERROR, "%s", message.c_str());
+    syslog (LOG_ERR, "%s", message.c_str());
 #endif
 }
