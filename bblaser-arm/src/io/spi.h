@@ -15,7 +15,7 @@ public:
     void write8Bits(unsigned char reg, unsigned char value);
     void write12Bits(unsigned char reg, unsigned char value);
 private:
-    fstream spi_fd;
+    int spi_fd;
     int nr;
     uint8_t bits_per_word; /*!< @brief is used to hold the bits per word size of SPI */
     uint8_t mode; /*!< @brief is used to hold the mode of SPI */
