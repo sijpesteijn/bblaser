@@ -45,12 +45,12 @@ int spi::send(unsigned char tx[], unsigned int length) {
 #ifndef __APPLE__
     unsigned char rx[length];
     struct spi_ioc_transfer transfer = {
-            .tx_buf = (unsigned long)tx,
-            .rx_buf = (unsigned long)rx,
-            .len = length,
-            .delay_usecs = 0,
-            .speed_hz = this->speed,
-            .bits_per_word = this->bits_per_word,
+            tx_buf : (unsigned long)tx,
+            rx_buf : (unsigned long)rx,
+            len : length,
+            delay_usecs : 0,
+            speed_hz : this->speed,
+            bits_per_word : this->bits_per_word,
     };
     // send the SPI message (all of the above fields, inc. buffers)
     int status = ioctl(this->spi_fd, SPI_IOC_MESSAGE(1), &transfer);
