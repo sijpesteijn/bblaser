@@ -49,7 +49,7 @@ int spi::send(unsigned char tx[], unsigned int length) {
     transfer.rx_buf = (unsigned long)rx;
     transfer.len = length;
     transfer.delay_usecs = 0;
-    transfer..speed_hz = this->speed;
+    transfer.speed_hz = this->speed;
     transfer.bits_per_word = this->bits_per_word;
     // send the SPI message (all of the above fields, inc. buffers)
     int status = ioctl(this->spi_fd, SPI_IOC_MESSAGE(1), &transfer);
