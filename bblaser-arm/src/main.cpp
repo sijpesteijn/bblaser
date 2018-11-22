@@ -12,7 +12,7 @@ void closeResources(void) {
 int main() {
 #ifndef __APPLE__
     openlog("bb-laser", ( LOG_CONS | LOG_PID), LOG_USER);
-    setlogmask(LOG_UPTO(LOG_ERR));
+    setlogmask(LOG_UPTO(LOG_DEBUG));
 #endif
 
     log::info("Starting BBLaser...");
