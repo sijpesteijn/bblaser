@@ -9,7 +9,7 @@
 #define SYSFS_GPIO_DIR "/Users/gijssijpesteijn/programming/c/bb-laser/resources/gpios/"
 #else
 #define SYSFS_GPIO_DIR "/sys/class/gpio/"
-#define SYSFS_SPI_DIR "/sys/class/spi/"
+#define SYSFS_SPI_DIR "/sys/class/spidev/"
 #endif
 
 
