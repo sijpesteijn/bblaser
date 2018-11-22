@@ -45,8 +45,8 @@ int spi::send(unsigned char tx[], int length) {
 #ifndef __APPLE__
     unsigned char rx[length];
     struct spi_ioc_transfer transfer = {
-            .tx_buf = tx,
-            .rx_buf = rx,
+            .tx_buf = (unsigned long)tx,
+            .rx_buf = (unsigned long)rx,
             .len = length,
             .delay_usecs = 0,
             .speed_hz = this->speed,
