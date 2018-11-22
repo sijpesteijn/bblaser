@@ -22,7 +22,7 @@ private:
     uint32_t speed; /*!< @brief is used to hold the speed of SPI */
     uint8_t flags;
     void connect();
-    int send(unsigned char tx[], int length);
+    int send(unsigned char tx[], unsigned int length);
 };
 
 

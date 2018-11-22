@@ -41,7 +41,7 @@ void spi::connect() {
 #endif
 }
 
-int spi::send(unsigned char tx[], int length) {
+int spi::send(unsigned char tx[], unsigned int length) {
 #ifndef __APPLE__
     unsigned char rx[length];
     struct spi_ioc_transfer transfer = {
