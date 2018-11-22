@@ -27,29 +27,32 @@ gpio::~gpio() {
 }
 
 void gpio::open() {
-    log::debug(string("gpio_open: export gpio: ") + string(to_string(this->nr)));
-    this->export_file_descriptor.open(SYSFS_GPIO_DIR "export");
-    if (!this->export_file_descriptor.is_open()) {
-        perror("gpio/export");
-    }
-    this->export_file_descriptor << this->nr;
-    this->export_file_descriptor.close();
+    log::debug("gpio_open: export gpio: " + to_string(this->nr));
 
-    string direction = SYSFS_GPIO_DIR;
-    direction += "gpio" + to_string(this->nr) + "/direction";
-    this->direction_file_descriptor.open(direction);
-    if (!this->direction_file_descriptor.is_open()) {
-        perror("gpio/direction");
-    }
-    this->direction_file_descriptor << (this->direction == OUTPUT_PIN ? "out" : "in");
-    this->direction_file_descriptor.close();
+    system(string("echo " + to_string(this->nr) + " >> " + SYSFS_GPIO_DIR + "export").c_str());
+//    this->export_file_descriptor.open(SYSFS_GPIO_DIR "export");
+//    if (!this->export_file_descriptor.is_open()) {
+//        log::error("gpio/export failed for gpio: " + to_string(this->nr));
+//        perror("gpio/export");
+//    }
+//    this->export_file_descriptor << this->nr;
+//    this->export_file_descriptor.close();
+//
+//    string direction = SYSFS_GPIO_DIR;
+//    direction += "gpio" + to_string(this->nr) + "/direction";
+//    this->direction_file_descriptor.open(direction);
+//    if (!this->direction_file_descriptor.is_open()) {
+//        perror("gpio/direction");
+//    }
+//    this->direction_file_descriptor << (this->direction == OUTPUT_PIN ? "out" : "in");
+//    this->direction_file_descriptor.close();
 
-    string value = SYSFS_GPIO_DIR;
-    value += "gpio" + to_string(this->nr) + "/value";
-    this->value_file_descriptor.open(value);
-    if (!this->value_file_descriptor.is_open()) {
-        perror("gpio/value");
-    }
+//    string value = SYSFS_GPIO_DIR;
+//    value += "gpio" + to_string(this->nr) + "/value";
+//    this->value_file_descriptor.open(value);
+//    if (!this->value_file_descriptor.is_open()) {
+//        perror("gpio/value");
+//    }
 }
 
 void gpio::setValue(int val) {
