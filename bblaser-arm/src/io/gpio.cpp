@@ -29,15 +29,17 @@ gpio::~gpio() {
 void gpio::open() {
     log::debug("gpio_open: export gpio: " + to_string(this->nr));
 
-    int result = system(string("echo " + to_string(this->nr) + " >> " + SYSFS_GPIO_DIR + "export").c_str());
+    string echo_export = string("echo " + to_string(this->nr) + " >> " + SYSFS_GPIO_DIR + "export");
+    int result = system(echo_export.c_str());
     if (result != 0 && errno != 0) {
-        log::error("gpio/export failed for gpio: " + to_string(this->nr));
+        log::error("gpio/export failed: " + echo_export);
         perror("gpio/export");
     }
 
-    result = system(string("echo " + string(this->direction == OUTPUT_PIN ? "out" : "in") + " >> " + SYSFS_GPIO_DIR + "gpio" + to_string(this->nr) + "/direction").c_str());
+    string echo_direction = string("echo " + string(this->direction == OUTPUT_PIN ? "out" : "in") + " >> " + SYSFS_GPIO_DIR + "gpio" + to_string(this->nr) + "/direction");
+    result = system(echo_direction.c_str());
     if (result != 0 && errno != 0) {
-        log::error("gpio/direction failed for gpio: " + to_string(this->nr));
+        log::error("gpio/direction failed: " + echo_direction);
         perror("gpio/direction");
     }
 
@@ -46,9 +48,10 @@ void gpio::open() {
 }
 
 void gpio::setValue(int val) {
-    int result = system(string("echo " + to_string(val) + " >> " + string(SYSFS_GPIO_DIR) + "gpio" + to_string(this->nr) + "/value").c_str());
+    string echo_value = string("echo " + to_string(val) + " >> " + string(SYSFS_GPIO_DIR) + "gpio" + to_string(this->nr) + "/value");
+    int result = system(echo_value.c_str());
     if (result != 0 && errno != 0) {
-        log::error("gpio/value failed for gpio: " + to_string(this->nr));
+        log::error("gpio/value failed: " + echo_value);
         perror("gpio/value");
     }
 }
