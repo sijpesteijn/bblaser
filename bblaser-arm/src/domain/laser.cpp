@@ -23,6 +23,10 @@ laser::laser() {
     log::debug("Laser initialized.");
 }
 
+laser::~laser() {
+    log::debug("Laser halted.");
+}
+
 bool laser::isEnabled() {
     return enabled;
 }

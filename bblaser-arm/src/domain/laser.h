@@ -24,6 +24,7 @@
 class laser {
 public:
     laser();
+    ~laser();
     void setEnabled(bool enabled);
     bool isEnabled();
     void setRed(int red);
