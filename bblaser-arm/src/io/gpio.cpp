@@ -8,7 +8,7 @@
 #include <string>
 #include <syslog.h>
 #include <dirent.h>
-#include <zconf.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -38,7 +38,7 @@ void gpio::open() {
             log::error("gpio/export failed: " + echo_export);
             perror("gpio/export");
         } else {
-            sleep(1);
+            usleep(1000);
         }
     } else {
         log::debug("GPIO " + to_string(this->nr) + " already exported.");
