@@ -7,6 +7,7 @@
 #include "../log.h"
 #include <string>
 #include <syslog.h>
+#include <dirent.h>
 
 using namespace std;
 
@@ -27,16 +28,23 @@ gpio::~gpio() {
 }
 
 void gpio::open() {
+    int result;
     log::debug("gpio_open: export gpio: " + to_string(this->nr));
 
-    string echo_export = string("echo " + to_string(this->nr) + " >> " + SYSFS_GPIO_DIR + "export");
-    int result = system(echo_export.c_str());
-    if (result != 0 || errno != 0) {
-        log::error("gpio/export failed: " + echo_export);
-        perror("gpio/export");
+    if (opendir(string(string(SYSFS_GPIO_DIR) + "gpio" + to_string(this->nr)).c_str()) == NULL) {
+        string echo_export = string("echo " + to_string(this->nr) + " >> " + SYSFS_GPIO_DIR + "export");
+        result = system(echo_export.c_str());
+        if (result != 0 || errno != 0) {
+            log::error("gpio/export failed: " + echo_export);
+            perror("gpio/export");
+        }
+    } else {
+        log::debug("GPIO " + to_string(this->nr) + " already exported.");
     }
 
-    string echo_direction = string("echo " + string(this->direction == OUTPUT_PIN ? "out" : "in") + " >> " + SYSFS_GPIO_DIR + "gpio" + to_string(this->nr) + "/direction");
+    string echo_direction = string(
+            "echo " + string(this->direction == OUTPUT_PIN ? "out" : "in") + " >> " + SYSFS_GPIO_DIR + "gpio" +
+            to_string(this->nr) + "/direction");
     result = system(echo_direction.c_str());
     if (result != 0 || errno != 0) {
         log::error("gpio/direction failed: " + echo_direction);
@@ -48,7 +56,8 @@ void gpio::open() {
 }
 
 void gpio::setValue(int val) {
-    string echo_value = string("echo " + to_string(val) + " >> " + string(SYSFS_GPIO_DIR) + "gpio" + to_string(this->nr) + "/value");
+    string echo_value = string(
+            "echo " + to_string(val) + " >> " + string(SYSFS_GPIO_DIR) + "gpio" + to_string(this->nr) + "/value");
     int result = system(echo_value.c_str());
     if (result != 0 || errno != 0) {
         log::error("gpio/value failed: " + echo_value);
@@ -57,7 +66,7 @@ void gpio::setValue(int val) {
 }
 
 int gpio::getValue() {
-    this->value_file_descriptor.seekg (0, ios::beg);
+    this->value_file_descriptor.seekg(0, ios::beg);
     string line;
     getline(this->value_file_descriptor, line);
     return stoi(line);
