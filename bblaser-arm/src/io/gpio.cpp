@@ -38,7 +38,7 @@ void gpio::open() {
             log::error("gpio/export failed: " + echo_export);
             perror("gpio/export");
         } else {
-            usleep(1000);
+            usleep(500);
         }
     } else {
         log::debug("GPIO " + to_string(this->nr) + " already exported.");
@@ -51,6 +51,8 @@ void gpio::open() {
     if (result != 0 || errno != 0) {
         log::error("gpio/direction failed: " + echo_direction);
         perror("gpio/direction");
+    } else {
+        log::debug(echo_direction);
     }
 
     this->setValue(0);
