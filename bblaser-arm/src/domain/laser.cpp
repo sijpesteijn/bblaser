@@ -15,7 +15,7 @@ laser::laser() {
     this->axis_ldac_gpio = new gpio(115);
     this->colors1_gpio = new gpio(15);
     this->colors2_gpio = new gpio(48);
-//    this->spi_bus = new spi(0, 8, 0, 10000000, O_RDWR);
+    this->spi_bus = new spi(0, 8, 0, 10000000, O_RDWR);
     this->axis_gpio->setValue(1);
     this->axis_ldac_gpio->setValue(1);
     this->colors1_gpio->setValue(1);
@@ -42,14 +42,12 @@ unsigned int hextoint(string hex) {
 void laser::setPoint(point *p) {
     this->p = p;
     this->axis_gpio->setValue(0);
-//    log::debug(this->p->getX());
+    log::debug(this->p->getX());
 
-//    this->spi_bus->write12Bits(0x70, this->p->x);
     this->spi_bus->write12Bits(0x70, (int)hextoint(this->p->getX()));
     this->axis_gpio->setValue(1);
     this->axis_gpio->setValue(0);
-//    log::debug(this->p->getY());
-//    this->spi_bus->write12Bits(0xf0, this->p->y);
+    log::debug(this->p->getY());
     this->spi_bus->write12Bits(0xf0, (int)hextoint(this->p->getY()));
     this->axis_gpio->setValue(1);
     this->axis_ldac_gpio->setValue(0);

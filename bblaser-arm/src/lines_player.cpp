@@ -31,6 +31,7 @@ void player(laser *lp, list<line> lines, future<void> futureObj) {
             plotPoints(lp, l.getPoints());
         }
     }
+
 //    log::debug("Stopping thread.");
 }
 

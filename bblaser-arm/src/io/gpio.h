@@ -28,8 +28,6 @@ public:
 private:
     int nr;
     PIN_DIRECTION direction;
-    ofstream export_file_descriptor;
-    ofstream direction_file_descriptor;
     fstream value_file_descriptor;
     void open();
 };
