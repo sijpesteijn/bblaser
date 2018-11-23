@@ -8,6 +8,7 @@
 #include <string>
 #include <syslog.h>
 #include <dirent.h>
+#include <zconf.h>
 
 using namespace std;
 
@@ -29,7 +30,6 @@ gpio::~gpio() {
 
 void gpio::open() {
     int result;
-    log::debug("gpio_open: export gpio: " + to_string(this->nr));
 
     if (opendir(string(string(SYSFS_GPIO_DIR) + "gpio" + to_string(this->nr)).c_str()) == NULL) {
         string echo_export = string("echo " + to_string(this->nr) + " >> " + SYSFS_GPIO_DIR + "export");
@@ -37,6 +37,8 @@ void gpio::open() {
         if (result != 0 || errno != 0) {
             log::error("gpio/export failed: " + echo_export);
             perror("gpio/export");
+        } else {
+            sleep(1);
         }
     } else {
         log::debug("GPIO " + to_string(this->nr) + " already exported.");
