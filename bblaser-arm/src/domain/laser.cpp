@@ -23,7 +23,7 @@ laser::laser() {
     log::debug("Laser initialized.");
 }
 
-laser::~laser() {
+void laser::close() {
     log::debug("Laser halted.");
 }
 

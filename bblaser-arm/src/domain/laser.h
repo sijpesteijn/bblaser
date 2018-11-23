@@ -24,13 +24,13 @@
 class laser {
 public:
     laser();
-    ~laser();
     void setEnabled(bool enabled);
     bool isEnabled();
     void setRed(int red);
     void setGreen(int green);
     void setBlue(int blue);
     void setPoint(point *p);
+    void close();
 private:
     bool enabled;
     point *p;

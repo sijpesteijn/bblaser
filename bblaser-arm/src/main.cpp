@@ -7,7 +7,8 @@
 
 laser laser1;
 void closeResources(void) {
-    log::info("Closing BBLaser...");
+    laser1.close();
+    log::info("Closed BBLaser...");
 }
 
 int main() {
