@@ -15,20 +15,18 @@
 #include <linux/spi/spidev.h>
 #endif
 
-spi::spi(int nr, uint8_t bits_per_word, uint8_t mode, uint32_t speed, uint8_t flags) {
+spi::spi(int nr) {
     this->nr = nr;
     this->connect();
-    this->bits_per_word = bits_per_word;
-    this->mode = mode;
-    this->speed = speed;
-    this->flags = flags;
 }
 
 void spi::connect() {
 #ifndef __APPLE__
     char filename[20];
-    sprintf(filename, "/dev/spidev1.%d", this->nr);
-    this->spi_fd = open(filename, this->flags);
+    sprintf(filename, "/sys/class/spidev/spidev1.%d", this->nr);
+    if ((this->spi_fd = open(filename, this->flags)) < 0) {
+        perror("SPI: Can't open device");
+    }
     if (ioctl(this->spi_fd, SPI_IOC_WR_MODE, this->mode) == -1) {
         perror("SPI: Can't set SPI mode.");
     }
