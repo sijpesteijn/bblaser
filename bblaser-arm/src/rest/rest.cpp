@@ -3,6 +3,7 @@
 //
 
 #include "rest.h"
+#include "../log.h"
 
 rest::rest(list<rest_resource *> resources) {
     auto settings = make_shared< Settings >( );
@@ -15,4 +16,5 @@ rest::rest(list<rest_resource *> resources) {
         }
     }
     this->service.start( settings );
+    log::debug("Restbed initialized.");
 }
