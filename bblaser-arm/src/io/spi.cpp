@@ -25,16 +25,16 @@ void spi::connect() {
     char filename[20];
     sprintf(filename, "/dev/spidev1.%d", this->nr);
     if ((this->spi_fd = open(filename, this->flags)) < 0) {
-        perror("SPI: Can't open device");
+        log::debug("SPI: Can't open device");
     }
     if (ioctl(this->spi_fd, SPI_IOC_WR_MODE, this->mode) == -1) {
-        perror("SPI: Can't set SPI mode.");
+        log::debug("SPI: Can't set SPI mode.");
     }
     if (ioctl(this->spi_fd, SPI_IOC_WR_BITS_PER_WORD, this->bits_per_word) == -1) {
-        perror("SPI: Can't set bits per word.");
+        log::debug("SPI: Can't set bits per word.");
     }
     if (ioctl(this->spi_fd, SPI_IOC_WR_MAX_SPEED_HZ, this->speed) == -1) {
-        perror("SPI: Can't set max HZ");
+        log::debug("SPI: Can't set max HZ");
     }
 #endif
 }
