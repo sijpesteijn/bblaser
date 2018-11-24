@@ -23,7 +23,7 @@ spi::spi(int nr) {
 void spi::connect() {
 #ifndef __APPLE__
     char filename[20];
-    sprintf(filename, "/sys/class/spidev/spidev1.%d", this->nr);
+    sprintf(filename, "/dev/spidev1.%d", this->nr);
     if ((this->spi_fd = open(filename, this->flags)) < 0) {
         perror("SPI: Can't open device");
     }
