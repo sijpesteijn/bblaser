@@ -5,9 +5,9 @@
 #include "rest/lifeline_resource.h"
 #include "rest/player_resource.h"
 
-laser laser1;
+laser *laser1;
 void closeResources(void) {
-    laser1.close();
+    laser1->close();
     log::info("Closed BBLaser...");
 }
 
@@ -19,10 +19,11 @@ int main() {
 
     log::info("Starting BBLaser...");
     atexit(closeResources);
+    laser1 = new laser();
 
-    laser1.setEnabled(true);
-    lifeline_resource ll_resource(&laser1);
-    player_resource p_resource(&laser1);
+    laser1->setEnabled(true);
+    lifeline_resource ll_resource(laser1);
+    player_resource p_resource(laser1);
     rest r({&ll_resource, &p_resource});
 
     log::info("Stopping BBLaser...");
