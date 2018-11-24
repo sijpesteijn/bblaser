@@ -27,7 +27,7 @@ spi::spi(int nr, uint8_t bits_per_word, uint8_t mode, uint32_t speed, uint8_t fl
 void spi::connect() {
 #ifndef __APPLE__
     char filename[20];
-    sprintf(filename, "/sys/class/spidev/spidev1.%d", this->nr);
+    sprintf(filename, "/dev/spidev1.%d", this->nr);
     this->spi_fd = open(filename, this->flags);
     if (ioctl(this->spi_fd, SPI_IOC_WR_MODE, this->mode) == -1) {
         perror("SPI: Can't set SPI mode.");
