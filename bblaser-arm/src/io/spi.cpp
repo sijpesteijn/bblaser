@@ -27,13 +27,13 @@ void spi::connect() {
     if ((this->spi_fd = open(filename, this->flags)) < 0) {
         log::debug("SPI: Can't open device");
     }
-    if (ioctl(this->spi_fd, SPI_IOC_WR_MODE, this->mode) == -1) {
+    if (ioctl(this->spi_fd, SPI_IOC_WR_MODE, &this->mode) == -1) {
         log::debug("SPI: Can't set SPI mode.");
     }
-    if (ioctl(this->spi_fd, SPI_IOC_WR_BITS_PER_WORD, this->bits_per_word) == -1) {
+    if (ioctl(this->spi_fd, SPI_IOC_WR_BITS_PER_WORD, &this->bits_per_word) == -1) {
         log::debug("SPI: Can't set bits per word.");
     }
-    if (ioctl(this->spi_fd, SPI_IOC_WR_MAX_SPEED_HZ, this->speed) == -1) {
+    if (ioctl(this->spi_fd, SPI_IOC_WR_MAX_SPEED_HZ, &this->speed) == -1) {
         log::debug("SPI: Can't set max HZ");
     }
 #endif
