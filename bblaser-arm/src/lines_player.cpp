@@ -26,9 +26,9 @@ void player(laser *lp, list<line> lines, future<void> futureObj) {
 //            lp->setGreen(l.getGreen());
 //            lp->setBlue(l.getBlue());
             lp->setRed(255);
-            lp->setGreen(255);
-            lp->setBlue(255);
-            plotPoints(lp, l.getPoints());
+//            lp->setGreen(255);
+//            lp->setBlue(255);
+//            plotPoints(lp, l.getPoints());
         }
     }
 
