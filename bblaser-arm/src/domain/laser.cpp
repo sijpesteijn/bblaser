@@ -60,7 +60,7 @@ void laser::setPoint(point *p) {
 
 void laser::setRed(int red) {
     this->colors1_gpio->setValue(0);
-    this->spi_bus->write8Bits(0x70, red);
+//    this->spi_bus->write8Bits(0x70, red);
     this->colors1_gpio->setValue(1);
 }
 
