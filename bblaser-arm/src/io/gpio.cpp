@@ -66,6 +66,8 @@ void gpio::setValue(int val) {
     if (result != 0 || errno != 0) {
         log::error("gpio/value failed: " + echo_value);
         perror("gpio/value");
+    } else {
+        usleep(500);
     }
 }
 

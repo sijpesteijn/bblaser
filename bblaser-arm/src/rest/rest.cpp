@@ -15,6 +15,6 @@ rest::rest(list<rest_resource *> resources) {
             this->service.publish( resource );
         }
     }
-    this->service.start( settings );
     log::debug("Restbed initialized.");
+    this->service.start( settings );
 }
