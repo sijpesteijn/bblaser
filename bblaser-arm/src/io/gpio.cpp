@@ -62,6 +62,7 @@ void gpio::open() {
 void gpio::setValue(int val) {
     this->value_file_descriptor << val;
     this->value_file_descriptor.flush();
+    usleep(1000);
 }
 
 int gpio::getValue() {
