@@ -32,7 +32,7 @@ void gpio::open() {
     int result;
 
     if (opendir(string(string(SYSFS_GPIO_DIR) + "gpio" + to_string(this->nr)).c_str()) == NULL) {
-        string echo_export = string("echo " + to_string(this->nr) + " >> " + SYSFS_GPIO_DIR + "export");
+        string echo_export = string("echo " + to_string(this->nr) + " > " + SYSFS_GPIO_DIR + "export");
         result = system(echo_export.c_str());
         if (result != 0 || errno != 0) {
             log::error("gpio/export failed: " + echo_export);
@@ -45,7 +45,7 @@ void gpio::open() {
     }
 
     string echo_direction = string(
-            "echo " + string(this->direction == OUTPUT_PIN ? "out" : "in") + " >> " + SYSFS_GPIO_DIR + "gpio" +
+            "echo " + string(this->direction == OUTPUT_PIN ? "out" : "in") + " > " + SYSFS_GPIO_DIR + "gpio" +
             to_string(this->nr) + "/direction");
     result = system(echo_direction.c_str());
     if (result != 0 || errno != 0) {
@@ -61,13 +61,11 @@ void gpio::open() {
 
 void gpio::setValue(int val) {
     string echo_value = string(
-            "echo " + to_string(val) + " >> " + string(SYSFS_GPIO_DIR) + "gpio" + to_string(this->nr) + "/value");
+            "echo " + to_string(val) + " > " + string(SYSFS_GPIO_DIR) + "gpio" + to_string(this->nr) + "/value");
     int result = system(echo_value.c_str());
     if (result != 0 || errno != 0) {
         log::error("gpio/value failed: " + echo_value);
         perror("gpio/value");
-    } else {
-        usleep(500);
     }
 }
 
