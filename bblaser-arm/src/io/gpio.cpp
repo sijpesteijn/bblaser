@@ -55,8 +55,8 @@ void gpio::open() {
         log::debug(echo_direction);
     }
 
-    this->setValue(0);
     this->value_file_descriptor.open(string(SYSFS_GPIO_DIR) + "gpio" + to_string(this->nr) + "/value");
+    this->setValue(0);
 }
 
 void gpio::setValue(int val) {
