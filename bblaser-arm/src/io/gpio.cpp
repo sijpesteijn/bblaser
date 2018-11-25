@@ -62,7 +62,7 @@ void gpio::open() {
 void gpio::setValue(int val) {
     this->value_file_descriptor << val;
     this->value_file_descriptor.flush();
-    log::debug("Gpio value set to " + to_string(val));
+//    log::debug("Gpio value set to " + to_string(val));
 //    usleep(1000000);
 }
 
