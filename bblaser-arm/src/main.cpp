@@ -21,10 +21,9 @@ int main() {
     atexit(closeResources);
     laser1 = new laser();
 
-    laser1->setEnabled(true);
     lifeline_resource ll_resource(laser1);
     player_resource p_resource(laser1);
-//    rest r({&ll_resource, &p_resource});
+    rest r({&ll_resource, &p_resource});
 
     log::info("Stopping BBLaser...");
 #ifndef __APPLE__

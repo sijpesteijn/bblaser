@@ -55,22 +55,17 @@ void gpio::open() {
         log::debug(echo_direction);
     }
 
-//    this->value_file_descriptor.open(string(SYSFS_GPIO_DIR) + "gpio" + to_string(this->nr) + "/value");
+    this->value_file_descriptor.open(string(SYSFS_GPIO_DIR) + "gpio" + to_string(this->nr) + "/value");
     this->setValue(0);
 }
 
 void gpio::setValue(int val) {
-    string echo_value = string(
-            "echo " + to_string(val) + " > " + string(SYSFS_GPIO_DIR) + "gpio" + to_string(this->nr) + "/value");
-    int result = system(echo_value.c_str());
-    if (result != 0 || errno != 0) {
-        log::error("gpio/value failed: " + echo_value);
-        perror("gpio/value");
-    }
+    this->value_file_descriptor << val;
+    this->value_file_descriptor.flush();
 }
 
 int gpio::getValue() {
-    this->value_file_descriptor.seekg(0, ios::beg);
+    this->value_file_descriptor.seekg (0, ios::beg);
     string line;
     getline(this->value_file_descriptor, line);
     return stoi(line);
