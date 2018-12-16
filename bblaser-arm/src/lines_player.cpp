@@ -43,18 +43,18 @@ void player(laser *lp, list<line> lines, future<void> futureObj) {
 
 lines_player::lines_player(laser *lp, list<line> lines) {
     this->lp = lp;
-    if (this->is_running) {
-        this->stop();
-    }
-    if (pthread_mutex_lock(&player_lock) != 0) {
-        log::error("Lines player: Can't get the lock on the player state.");
-    }
-    this->futureObj = this->exitSignal.get_future();
-    this->is_running = true;
-    this->runner = thread(player, this->lp, lines, move(this->futureObj));
-    if (pthread_mutex_unlock(&player_lock) != 0) {
-        log::error("Lines player: Can't unlock on the player state.");
-    }
+//    if (this->is_running) {
+//        this->stop();
+//    }
+//    if (pthread_mutex_lock(&player_lock) != 0) {
+//        log::error("Lines player: Can't get the lock on the player state.");
+//    }
+//    this->futureObj = this->exitSignal.get_future();
+//    this->is_running = true;
+//    this->runner = thread(player, this->lp, lines, move(this->futureObj));
+//    if (pthread_mutex_unlock(&player_lock) != 0) {
+//        log::error("Lines player: Can't unlock on the player state.");
+//    }
 }
 
 void lines_player::stop() {
