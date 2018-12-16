@@ -86,3 +86,9 @@ void spi::write12Bits(unsigned char reg, unsigned char value) {
     }
 }
 
+void spi::spi_close() {
+#ifndef __APPLE__
+    close(this->spi_fd);
+#endif
+}
+

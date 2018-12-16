@@ -52,6 +52,8 @@ public:
 
     void write12Bits(unsigned char reg, unsigned char value);
 
+    void spi_close();
+
 private:
     int spi_fd;
     int nr;

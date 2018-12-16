@@ -24,6 +24,7 @@ laser::laser() {
 }
 
 void laser::close() {
+    this->spi_bus->spi_close();
     log::debug("Laser halted.");
 }
 

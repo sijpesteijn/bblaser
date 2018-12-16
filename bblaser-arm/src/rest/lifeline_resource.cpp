@@ -18,7 +18,7 @@ static shared_ptr<Service> service = nullptr;
 
 
 void lifeline_close_handler(const shared_ptr<WebSocket> socket) {
-    log::debug("Lifeline close handler");
+    log::debug("Lifeline spi_close handler");
     if (socket->is_open()) {
         auto response = make_shared<WebSocketMessage>(WebSocketMessage::CONNECTION_CLOSE_FRAME, Bytes({10, 00}));
         socket->send(response);
