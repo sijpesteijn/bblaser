@@ -10,6 +10,7 @@
 #include <sys/ioctl.h>
 #include <cmath>
 #include <fcntl.h>
+#include <unistd.h>
 
 #ifndef __APPLE__
 #include <linux/spi/spidev.h>
