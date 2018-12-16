@@ -14,7 +14,7 @@ void plotPoints(laser *lp, list<point> points) {
         point p = *it;
         lp->setPoint(&p);
     }
-//    log::debug("Points plotted");
+    log::debug("Points plotted");
 
 }
 
@@ -22,13 +22,10 @@ void player(laser *lp, list<line> lines, future<void> futureObj) {
     while (futureObj.wait_for(chrono::milliseconds(1)) == future_status::timeout) {
         for (list<line>::iterator it = lines.begin(); it != lines.end(); it++) {
             line l = *it;
-//            lp->setRed(l.getRed());
-//            lp->setGreen(l.getGreen());
-//            lp->setBlue(l.getBlue());
-            lp->setRed(255);
-//            lp->setGreen(255);
-//            lp->setBlue(255);
-//            plotPoints(lp, l.getPoints());
+            lp->setRed(atoi(l.getRed().c_str()));
+            lp->setGreen(atoi(l.getGreen().c_str()));
+            lp->setBlue(atoi(l.getBlue().c_str()));
+            plotPoints(lp, l.getPoints());
         }
     }
 

@@ -25,7 +25,7 @@ export class EndpointsService {
     this.endpoints[ANIMATION_SAVE] = this.BASE_URL + 'r/animations/';
     this.endpoints[ANIMATION_FRAME_UPDATE] = this.BASE_URL + 'r/animations/:id/frame';
     this.endpoints[LASER] = this.BASE_URL + 'r/laser';
-    this.endpoints[LIFELINE] = 'ws://localhost:1984/lifeline';
+    this.endpoints[LIFELINE] = 'ws://192.168.88.28:1984/lifeline';
   }
 
   get(key: string): string {

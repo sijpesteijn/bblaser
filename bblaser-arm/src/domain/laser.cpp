@@ -12,9 +12,9 @@
 laser::laser() {
     this->pixels_per_bit = 65535/AXIS_MAX;
     this->axis_gpio = new gpio(60);
-    this->axis_ldac_gpio = new gpio(115);
     this->colors1_gpio = new gpio(15);
     this->colors2_gpio = new gpio(48);
+    this->axis_ldac_gpio = new gpio(115);
     this->spi_bus = new spi(0);
     this->axis_gpio->setValue(1);
     this->axis_ldac_gpio->setValue(1);

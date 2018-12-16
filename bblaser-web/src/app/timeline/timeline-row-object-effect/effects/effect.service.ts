@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { EffectItem } from '../../store';
-import { ShapeRotateEffectComponent } from './shape-rotate-effect.compoent';
+import { ShapeRotateEffectComponent } from './shape-rotate-effect.component';
 import { BBEffectData } from '../../../animations/animation.service';
-import { ColorGradientEffectComponent } from './color-gradient-effect.compoent';
-import { ShapeMoveEffectComponent } from './shape-move-effect.compoent';
-import { ShapeResizeEffectComponent } from './shape-resize-effect.compoent';
+import { ColorGradientEffectComponent } from './color-gradient-effect.component';
+import { ShapeMoveEffectComponent } from './shape-move-effect.component';
+import { ShapeResizeEffectComponent } from './shape-resize-effect.component';
 
 @Injectable({
   providedIn: 'root'

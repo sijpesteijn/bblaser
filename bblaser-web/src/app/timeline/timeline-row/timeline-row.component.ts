@@ -63,7 +63,7 @@ export class TimelineRowDeleteDialogComponent {
     }
 
     .timeline-row-content {
-      overflow: hidden;
+      overflow: visible;
       white-space: nowrap;
       height: 100%;
     }

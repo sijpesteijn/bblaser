@@ -15,8 +15,8 @@ import { EffectComponent } from '../../store';
   selector: 'bb-color-gradient-effect',
   template: `
     <div class="effect-color-gradient">
-      <bb-color-picker [color]="effectData.startColor" [toolTip]="'Start color of gradient'"></bb-color-picker>
-      <bb-color-picker [color]="effectData.endColor" [toolTip]="'End color of gradient'"></bb-color-picker>
+      <bb-radial-color-picker [color]="effectData.startColor" [toolTip]="'Start color of gradient'"></bb-radial-color-picker>
+      <bb-radial-color-picker [color]="effectData.endColor" [toolTip]="'End color of gradient'"></bb-radial-color-picker>
       <span class="color gradient"
             #gradientColor
             matTooltip="Gradient result"></span>

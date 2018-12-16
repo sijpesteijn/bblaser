@@ -8,18 +8,18 @@ import { TimelineMinorTickComponent } from './timeline-minor-tick/timeline-minor
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../material.module';
 import { TimelineRowObjectEffectComponent } from './timeline-row-object-effect/timeline-row-object-effect.component';
-import { ColorGradientEffectComponent } from './timeline-row-object-effect/effects/color-gradient-effect.compoent';
-import { ShapeMoveEffectComponent } from './timeline-row-object-effect/effects/shape-move-effect.compoent';
-import { ShapeRotateEffectComponent } from './timeline-row-object-effect/effects/shape-rotate-effect.compoent';
-import { ShapeResizeEffectComponent } from './timeline-row-object-effect/effects/shape-resize-effect.compoent';
+import { ColorGradientEffectComponent } from './timeline-row-object-effect/effects/color-gradient-effect.component';
+import { ShapeMoveEffectComponent } from './timeline-row-object-effect/effects/shape-move-effect.component';
+import { ShapeRotateEffectComponent } from './timeline-row-object-effect/effects/shape-rotate-effect.component';
+import { ShapeResizeEffectComponent } from './timeline-row-object-effect/effects/shape-resize-effect.component';
 import {
   TimelineRowObjectContextMenuComponent
 } from './timeline-row-object/timeline-row-object-contextmenu/timeline-row-object-context-menu.component';
 import { ResizableModule } from 'angular-resizable-element';
-import { ColorPickerModule } from '../color-picker/color-picker/color-picker.module';
 import { DndModule } from 'ngx-drag-drop';
 import { EffectDirective } from './timeline-row-object/timeline-row-effects/effect.directive';
 import { TimelineRowEffectComponent } from './timeline-row-object/timeline-row-effects/timeline-row-effect.component';
+import { RadialColorPickerModule } from '../radial-color-picker/radial-color-picker.module';
 
 
 const TIMESCALES: TimeScale[] = [
@@ -46,7 +46,7 @@ const TIMESCALES: TimeScale[] = [
 @NgModule({
   imports: [
     CommonModule,
-    ColorPickerModule,
+    RadialColorPickerModule,
     MaterialModule,
     ResizableModule,
     DndModule

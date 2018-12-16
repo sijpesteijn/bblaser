@@ -19,6 +19,7 @@ import { StoreDevtools, StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { ResizableModule } from 'angular-resizable-element';
 import { DndModule } from 'ngx-drag-drop';
+import { RadialColorPickerModule } from './radial-color-picker/radial-color-picker.module';
 
 const routes = [
   { path: '', redirectTo: '/animations', pathMatch: 'full' },
@@ -41,6 +42,7 @@ export function createTranslateLoader(http: HttpClient) {
     BrowserModule,
     BrowserAnimationsModule,
     DndModule,
+    RadialColorPickerModule,
     // FlexLayoutModule,
     EditValueModule,
     MaterialModule,
