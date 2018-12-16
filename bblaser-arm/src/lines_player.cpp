@@ -5,6 +5,7 @@
 #include "lines_player.h"
 #include "log.h"
 #include <thread>
+#include <unistd.h>
 
 // Create a lock and thread condition
 pthread_mutex_t player_lock = PTHREAD_MUTEX_INITIALIZER;
@@ -23,10 +24,17 @@ void player(laser *lp, list<line> lines, future<void> futureObj) {
     while (futureObj.wait_for(chrono::milliseconds(1)) == future_status::timeout) {
         for (list<line>::iterator it = lines.begin(); it != lines.end(); it++) {
             line l = *it;
+            if (pthread_mutex_lock(&player_lock) != 0) {
+                log::error("Lines player: Can't get the lock on the player state.");
+            }
             lp->setRed(atoi(l.getRed().c_str()));
             lp->setGreen(atoi(l.getGreen().c_str()));
             lp->setBlue(atoi(l.getBlue().c_str()));
             plotPoints(lp, l.getPoints());
+            if (pthread_mutex_unlock(&player_lock) != 0) {
+                log::error("Lines player: Can't unlock on the player state.");
+            }
+            usleep(10);
         }
     }
 
