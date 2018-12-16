@@ -60,6 +60,7 @@ int spi::send(unsigned char tx[], unsigned int length) {
     // send the SPI message (all of the above fields, inc. buffers)
     int status = ioctl(this->spi_fd, SPI_IOC_MESSAGE(1), &transfer);
     if (status < 0) {
+        log::debug("Spi error: " + to_string(status));
         perror("SPI: SPI_IOC_MESSAGE Failed");
     }
 #endif
@@ -80,9 +81,6 @@ void spi::write12Bits(unsigned char reg, unsigned char value) {
     unsigned char data[2] = {};
     data[0] = reg | ((value & 0xff00) >> 8);
     data[1] = (value & 0x00ff);
-//    log::debug("write12Bits");
-//    log::debug(to_string(data[0]));
-//    log::debug(to_string(data[1]));
     if (this->send(data, sizeof(data)) == -1) {
         perror("Failed to update output.");
     }

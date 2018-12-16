@@ -45,14 +45,15 @@ unsigned int hextoint(string hex) {
 
 void laser::setPoint(point *p) {
     this->p = p;
-    this->axis_gpio->setValue(0);
-    log::debug(to_string((int)hextoint(this->p->getX())));
 
+    this->axis_gpio->setValue(0);
     this->spi_bus->write12Bits(0x70, (int)hextoint(this->p->getX()));
     this->axis_gpio->setValue(1);
+
     this->axis_gpio->setValue(0);
     this->spi_bus->write12Bits(0xf0, (int)hextoint(this->p->getY()));
     this->axis_gpio->setValue(1);
+
     this->axis_ldac_gpio->setValue(0);
     this->axis_ldac_gpio->setValue(1);
 }
