@@ -8,6 +8,7 @@
 #include "laser.h"
 #include "../log.h"
 #include "line.h"
+#include <unistd.h>
 
 laser::laser() {
     this->pixels_per_bit = 65535/AXIS_MAX;
@@ -24,6 +25,7 @@ laser::laser() {
     this->axis_ldac_gpio->setValue(1);
 
     this->spi_bus = new spi(0);
+    usleep(500);
     log::debug("Laser initialized.");
 }
 
