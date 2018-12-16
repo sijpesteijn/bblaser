@@ -64,9 +64,9 @@ void lines_player::stop() {
     exitSignal.set_value();
     this->runner.join();
     this->is_running = false;
-    this->lp->setRed(1);
-    this->lp->setGreen(1);
-    this->lp->setBlue(1);
+//    this->lp->setRed(1);
+//    this->lp->setGreen(1);
+//    this->lp->setBlue(1);
 //    point p(0,0);
 //    this->lp->setPoint(&p);
     log::debug("Stopping");
