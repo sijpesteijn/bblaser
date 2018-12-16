@@ -44,7 +44,7 @@ void lines_player::stop() {
     this->lp->setRed(0);
     this->lp->setGreen(0);
     this->lp->setBlue(0);
-    this->lp->setPoint(new point(0,0));
+//    this->lp->setPoint(new point(0,0));
     exitSignal.set_value();
     this->runner.join();
 }
