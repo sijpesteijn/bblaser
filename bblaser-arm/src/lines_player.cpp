@@ -40,6 +40,7 @@ lines_player::lines_player(laser *lp, list<line> lines) {
 }
 
 void lines_player::stop() {
+    log::debug("Stopping");
     exitSignal.set_value();
     this->runner.join();
 }
