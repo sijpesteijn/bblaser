@@ -22,6 +22,7 @@ private:
     future<void> futureObj;
     thread runner;
     laser *lp;
+    bool is_running;
 };
 
 

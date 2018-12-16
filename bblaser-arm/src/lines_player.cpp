@@ -6,8 +6,6 @@
 #include "log.h"
 #include <thread>
 
-
-
 void plotPoints(laser *lp, list<point> points) {
     std::list<point>::iterator it;
     for (it = points.begin(); it != points.end(); it++){
@@ -32,16 +30,20 @@ void player(laser *lp, list<line> lines, future<void> futureObj) {
     log::debug("Stopping thread.");
 }
 
-
 lines_player::lines_player(laser *lp, list<line> lines) {
     this->lp = lp;
+    if (this->is_running) {
+        this->stop();
+    }
     this->futureObj = this->exitSignal.get_future();
+    this->is_running = true;
     this->runner = thread(player, this->lp, lines, move(this->futureObj));
 }
 
 void lines_player::stop() {
     exitSignal.set_value();
     this->runner.join();
+    this->is_running = false;
 //    this->lp->setRed(0);
 //    this->lp->setGreen(0);
 //    this->lp->setBlue(0);
