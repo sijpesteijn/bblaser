@@ -42,9 +42,9 @@ lines_player::lines_player(laser *lp, list<line> lines) {
 void lines_player::stop() {
     exitSignal.set_value();
     this->runner.join();
-    this->lp->setRed(0);
-    this->lp->setGreen(0);
-    this->lp->setBlue(0);
-    this->lp->setPoint(new point(0,0));
+//    this->lp->setRed(0);
+//    this->lp->setGreen(0);
+//    this->lp->setBlue(0);
+//    this->lp->setPoint(new point(0,0));
     log::debug("Stopping");
 }
