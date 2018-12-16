@@ -29,7 +29,7 @@ void player(laser *lp, list<line> lines, future<void> futureObj) {
         }
     }
 
-//    log::debug("Stopping thread.");
+    log::debug("Stopping thread.");
 }
 
 
@@ -40,11 +40,11 @@ lines_player::lines_player(laser *lp, list<line> lines) {
 }
 
 void lines_player::stop() {
-    log::debug("Stopping");
+    exitSignal.set_value();
+    this->runner.join();
     this->lp->setRed(0);
     this->lp->setGreen(0);
     this->lp->setBlue(0);
-//    this->lp->setPoint(new point(0,0));
-    exitSignal.set_value();
-    this->runner.join();
+    this->lp->setPoint(new point(0,0));
+    log::debug("Stopping");
 }
