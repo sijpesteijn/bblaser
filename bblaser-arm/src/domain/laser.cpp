@@ -62,24 +62,27 @@ void laser::setPoint(point *p) {
     this->axis_gpio->setValue(1);
 
     this->axis_ldac_gpio->setValue(0);
-//    usleep(10);
+    usleep(10);
     this->axis_ldac_gpio->setValue(1);
 }
 
 void laser::setRed(int red) {
     this->colors1_gpio->setValue(0);
     this->spi_bus->write8Bits(0x70, red);
+    usleep(10);
     this->colors1_gpio->setValue(1);
 }
 
 void laser::setGreen(int green) {
     this->colors1_gpio->setValue(0);
     this->spi_bus->write8Bits(0xf0, green);
+    usleep(10);
     this->colors1_gpio->setValue(1);
 }
 
 void laser::setBlue(int blue) {
     this->colors2_gpio->setValue(0);
     this->spi_bus->write8Bits(0xf0, blue);
+    usleep(10);
     this->colors2_gpio->setValue(1);
 }
