@@ -60,7 +60,7 @@ void lines_player::stop() {
     this->lp->setGreen(0);
     this->lp->setBlue(0);
     point p(0,0);
-    this->lp->setPoint(p);
+    this->lp->setPoint(&p);
     log::debug("Stopping");
     if (pthread_mutex_unlock(&player_lock) != 0) {
         log::error("Lines player: Can't unlock on the player state.");
