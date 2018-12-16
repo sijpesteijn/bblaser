@@ -60,6 +60,7 @@ void laser::setPoint(point *p) {
     this->axis_gpio->setValue(1);
 
     this->axis_ldac_gpio->setValue(0);
+//    usleep(10);
     this->axis_ldac_gpio->setValue(1);
 }
 
