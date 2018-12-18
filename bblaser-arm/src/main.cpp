@@ -6,7 +6,9 @@
 #include "rest/player_resource.h"
 
 laser *laser1;
+rest *rest1;
 void closeResources(void) {
+    rest1->close();
     laser1->close();
     log::info("Closed BBLaser...");
 }
@@ -23,7 +25,7 @@ int main() {
 
     lifeline_resource ll_resource(laser1);
     player_resource p_resource(laser1);
-    rest r({&ll_resource, &p_resource});
+    rest1 = new rest({&ll_resource, &p_resource});
 
     log::info("Stopping BBLaser...");
 #ifndef __APPLE__

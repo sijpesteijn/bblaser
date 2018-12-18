@@ -6,6 +6,7 @@
 #include "../log.h"
 
 rest::rest(list<rest_resource *> resources) {
+    this->resources = resources;
     auto settings = make_shared< Settings >( );
     settings->set_port( 1984 );
     settings->set_default_header( "Connection", "spi_close" );
@@ -17,4 +18,10 @@ rest::rest(list<rest_resource *> resources) {
     }
     log::debug("Restbed initialized.");
     this->service.start( settings );
+}
+
+void rest::close() {
+    for ( rest_resource *r_resource: resources) {
+        r_resource->close();
+    }
 }

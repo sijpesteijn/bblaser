@@ -15,6 +15,7 @@ using namespace std;
 class lines_player {
 public:
     lines_player(laser *lp, list<line> lines);
+    void playLines(list<line> lines);
     void stop();
 
 private:
@@ -22,7 +23,6 @@ private:
     future<void> futureObj;
     thread runner;
     laser *lp;
-    bool is_running;
 };
 
 

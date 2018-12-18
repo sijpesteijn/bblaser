@@ -16,8 +16,11 @@ class rest {
 public:
     rest(list<rest_resource*> resources);
 
+    void close();
+
 private:
     Service service;
+    list<rest_resource*> resources;
 };
 
 

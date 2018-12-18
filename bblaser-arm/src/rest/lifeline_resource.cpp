@@ -124,3 +124,7 @@ lifeline_resource::lifeline_resource(laser *l_p) {
 list<shared_ptr<Resource>> lifeline_resource::getResources() {
     return {this->resource};
 }
+
+void lifeline_resource::close() {
+
+}

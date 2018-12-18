@@ -6,9 +6,13 @@
 #include "log.h"
 #include <thread>
 #include <unistd.h>
+#include <mutex>
+#include <string>
+using namespace std;
 
-// Create a lock and thread condition
-pthread_mutex_t player_lock = PTHREAD_MUTEX_INITIALIZER;
+// Create a lock
+mutex mtx;
+list<line> lines;
 
 void plotPoints(laser *lp, list<point> points) {
     std::list<point>::iterator it;
@@ -16,61 +20,45 @@ void plotPoints(laser *lp, list<point> points) {
         point p = *it;
         lp->setPoint(&p);
     }
-    log::debug("Points plotted");
+//#ifdef __APPLE__
+//    usleep(100000);
+//#endif
+//    log::debug("Points plotted");
 
 }
 
-void player(laser *lp, list<line> lines, future<void> futureObj) {
-    while (futureObj.wait_for(chrono::milliseconds(1)) == future_status::timeout) {
+void player(laser *lp, future<void> futureObj) {
+//    while (futureObj.wait_for(chrono::milliseconds(1)) == future_status::timeout) {
+    for(;;) {
+        mtx.lock();
         for (list<line>::iterator it = lines.begin(); it != lines.end(); it++) {
             line l = *it;
-            if (pthread_mutex_lock(&player_lock) != 0) {
-                log::error("Lines player: Can't get the lock on the player state.");
-            }
             lp->setRed(atoi(l.getRed().c_str()));
             lp->setGreen(atoi(l.getGreen().c_str()));
             lp->setBlue(atoi(l.getBlue().c_str()));
             plotPoints(lp, l.getPoints());
-            if (pthread_mutex_unlock(&player_lock) != 0) {
-                log::error("Lines player: Can't unlock on the player state.");
-            }
             usleep(10);
         }
+        mtx.unlock();
     }
-
-    log::debug("Stopping thread.");
+    log::debug("Thread stopped.");
 }
 
-lines_player::lines_player(laser *lp, list<line> lines) {
+lines_player::lines_player(laser *lp, list<line> lns) {
     this->lp = lp;
-//    if (this->is_running) {
-//        this->stop();
-//    }
-//    if (pthread_mutex_lock(&player_lock) != 0) {
-//        log::error("Lines player: Can't get the lock on the player state.");
-//    }
-//    this->futureObj = this->exitSignal.get_future();
-//    this->is_running = true;
-//    this->runner = thread(player, this->lp, lines, move(this->futureObj));
-//    if (pthread_mutex_unlock(&player_lock) != 0) {
-//        log::error("Lines player: Can't unlock on the player state.");
-//    }
+    lines = move(lns);
+    this->futureObj = this->exitSignal.get_future();
+    this->runner = thread(player, this->lp, move(this->futureObj));
+}
+
+void lines_player::playLines(list<line> lns) {
+    mtx.lock();
+    lines = move(lns);
+    mtx.unlock();
 }
 
 void lines_player::stop() {
-    if (pthread_mutex_lock(&player_lock) != 0) {
-        log::error("Lines player: Can't get the lock on the player state.");
-    }
     exitSignal.set_value();
     this->runner.join();
-    this->is_running = false;
-//    this->lp->setRed(1);
-//    this->lp->setGreen(1);
-//    this->lp->setBlue(1);
-//    point p(0,0);
-//    this->lp->setPoint(&p);
     log::debug("Stopping");
-    if (pthread_mutex_unlock(&player_lock) != 0) {
-        log::error("Lines player: Can't unlock on the player state.");
-    }
 }

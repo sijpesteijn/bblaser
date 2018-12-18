@@ -34,6 +34,7 @@ public:
     }
     virtual list<shared_ptr<Resource>> getResources() = 0;
 
+    virtual void close() = 0;
 };
 
 

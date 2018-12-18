@@ -16,6 +16,7 @@
 
 using namespace std;
 static laser *l;
+static line emptyLine = line("000000000000000000");
 static lines_player *lp;
 
 json_t *parseRoot(const char *buffer, size_t buflen) {
@@ -58,12 +59,10 @@ void post_play_method_handler(const shared_ptr<Session> session) {
                     lines.push_back(line1);
                 }
             }
-//            log::debug("Begin new lines");
-            lp->stop();
-            free(lp);
-            lp = new lines_player(l, lines);
-
-//            log::debug("New lines");
+            if (lines.size() == 0) {
+                lines.push_back(emptyLine);
+            }
+            lp->playLines(lines);
             session->close(OK);
         });
     }
@@ -71,7 +70,7 @@ void post_play_method_handler(const shared_ptr<Session> session) {
 
 player_resource::player_resource(laser *laser1) {
     l = laser1;
-    lp = new lines_player(l, {});
+    lp = new lines_player(l, {emptyLine});
     this->resource = make_shared<Resource>();
     this->resource->set_path(PLAYER);
     this->resource->set_method_handler("POST", post_play_method_handler);
@@ -82,4 +81,8 @@ player_resource::player_resource(laser *laser1) {
 
 list<shared_ptr<Resource>> player_resource::getResources() {
     return {this->resource};
+}
+
+void player_resource::close() {
+    lp->stop();
 }

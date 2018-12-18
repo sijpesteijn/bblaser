@@ -13,6 +13,7 @@ class lifeline_resource: public rest_resource {
 public:
     lifeline_resource(laser *l_p);
     list<shared_ptr<Resource>> getResources();
+    void close();
 private:
     shared_ptr<Resource> resource;
 };

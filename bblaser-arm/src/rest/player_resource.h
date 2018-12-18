@@ -12,6 +12,7 @@ class player_resource: public rest_resource {
 public:
     player_resource(laser *laser1);
     list<shared_ptr<Resource>> getResources();
+    void close();
 private:
     shared_ptr<Resource> resource;
 };
