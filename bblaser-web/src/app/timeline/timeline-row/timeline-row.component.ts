@@ -34,7 +34,8 @@ export class TimelineRowDeleteDialogComponent {
     <div class="timeline-row">
       <div class="timeline-row-container"
            [ngClass]="{'selected': timelineRow.selected, 'highlight': timelineRow.highlight}">
-        <div class="timeline-row-content">
+        <div class="timeline-row-content"
+             [ngStyle]="{'height.px': (timelineRow | timelineRowMaxEffects)}">
           <bb-timeline-row-object *ngFor="let timelineObject of timelineRow.timelineObjects"
                                   [timelineObject]="timelineObject"
                                   [timeScale]="timeScale"

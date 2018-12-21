@@ -1,12 +1,14 @@
 <div class="timeline-content"
      (mousemove)="moveEvent($event)"
+     (mouseleave)="mouseUpIndicator($event)"
      (mouseup)="mouseUpIndicator($event)">
   <div class="timeline-navigator">
     <div class="timeline-header"></div>
     <div class="timeline-ruler-scroll-container" #timelineRulerScrollContainer
          (mousedown)="mouseDownIndicator($event)"
          (mouseup)="mouseUpIndicator($event)"
-         (scroll)="scrollIndicator($event, groupContainer)">
+         (scroll)="scrollIndicator($event, groupContainer)"
+         (scrollend)="scrollIndicator($event, groupContainer)">
       <div class="timeline-ruler-container">
         <div class="timeline-ruler">
           <ng-container *ngFor="let tick of ticks">
@@ -27,6 +29,7 @@
     <div class="timeline-group-headers">
       <div class="timeline-group-header" *ngFor="let timelineRow of timelineRows"
            [ngClass]="{'selected': timelineRow.selected, 'highlight': timelineRow.highlight}"
+           [ngStyle]="{'height.px': (timelineRow | timelineRowMaxEffects)}"
            (mouseover)="timelineRow.highlight = true"
            (mouseout)="timelineRow.highlight = false"
            (click)="timelineRow.expanded = !timelineRow.expanded">

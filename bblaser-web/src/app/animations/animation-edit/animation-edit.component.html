@@ -1,6 +1,8 @@
-<bb-animation-canvas></bb-animation-canvas>
+<div class="animatio-edit">
 <bb-animation-draw-tools></bb-animation-draw-tools>
+<bb-animation-canvas></bb-animation-canvas>
 <bb-timeline [timelineRows]="timelineRows"
              (indicatorPosition)="setIndicatorPosition($event)"
              (timelineRowChanged)="handleTimelineRowChanged($event)"
              (timelineRowDeleted)="handleTimelineRowDeleted($event)"></bb-timeline>
+</div>

@@ -20,6 +20,7 @@ import { DndModule } from 'ngx-drag-drop';
 import { EffectDirective } from './timeline-row-object/timeline-row-effects/effect.directive';
 import { TimelineRowEffectComponent } from './timeline-row-object/timeline-row-effects/timeline-row-effect.component';
 import { RadialColorPickerModule } from '../radial-color-picker/radial-color-picker.module';
+import { TimelineRowMaxEffectsPipe } from './timeline-row-object/timeline-row-max-effects.pipe';
 
 
 const TIMESCALES: TimeScale[] = [
@@ -66,7 +67,8 @@ const TIMESCALES: TimeScale[] = [
     TimelineRowObjectContextMenuComponent,
     TimelineRowDeleteDialogComponent,
     EffectDirective,
-    TimelineRowEffectComponent
+    TimelineRowEffectComponent,
+    TimelineRowMaxEffectsPipe
   ],
   exports: [
     TimelineComponent

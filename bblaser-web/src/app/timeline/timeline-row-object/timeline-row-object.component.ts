@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   EventEmitter,
@@ -9,7 +10,7 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import { TimeScale } from '../timeline.component';
+import { OBJECT_NAMES_WIDTH, TimeScale } from '../timeline.component';
 import { TimelineObject } from '../store/index';
 import {
   BBColorGradientEffect,
@@ -36,8 +37,8 @@ import { BoundingRectangle, ResizeEvent } from 'angular-resizable-element';
            (resizeEnd)="handleResizeEnd($event)"
            [resizeEdges]="{left: true, right: true}"
            #timelineRowObject
-           [ngStyle]="{'left.px': (timelineObject.start / timeScale.pixelsPerMillisecond) / timeScale.scale,
-           'width.px': (timelineObject.duration / timeScale.pixelsPerMillisecond) / timeScale.scale}"
+           [ngStyle]="{'left.px': timelineObject.start / timeScale.pixelsPerMillisecond / timeScale.scale,
+           'width.px': timelineObject.duration / timeScale.pixelsPerMillisecond / timeScale.scale}"
            (mouseout)="handleMouseOut()">
         <span class="center"
               (mousedown)="downCenter($event)"
@@ -47,8 +48,7 @@ import { BoundingRectangle, ResizeEvent } from 'angular-resizable-element';
       </div>
       <div class="timeline-row-object-effects" *ngIf="expanded"
            [ngStyle]="{'left.px': (timelineObject.start / timeScale.pixelsPerMillisecond) / timeScale.scale, 
-           'width.px': (timelineObject.duration / timeScale.pixelsPerMillisecond) / timeScale.scale,
-            'height.px': 24 + (timelineObject.effects.length * 22)}">
+           'width.px': (timelineObject.duration / timeScale.pixelsPerMillisecond) / timeScale.scale}">
         <ul>
           <li *ngFor="let effect of timelineObject.effects">
             <bb-timeline-row-effect
@@ -63,7 +63,8 @@ import { BoundingRectangle, ResizeEvent } from 'angular-resizable-element';
                                            (typeChanged)="addEffect($event)"></bb-timeline-row-object-context-menu>
     </div>
   `,
-  styleUrls: ['timeline-row-object.scss']
+  styleUrls: ['timeline-row-object.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TimelineRowObjectComponent implements OnChanges, OnInit {
   @Input()
@@ -113,13 +114,8 @@ export class TimelineRowObjectComponent implements OnChanges, OnInit {
 
   handleResizing(event: ResizeEvent) {
     if (event.edges.left) {
-      console.log('RStart ', this.timelineObject.start);
-      // console.log('Start ', this.startRectangle.left + event.edges.left);
-      // console.log('Event ', event.edges.left);
-      // this.timelineObject.start = (this.startRectangle.left + event.edges.left) / this.timeScale.pixelsPerMillisecond;
-      // const start = this.timelineObject.start;
-      // this.timelineObject.start = (event.rectangle.left - OBJECT_NAMES_WIDTH) * this.timeScale.pixelsPerMillisecond;
-      // this.timelineObject.duration -= this.timelineObject.start - start;
+      this.timelineObject.start = (event.rectangle.left - OBJECT_NAMES_WIDTH) * this.timeScale.pixelsPerMillisecond;
+      this.timelineObject.duration = event.rectangle.width * this.timeScale.pixelsPerMillisecond;
     } else if (event.edges.right) {
       this.timelineObject.duration = (event.rectangle.right - event.rectangle.left) * this.timeScale.pixelsPerMillisecond;
     }

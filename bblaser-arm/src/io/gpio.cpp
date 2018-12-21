@@ -51,11 +51,9 @@ void gpio::open() {
     if (result != 0 || errno != 0) {
         log::error("gpio/direction failed: " + echo_direction);
         perror("gpio/direction");
-    } else {
-        log::debug(echo_direction);
     }
 
-    this->value_file_descriptor.open(string(SYSFS_GPIO_DIR) + "gpio" + to_string(this->nr) + "/value");
+    this->value_file_descriptor.open(string(SYSFS_GPIO_DIR) + "gpio" + to_string(this->nr) + "/value", std::ofstream::trunc);
     this->setValue(0);
 }
 

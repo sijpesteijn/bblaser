@@ -7,15 +7,21 @@ export interface LaserState {
 
 export const initialLaserState: LaserState = {
   connected: false,
-  address: 'ws://localhost:1984/lifeline'
+  address: undefined // ws://localhost:1984/lifeline'
 };
 
-export function laserReducer(state = initialLaserState, action: fromBBLaser.LaserConnectionAction): LaserState {
+export function laserReducer(state = initialLaserState, action: fromBBLaser.BBLaserActions): LaserState {
   switch (action.type) {
     case fromBBLaser.LASER_CONNECTION: {
       return {
         ...state,
         connected: action.connected
+      };
+    }
+    case fromBBLaser.LASER_ENDPOINT: {
+      return {
+        ...state,
+        address: action.endpoint
       };
     }
   }

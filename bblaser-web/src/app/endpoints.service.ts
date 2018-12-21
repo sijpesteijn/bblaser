@@ -15,17 +15,18 @@ export const LIFELINE = 'lifeline';
 })
 export class EndpointsService {
   endpoints: Map<string, string> = new Map();
-  readonly BASE_URL = 'http://bb-laser.test/';
+  readonly PROTOCOL = 'http';
+  readonly BASE_URL = '://bb-laser.test/';
 
   constructor() {
-    this.endpoints[ANIMATION_ALL] = this.BASE_URL + 'r/animations';
-    this.endpoints[ANIMATION_REMOVE] = this.BASE_URL + 'r/animations/:id';
-    this.endpoints[ANIMATION_BYID] = this.BASE_URL + 'r/animations/:id';
-    this.endpoints[ANIMATION_UPLOAD] = this.BASE_URL + 'r/animations/upload';
-    this.endpoints[ANIMATION_SAVE] = this.BASE_URL + 'r/animations/';
-    this.endpoints[ANIMATION_FRAME_UPDATE] = this.BASE_URL + 'r/animations/:id/frame';
-    this.endpoints[LASER] = this.BASE_URL + 'r/laser';
-    this.endpoints[LIFELINE] = 'ws://192.168.88.28:1984/lifeline';
+    this.endpoints[ANIMATION_ALL] = this.PROTOCOL + this.BASE_URL + 'r/animations';
+    this.endpoints[ANIMATION_REMOVE] = this.PROTOCOL + this.BASE_URL + 'r/animations/:id';
+    this.endpoints[ANIMATION_BYID] = this.PROTOCOL + this.BASE_URL + 'r/animations/:id';
+    this.endpoints[ANIMATION_UPLOAD] = this.PROTOCOL + this.BASE_URL + 'r/animations/upload';
+    this.endpoints[ANIMATION_SAVE] = this.PROTOCOL + this.BASE_URL + 'r/animations/';
+    this.endpoints[ANIMATION_FRAME_UPDATE] = this.PROTOCOL + this.BASE_URL + 'r/animations/:id/frame';
+    this.endpoints[LASER] = this.PROTOCOL + this.BASE_URL + 'r/laser';
+    this.endpoints[LIFELINE] = 'ws' + this.BASE_URL + 'r/lifeline'; //ws://192.168.88.28:1984/lifeline';
   }
 
   get(key: string): string {

@@ -68,7 +68,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.store.select(laserStore.laserAddress).subscribe(address => this.startReconnect(address));
+    this.store.select(laserStore.laserAddress).subscribe(address => {if (address) { this.startReconnect(address);}});
   }
 
   ngOnDestroy() {
@@ -76,6 +76,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy {
   }
 
   startReconnect(address: string) {
+    console.log('Address ', address);
     this.retry = setInterval(() => {
       try {
         this.lifeline = new WebSocket(address);

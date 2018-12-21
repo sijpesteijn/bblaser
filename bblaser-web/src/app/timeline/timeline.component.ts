@@ -1,7 +1,9 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
-  EventEmitter, Inject,
+  EventEmitter,
+  Inject,
   Input,
   OnChanges,
   OnDestroy,
@@ -16,7 +18,6 @@ import * as timelineStore from './store';
 import { TimelineObject, TimelineRow } from './store';
 import { MatDialog } from '@angular/material';
 import { TimelineRowDeleteDialogComponent } from './timeline-row/timeline-row.component';
-import { ResizeEvent } from 'angular-resizable-element';
 
 export const TIMEOUT_TIME = 50;
 
@@ -39,13 +40,14 @@ export interface SideEvent {
   offset: number
 }
 
-const OBJECT_NAMES_WIDTH = 152;
+export const OBJECT_NAMES_WIDTH = 152;
 export const LABEL_WIDTH = 400;
 
 @Component({
   selector: 'bb-timeline',
   templateUrl: './timeline.component.html',
-  styleUrls: ['./timeline.component.scss']
+  styleUrls: ['./timeline.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
   private startTime: number;
@@ -127,9 +129,9 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   mouseDownIndicator(event: MouseEvent) {
-    if (event.offsetX <= this.getMaxPosition()) {
+    if (this.getXPosition(event) <= this.getMaxPosition()) {
       this.moveIndicator = true;
-      this.position = event.offsetX * this.timeScales[this.timeScaleIndex].scale;
+      this.position = this.getXPosition(event) * this.timeScales[this.timeScaleIndex].scale;
       this.setIndicator();
     }
     event.preventDefault();
@@ -140,11 +142,14 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   moveEvent(event: MouseEvent) {
-    if (event.offsetY > 0 && this.moveIndicator && event.offsetX > 0 && event.offsetX <= this.getMaxPosition()) {
-      this.position = event.offsetX * this.timeScales[this.timeScaleIndex].scale;
-      console.log('move ', event);
+    if (this.moveIndicator && this.getXPosition(event) > 0 && this.getXPosition(event) <= this.getMaxPosition()) {
+      this.position = this.getXPosition(event) * this.timeScales[this.timeScaleIndex].scale;
       this.setIndicator();
     }
+  }
+
+  getXPosition(event: MouseEvent): number {
+    return event.x - OBJECT_NAMES_WIDTH + this.groupContainer.nativeElement.scrollLeft;
   }
 
   scrollIndicator(event: Event, slave: ElementRef) {
@@ -158,7 +163,7 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
       if (this.repeat && this.getIndicatorPosition() === this.getMaxPosition()) {
         this.position = 0;
       } else if (this.getIndicatorPosition() < this.getMaxPosition()) {
-        if (this.position + TIMEOUT_TIME < this.maxPosition) {
+        if (this.position + TIMEOUT_TIME <= this.maxPosition) {
           this.position += TIMEOUT_TIME;
         } else {
           this.position = this.maxPosition;
@@ -203,7 +208,7 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
       if (this.maxPosition < (biggest[0].start + biggest[0].duration)) {
         this.maxPosition = (biggest[0].start + biggest[0].duration);
       } else if (this.maxPosition > (biggest[0].start + biggest[0].duration)) {
-        this.calculateMaxTimePosition();
+        this.maxPosition = (biggest[0].start + biggest[0].duration);
       }
       this.setTimeIndication();
     }
