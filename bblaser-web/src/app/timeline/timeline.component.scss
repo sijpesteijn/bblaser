@@ -97,11 +97,6 @@
       border-right: 1px black dashed;
       min-height: 100%;
 
-      .highlight {
-        color: #1bf5f5;
-      }
-
-
       .timeline-group-header {
         background-color: #999;
         vertical-align: middle;
@@ -125,13 +120,12 @@
         /* IE6-9 */
         min-height: 21px;
 
-        i {
+        mat-icon {
           color: #888;
-          height: 12px;
-          width: 15px;
+          font-size: 24px;
         }
 
-        .fa-trash {
+        .timeline-row-actions {
           float: right;
         }
 

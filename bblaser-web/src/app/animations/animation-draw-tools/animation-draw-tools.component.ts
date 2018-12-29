@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import * as animationStore from '../animation-store';
 import { Store } from '@ngrx/store';
-import { MatButtonToggleChange, MatButtonToggleGroup } from '@angular/material';
+import { MatButtonToggleChange, MatButtonToggleGroup, MatCheckboxChange } from '@angular/material';
 import { DEFAULT_TOOL } from '../../paper/tools';
 
 @Component({
@@ -51,4 +51,5 @@ export class AnimationDrawToolsComponent implements OnChanges, OnDestroy {
   selectTool(event: MatButtonToggleChange) {
     this.aStore.dispatch(new animationStore.SelectDrawToolAction(event.value));
   }
+
 }

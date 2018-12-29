@@ -8,10 +8,10 @@ import { TimelineMinorTickComponent } from './timeline-minor-tick/timeline-minor
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../material.module';
 import { TimelineRowObjectEffectComponent } from './timeline-row-object-effect/timeline-row-object-effect.component';
-import { ColorGradientEffectComponent } from './timeline-row-object-effect/effects/color-gradient-effect.component';
-import { ShapeMoveEffectComponent } from './timeline-row-object-effect/effects/shape-move-effect.component';
-import { ShapeRotateEffectComponent } from './timeline-row-object-effect/effects/shape-rotate-effect.component';
-import { ShapeResizeEffectComponent } from './timeline-row-object-effect/effects/shape-resize-effect.component';
+import { ColorGradientEffectComponent } from '../timeline-effects/color-gradient-effect.component';
+import { ShapeMoveEffectComponent } from '../timeline-effects/shape-move-effect.component';
+import { ShapeRotateEffectComponent } from '../timeline-effects/shape-rotate-effect.component';
+import { ShapeResizeEffectComponent } from '../timeline-effects/shape-resize-effect.component';
 import {
   TimelineRowObjectContextMenuComponent
 } from './timeline-row-object/timeline-row-object-contextmenu/timeline-row-object-context-menu.component';
@@ -21,6 +21,7 @@ import { EffectDirective } from './timeline-row-object/timeline-row-effects/effe
 import { TimelineRowEffectComponent } from './timeline-row-object/timeline-row-effects/timeline-row-effect.component';
 import { RadialColorPickerModule } from '../radial-color-picker/radial-color-picker.module';
 import { TimelineRowMaxEffectsPipe } from './timeline-row-object/timeline-row-max-effects.pipe';
+import { TimelineRowEffectContextmenuComponent } from './timeline-row-object/timeline-row-effects/timeline-row-effect-contextmenu/timeline-row-effect-contextmenu.component';
 
 
 const TIMESCALES: TimeScale[] = [
@@ -68,7 +69,8 @@ const TIMESCALES: TimeScale[] = [
     TimelineRowDeleteDialogComponent,
     EffectDirective,
     TimelineRowEffectComponent,
-    TimelineRowMaxEffectsPipe
+    TimelineRowMaxEffectsPipe,
+    TimelineRowEffectContextmenuComponent
   ],
   exports: [
     TimelineComponent

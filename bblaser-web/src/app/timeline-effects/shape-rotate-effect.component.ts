@@ -1,6 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { BBEffectData, BBRotateEffect } from '../../../animations/animation.service';
-import { EffectComponent } from '../../store';
+import { BBEffectData } from '../animations/animation.service';
+import { EffectComponent } from '../timeline/store/index';
+
+export interface ShapeRotateEffect extends BBEffectData {
+  degrees: number;
+}
 
 @Component({
   selector: 'bb-shape-rotate-effect',
@@ -19,11 +23,11 @@ import { EffectComponent } from '../../store';
 })
 export class ShapeRotateEffectComponent implements EffectComponent {
   readonly type = 'shape_rotate';
-  effectData: BBRotateEffect;
+  effectData: ShapeRotateEffect;
 
   constructor() {}
 
   setEffectData(effectData: BBEffectData): void {
-    this.effectData = effectData as BBRotateEffect;
+    this.effectData = effectData as ShapeRotateEffect;
   }
 }

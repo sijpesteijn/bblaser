@@ -12,17 +12,11 @@ import {
 } from '@angular/core';
 import { OBJECT_NAMES_WIDTH, TimeScale } from '../timeline.component';
 import { TimelineObject } from '../store/index';
-import {
-  BBColorGradientEffect,
-  BBEffectData,
-  BBMoveEffect,
-  BBPoint,
-  BBResizeEffect,
-  BBRotateEffect
-} from '../../animations/animation.service';
+import { BBEffectData, BBPoint } from '../../animations/animation.service';
 import { Store } from '@ngrx/store';
 import * as timelineStore from '../store';
 import { BoundingRectangle, ResizeEvent } from 'angular-resizable-element';
+import { EffectService } from '../../timeline-effects/effect.service';
 
 @Component({
   selector: 'bb-timeline-row-object',
@@ -52,9 +46,10 @@ import { BoundingRectangle, ResizeEvent } from 'angular-resizable-element';
         <ul>
           <li *ngFor="let effect of timelineObject.effects">
             <bb-timeline-row-effect
+              [parentStart]="timelineObject.start"
+              [parentDuration]="timelineObject.duration"
               [effectData]="effect"
-              [scale]="timeScale"
-              [maxDuration]="timelineObject.duration"
+              [timeScale]="timeScale"
               (effectChanged)="handleEffectChanged($event)"></bb-timeline-row-effect>
           </li>
         </ul>
@@ -84,7 +79,8 @@ export class TimelineRowObjectComponent implements OnChanges, OnInit {
   point: BBPoint;
   private startRectangle: BoundingRectangle;
 
-  constructor(private store: Store<timelineStore.TimelineState>) {
+  constructor(private effectService: EffectService,
+              private store: Store<timelineStore.TimelineState>) {
   }
 
   ngOnInit() {
@@ -102,20 +98,20 @@ export class TimelineRowObjectComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['timeScale']) {
-      this.timeScale = changes['timeScale'].currentValue;
-    }
   }
 
   handleResizeStart(event: ResizeEvent) {
-    console.log('Start ', event);
     this.startRectangle = event.rectangle;
   }
 
   handleResizing(event: ResizeEvent) {
     if (event.edges.left) {
       this.timelineObject.start = (event.rectangle.left - OBJECT_NAMES_WIDTH) * this.timeScale.pixelsPerMillisecond;
-      this.timelineObject.duration = event.rectangle.width * this.timeScale.pixelsPerMillisecond;
+      if (this.timelineObject.start < 0) {
+        this.timelineObject.start = 0;
+      } else {
+        this.timelineObject.duration = event.rectangle.width * this.timeScale.pixelsPerMillisecond;
+      }
     } else if (event.edges.right) {
       this.timelineObject.duration = (event.rectangle.right - event.rectangle.left) * this.timeScale.pixelsPerMillisecond;
     }
@@ -132,7 +128,7 @@ export class TimelineRowObjectComponent implements OnChanges, OnInit {
     this.center_down = true;
     this.timelineObject.selected = true;
     if (event.shiftKey) {
-      console.log('Select multiple');
+      // console.log('Select multiple');
       this.store.dispatch(new timelineStore.TimelineAddToSelected(this.timelineObject));
     } else {
       this.store.dispatch(new timelineStore.TimelineSetSelected([this.timelineObject]));
@@ -162,11 +158,11 @@ export class TimelineRowObjectComponent implements OnChanges, OnInit {
 
   showContextMenu(event: MouseEvent) {
     event.stopPropagation();
-    this.contextMenu = true;
     this.point = {
       x: (this.timelineObject.start / this.timeScale.pixelsPerMillisecond / this.timeScale.scale) + event.layerX,
       y: event.layerY
     };
+    this.contextMenu = true;
     this.store.dispatch(new timelineStore.TimelineSetSelected([this.timelineObject]));
   }
 
@@ -180,45 +176,7 @@ export class TimelineRowObjectComponent implements OnChanges, OnInit {
   }
 
   addEffect(type: string) {
-    if (type === 'color_gradient') {
-      this.timelineObject.effects.push(({
-        id: 1,
-        type: 'color_gradient',
-        name: 'gradient',
-        start: 0,
-        duration: this.timelineObject.duration,
-        startColor: {red: 255, green: 0, blue: 0},
-        endColor: {red: 255, green: 0, blue: 255}
-      }) as BBColorGradientEffect);
-    } else if (type === 'shape_move') {
-      this.timelineObject.effects.push(({
-        id: 1,
-        type: 'shape_move',
-        name: 'move',
-        start: 0,
-        duration: this.timelineObject.duration,
-        startPosition: {x: 0, y: 0},
-        endPosition: {x: 65535, y: 65535}
-      }) as BBMoveEffect);
-    } else if (type === 'shape_resize') {
-      this.timelineObject.effects.push(({
-        id: 1,
-        type: 'shape_resize',
-        name: 'resize',
-        start: 0,
-        duration: this.timelineObject.duration,
-        scale: 1
-      }) as BBResizeEffect);
-    } else if (type === 'shape_rotate') {
-      this.timelineObject.effects.push(({
-        id: 1,
-        type: 'shape_rotate',
-        name: 'rotate',
-        start: 0,
-        duration: this.timelineObject.duration,
-        degrees: 360
-      }) as BBRotateEffect);
-    }
+    this.timelineObject.effects.push(this.effectService.addNewEffect(type, this.timelineObject.duration));
     this.timelineObjectChanged.emit(this.timelineObject);
   }
 

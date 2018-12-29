@@ -1,17 +1,12 @@
 import { Injectable } from '@angular/core';
 import * as paper from 'paper';
-import * as onecolor from 'onecolor';
 import {
   BBAnimation,
   BBBox,
   BBColor,
-  BBColorGradientEffect,
   BBElement,
   BBLine,
-  BBMoveEffect,
   BBPoint,
-  BBResizeEffect,
-  BBRotateEffect,
   BBShape
 } from '../animations/animation.service';
 import { EventService } from '../event.service';
@@ -19,6 +14,7 @@ import { Store } from '@ngrx/store';
 import * as paperStore from './';
 import { BoxTool, LineTool, SelectTool, STROKE_WIDTH } from './tools';
 import { MoveTool } from './tools/move.tool';
+import { EffectService } from '../timeline-effects/effect.service';
 
 export interface Tool {
   activate();
@@ -33,9 +29,11 @@ export class PaperService {
   public scale = 1;
   public activeTool: Tool;
   private animation: BBAnimation;
-  private tools: {name:string; tool: Tool;}[] = [];
+  private tools: { name: string; tool: Tool; }[] = [];
+  private gridLayer: paper.Layer;
 
   constructor(private eventService: EventService,
+              private effectService: EffectService,
               private pStore: Store<paperStore.PaperState>) {
     paper.install(window);
     this.tools.push({name: 'selectTool', tool: new SelectTool(this)});
@@ -51,6 +49,7 @@ export class PaperService {
     paper.project.currentStyle.fontSize = 25;
     paper.settings.handleSize = 8;
     this.calculateScale();
+    this.createGridLayer();
   }
 
   setZoom(zoom: number) {
@@ -67,6 +66,36 @@ export class PaperService {
 
   private calculateScale() {
     this.scale = paper.view.viewSize.width / 65534 / paper.view.zoom;
+  }
+
+  createGridLayer(): void {
+    this.gridLayer = paper.project.activeLayer;
+    const gridLevel = 25;
+    const side = (((65534 * this.scale) % gridLevel) / 2) - 2;
+    this.lineGrid(side, gridLevel, true);
+  }
+
+  private lineGrid(side, gridLevel: number, dotted: boolean) {
+    const dashArray = [2, gridLevel];
+    for (let i = 0; i < ((65534 * this.scale) - side); i++) {
+      if (i % gridLevel === 0) {
+        const line = new paper.Path.Line(new paper.Point(i + side, 0), new paper.Point(i + side, (65534 * this.scale)));
+        line.strokeColor = '#bbbbbb';
+        line.strokeWidth = 1;
+        if (dotted) {
+          line.dashArray = dashArray;
+        }
+      }
+    }
+    if (!dotted) {
+      for (let i = 0; i < ((65534 * this.scale) - side); i++) {
+        if (i % gridLevel === 0) {
+          const line = new paper.Path.Line(new paper.Point(0, i + side), new paper.Point((65534 * this.scale), i + side));
+          line.strokeColor = '#bbbbbb';
+          line.strokeWidth = 1;
+        }
+      }
+    }
   }
 
   createPath(points: BBPoint[], strokeColor: BBColor): paper.Path {
@@ -121,6 +150,7 @@ export class PaperService {
     return {
       id: path.id,
       type: 'line',
+      visible: path.visible,
       color: {
         red: (path.strokeColor as paper.Color).red,
         green: (path.strokeColor as paper.Color).green,
@@ -136,6 +166,7 @@ export class PaperService {
     return {
       id: path.id,
       type: 'box',
+      visible: path.visible,
       color: {
         red: (path.strokeColor as paper.Color).red,
         green: (path.strokeColor as paper.Color).green,
@@ -147,7 +178,7 @@ export class PaperService {
 
   clear() {
     if (paper.project) {
-      paper.project.clear();
+      // paper.project.clear();
     }
   }
 
@@ -168,53 +199,14 @@ export class PaperService {
       path.closed = true;
       path.data.closed = true;
     }
-    path.visible = true;
+    path.visible = element.shape.visible;
     element.appearances
       .filter(app => app.start <= position && position < app.start + app.duration)
       .forEach(app => {
         app.effects.filter(effect => app.start + effect.start <= position && position < app.start + effect.start + effect.duration)
           .forEach(effect => {
-            switch (effect.type) {
-              case 'color_gradient': {
-                const colorGradient = (effect as BBColorGradientEffect);
-                const startColor = onecolor('rgb(' + colorGradient.startColor.red + ',' + colorGradient.startColor.green
-                  + ',' + colorGradient.startColor.blue + ')');
-                const endColor = onecolor('rgb(' + colorGradient.endColor.red + ',' + colorGradient.endColor.green
-                  + ',' + colorGradient.endColor.blue + ')');
-                const rDelta = (endColor.red() - startColor.red()) / (effect.duration + 1);
-                const gDelta = (endColor.green() - startColor.green()) / (effect.duration + 1);
-                const bDelta = (endColor.blue() - startColor.blue()) / (effect.duration + 1);
-                const aDelta = (endColor.alpha() - startColor.alpha()) / (effect.duration + 1);
-                const uColor = startColor
-                  .red(rDelta * (position - app.start - effect.start), true)
-                  .green(gDelta * (position - app.start - effect.start), true)
-                  .blue(bDelta * (position - app.start - effect.start), true)
-                  .alpha(aDelta * (position - app.start - effect.start), true).hex();
-                path.strokeColor = uColor;
-              }
-                break;
-              case 'shape_move': {
-                const shapeMove = (effect as BBMoveEffect);
-                const xStep = Math.abs(shapeMove.startPosition.x - shapeMove.endPosition.x) * this.scale / shapeMove.duration;
-                const yStep = Math.abs(shapeMove.startPosition.y - shapeMove.endPosition.y) * this.scale / shapeMove.duration;
-                path.translate(new paper.Point(xStep * (position - app.start - effect.start), yStep * (position - app.start - effect.start)));
-              }
-                break;
-              case 'shape_rotate': {
-                const shapRotate = (effect as BBRotateEffect);
-                const degreeStep = shapRotate.degrees / shapRotate.duration;
-                path.rotate(degreeStep * (position - app.start - effect.start));
-              }
-                break;
-              case 'shape_resize': {
-                const shapeResize = (effect as BBResizeEffect);
-                const scaleStep = shapeResize.scale / shapeResize.duration;
-                path.scale(scaleStep * (position - app.start - effect.start));
-              }
-                break;
-            }
+            this.effectService.manipulatePath(path, effect, app.start, position, this.scale);
           });
-
       });
   }
 
@@ -235,19 +227,22 @@ export class PaperService {
     const bbShapes: BBShape[] = [];
     if (paperObjects) {
       paperObjects.map(paperObject => paperObject[1]).forEach(paperObject => {
-        const points: BBPoint[] = [];
-        paperObject.segments.forEach(segment => points.push(
-          {
-            x: Math.round(segment[0] / this.scale),
-            y: Math.round(segment[1] / this.scale)
-          }));
-        const strokeColor = paperObject.strokeColor;
-        bbShapes.push({
-          id: 0,
-          type: paperObject.data.type,
-          color: {red: strokeColor[0], green: strokeColor[1], blue: strokeColor[2]},
-          points: points
-        });
+        if (paperObject.visible) {
+          const points: BBPoint[] = [];
+          paperObject.segments.forEach(segment => points.push(
+            {
+              x: Math.round(segment[0] / this.scale),
+              y: Math.round(segment[1] / this.scale)
+            }));
+          const strokeColor = paperObject.strokeColor;
+          bbShapes.push({
+            id: 0,
+            type: paperObject.data.type,
+            visible: paperObject.visible,
+            color: {red: strokeColor[0], green: strokeColor[1], blue: strokeColor[2]},
+            points: points
+          });
+        }
       });
     }
     return bbShapes;
@@ -266,4 +261,7 @@ export class PaperService {
     return 0;
   }
 
+  showGrid(visible: boolean) {
+    this.gridLayer.visible = visible;
+  }
 }

@@ -276,4 +276,8 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
     this.store.dispatch(new timelineStore.TimeLineContainerClick());
   }
 
+  setVisible(row: TimelineRow, visibility: boolean) {
+    row.visible = visibility;
+    this.timelineRowChanged.emit(row);
+  }
 }

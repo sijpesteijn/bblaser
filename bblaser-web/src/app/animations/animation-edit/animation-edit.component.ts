@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BBAnimation, BBAppearance } from '../animation.service';
 import { ActivatedRoute } from '@angular/router';
 import { AnimationsState } from '../animation-store';
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import * as animationStore from '../animation-store';
 import * as paperStore from '../../paper';
 import { PaperState } from '../../paper';
@@ -29,7 +29,7 @@ export class AnimationEditComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.aStore.dispatch(new animationStore.LoadAnimationAction(params.id));
     });
-    this.pStore.select(paperStore.newShape).subscribe(shape => {
+    this.pStore.pipe(select(paperStore.newShape)).subscribe(shape => {
       if (shape !== undefined && this.animation) {
         const appearance = {
           id: shape.id,
@@ -49,6 +49,7 @@ export class AnimationEditComponent implements OnInit {
           id: element.id,
           name: element.name,
           selected: false,
+          visible: true,
           expanded: false,
           timelineObjects: [{
             id: shape.id,
@@ -61,25 +62,20 @@ export class AnimationEditComponent implements OnInit {
         this.aStore.dispatch(new animationStore.SaveAnimationAction(this.animation, false));
       }
     });
-    this.pStore.select(paperStore.updatedShape).subscribe(shape => {
+    this.pStore.pipe(select(paperStore.updatedShape)).subscribe(shape => {
       if (shape !== undefined && this.animation) {
-        // console.log('Updated ', shape);
         this.animation.elements.find(elem => elem.id === shape.id).shape = shape;
         this.aStore.dispatch(new animationStore.SaveAnimationAction(this.animation, false));
       }
     });
-    this.aStore.select(paperStore.animationLoaded).subscribe(animation => {
+    this.aStore.pipe(select(paperStore.animationLoaded)).subscribe(animation => {
       if (animation) {
-        // if (!this.animation) { // || this.animation.last_update !== animation.last_update) {
-        //   console.log('Create timeline timelineRows ', animation);
-          this.animation = animation;
-          this.timelineRows = [];
-          this.createTimeline();
-        // }
+        this.animation = animation;
+        this.timelineRows = [];
+        this.createTimeline();
       }
     });
   }
-
 
   private createTimeline() {
     this.animation.elements.forEach(element => {
@@ -89,6 +85,7 @@ export class AnimationEditComponent implements OnInit {
           name: element.name,
           selected: false,
           expanded: false,
+          visible: true,
           timelineObjects: [{
             id: appearance.id,
             start: appearance.start,
@@ -99,7 +96,6 @@ export class AnimationEditComponent implements OnInit {
         });
       });
     });
-
   }
 
   handleTimelineRowChanged(row: TimelineRow) {
@@ -115,7 +111,9 @@ export class AnimationEditComponent implements OnInit {
       });
     });
     bbElement.appearances = appearances;
+    bbElement.shape.visible = row.visible;
 
+    this.aStore.dispatch(new animationStore.AnimationUpdatedAction(this.animation));
     this.aStore.dispatch(new animationStore.SaveAnimationAction(this.animation, false));
   }
 

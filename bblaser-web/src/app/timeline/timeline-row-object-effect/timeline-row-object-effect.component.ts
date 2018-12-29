@@ -57,17 +57,10 @@ export class TimelineRowObjectEffectComponent implements OnChanges {
   @Output()
   private effectChanged: EventEmitter<BBEffectData> = new EventEmitter();
 
-
-  constructor(private element: ElementRef<HTMLElement>) {
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['maxDuration']) {
-      this.maxDuration = changes['maxDuration'].currentValue;
+    if (changes.parentDuration) {
+      this.setPosition();
     }
-    // this.element.nativeElement.style.setProperty('background-image', 'linear-gradient(-90deg, ' + this.getRGBColor((this.effectData as BBColorGradientEffect).startColor) + ', ' +
-    //   '' + this.getRGBColor((this.effectData as BBColorGradientEffect).endColor) + ')');
-    this.setPosition();
   }
 
   private setPosition() {
@@ -92,7 +85,6 @@ export class TimelineRowObjectEffectComponent implements OnChanges {
     this.centerDown = true;
     this.center_down_x = event.x;
     this.center_down_y = event.y;
-
   }
 
   moveCenter(event: MouseEvent) {
@@ -109,6 +101,5 @@ export class TimelineRowObjectEffectComponent implements OnChanges {
     // if (this.center_down_x === event.x && this.center_down_y === event.y) {
     //   this.timelineObject.selected = !this.timelineObject.selected;
     // }
-
   }
 }

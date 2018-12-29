@@ -3,7 +3,7 @@ import * as fromTimeline from './timeline.actions';
 import { Type } from '@angular/core';
 
 export class EffectItem {
-  constructor(public component: Type<any>, public effectData: any) {}
+  constructor(public component: Type<any>, public effectData: BBEffectData) {}
 }
 
 export interface EffectComponent {
@@ -22,6 +22,7 @@ export interface TimelineRow {
   id: number;
   name: string;
   selected: boolean;
+  visible: boolean;
   expanded: boolean;
   timelineObjects: TimelineObject[];
 }

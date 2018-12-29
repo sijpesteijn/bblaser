@@ -2,6 +2,7 @@ import { Action } from '@ngrx/store';
 import { BBAnimation, BBShape } from '../animation.service';
 
 export const SELECT_ANIMATION = '[Animation] SelectAnimationAction';
+export const ANIMATION_UPDATED = '[Animation] AnimationUpdatedAction';
 export const SELECT_ANIMATION_SUCCESS = '[Animation] SelectAnimationActionSuccess';
 export const SELECT_ANIMATION_FAIL = '[Animation] SelectAnimationActionFail';
 export const LOAD_ANIMATION = '[Animation] LoadAnimationAction';
@@ -20,6 +21,11 @@ export class SelectDrawToolAction implements Action {
 
 export class SelectAnimationAction implements Action {
   readonly type = SELECT_ANIMATION;
+  constructor(public animation: BBAnimation) {}
+}
+
+export class AnimationUpdatedAction implements Action {
+  readonly type = ANIMATION_UPDATED;
   constructor(public animation: BBAnimation) {}
 }
 
@@ -71,4 +77,4 @@ export class SendToLaser implements Action {
 
 export type AnimationActions = SelectAnimationAction | LoadAnimationSuccessAction | LoadAnimationFailAction |
   LoadAnimationAction | SaveAnimationAction | SaveAnimationSuccessAction | SaveAnimationFailAction | SetTimerPosition |
-  PreviewAnimation | SelectDrawToolAction | SendToLaser;
+  PreviewAnimation | SelectDrawToolAction | SendToLaser | AnimationUpdatedAction;

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Component, Injectable, Type } from '@angular/core';
 import {
   ANIMATION_ALL,
   ANIMATION_BYID,
@@ -11,6 +11,8 @@ import { BehaviorSubject, Observable, Subject, throwError } from 'rxjs/index';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, debounceTime, distinctUntilChanged, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { map } from 'rxjs/internal/operators';
+import * as paper from "paper";
+import { TimeScale } from '../timeline/timeline.component';
 
 export interface GetAnimationOptions {
   page: number;
@@ -40,6 +42,7 @@ export interface BBBox extends BBShape {
 export interface BBShape {
   id: number;
   type: string;
+  visible: boolean;
   points: BBPoint[];
   color: BBColor;
 }
@@ -50,24 +53,7 @@ export interface BBEffectData {
   name: string;
   start: number;
   duration: number;
-}
-
-export interface BBColorGradientEffect extends BBEffectData {
-  startColor: BBColor;
-  endColor: BBColor;
-}
-
-export interface BBMoveEffect extends BBEffectData {
-  startPosition: BBPoint;
-  endPosition: BBPoint;
-}
-
-export interface BBRotateEffect extends BBEffectData {
-  degrees: number;
-}
-
-export interface BBResizeEffect extends BBEffectData {
-  scale: number;
+  visible: boolean;
 }
 
 export interface BBAppearance {

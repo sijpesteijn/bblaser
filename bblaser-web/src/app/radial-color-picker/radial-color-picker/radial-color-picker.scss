@@ -38,6 +38,9 @@
     .rotator-knob {
       @include z-depth-all(6);
     }
+    .rotator {
+      display: block;
+    }
   }
 
   &.disabled {
@@ -78,6 +81,7 @@
 
   .rotator {
     position: absolute;
+    display: none;
 
     &.dragging {
       z-index: 1;

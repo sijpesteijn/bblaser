@@ -1,15 +1,21 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
-  Input,
-  OnChanges,
-  SimpleChanges,
+  ElementRef, Type,
   ViewChild
 } from '@angular/core';
-import { BBColorGradientEffect, BBEffectData } from '../../../animations/animation.service';
-import { TimeScale } from '../../timeline.component';
-import { EffectComponent } from '../../store';
+import * as onecolor from 'onecolor';
+import * as paper from 'paper';
+import { BBColor, BBEffectData } from '../animations/animation.service';
+import { EffectComponent } from '../timeline/store/index';
+import { TimeScale } from '../timeline/timeline.component';
+
+// const COLOR_GRADIENT = "color_gradient";
+
+export interface ColorGradientEffect extends BBEffectData {
+  startColor: BBColor;
+  endColor: BBColor;
+}
 
 @Component({
   selector: 'bb-color-gradient-effect',
@@ -40,7 +46,7 @@ import { EffectComponent } from '../../store';
 })
 export class ColorGradientEffectComponent implements EffectComponent {
   readonly type = 'color_gradient';
-  effectData: BBColorGradientEffect;
+  effectData: ColorGradientEffect;
   @ViewChild('gradientColor')
   gradientColorElement: ElementRef;
 
@@ -48,8 +54,7 @@ export class ColorGradientEffectComponent implements EffectComponent {
   }
 
   setEffectData(effectData: BBEffectData): void {
-      console.log('Changes');
-      this.effectData = effectData as BBColorGradientEffect;
+      this.effectData = effectData as ColorGradientEffect;
       const startColor = this.effectData.startColor;
       const rgbStartColor = 'rgb(' + startColor.red + ',' + startColor.green + ',' + startColor.blue + ')';
       const endColor = this.effectData.endColor;

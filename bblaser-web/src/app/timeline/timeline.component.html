@@ -31,12 +31,17 @@
            [ngClass]="{'selected': timelineRow.selected, 'highlight': timelineRow.highlight}"
            [ngStyle]="{'height.px': (timelineRow | timelineRowMaxEffects)}"
            (mouseover)="timelineRow.highlight = true"
-           (mouseout)="timelineRow.highlight = false"
-           (click)="timelineRow.expanded = !timelineRow.expanded">
-        <i class="fa fa-chevron-right" *ngIf="!timelineRow.expanded && hasEffects(timelineRow)"></i>
-        <i class="fa fa-chevron-down" *ngIf="timelineRow.expanded && hasEffects(timelineRow)"></i>
-        <span class="timeline-group-header-track" [innerHTML]="timelineRow.name"></span>
-        <i class="fa fa-trash" (click)="deleteRow($event, timelineRow)"></i>
+           (mouseout)="timelineRow.highlight = false">
+        <span (click)="timelineRow.expanded = !timelineRow.expanded">
+          <mat-icon *ngIf="!timelineRow.expanded && hasEffects(timelineRow)">keyboard_arrow_right</mat-icon>
+          <mat-icon *ngIf="timelineRow.expanded && hasEffects(timelineRow)">keyboard_arrow_down</mat-icon>
+          <span class="timeline-group-header-track" [innerHTML]="timelineRow.name"></span>
+        </span>
+        <span class="timeline-row-actions">
+          <mat-icon *ngIf="timelineRow.visible" (click)="setVisible(timelineRow, false)">visibility</mat-icon>
+          <mat-icon *ngIf="!timelineRow.visible"  (click)="setVisible(timelineRow, true)">visibility_off</mat-icon>
+          <!--<mat-icon (click)="deleteRow($event, timelineRow)">delete</mat-icon>-->
+        </span>
       </div>
     </div>
     <div class="timeline-group-container" (scroll)="scrollIndicator($event, indicatorContainer)"

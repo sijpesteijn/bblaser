@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { BBPoint } from '../../../animations/animation.service';
+import { EffectInfo, EffectService } from '../../../timeline-effects/effect.service';
 
 @Component({
   selector: 'bb-timeline-row-object-context-menu',
@@ -7,10 +8,7 @@ import { BBPoint } from '../../../animations/animation.service';
     <div class="context-menu" [ngStyle]="{'left.px': point.x, 'top.px': point.y}">
       <mat-card>
         <ul>
-          <li><button mat-button (click)="addEffect($event, 'color_gradient')">Gradient</button></li>
-          <li><button mat-button (click)="addEffect($event, 'shape_move')">Move</button></li>
-          <li><button mat-button (click)="addEffect($event, 'shape_resize')">Resize</button></li>
-          <li><button mat-button (click)="addEffect($event, 'shape_rotate')">Rotate</button></li>
+          <li *ngFor="let effect of effects"><button mat-button (click)="addEffect($event, effect.type)">{{effect.name}}</button></li>
         </ul>
       </mat-card>
     </div>
@@ -32,15 +30,23 @@ import { BBPoint } from '../../../animations/animation.service';
     }
   `]
 })
-export class TimelineRowObjectContextMenuComponent {
+export class TimelineRowObjectContextMenuComponent implements OnInit {
   @Input()
   point: BBPoint;
+  effects: EffectInfo[];
 
   @Output()
   typeChanged: EventEmitter<string> = new EventEmitter();
+
+  constructor(private effectService: EffectService) {}
+
+  ngOnInit(): void {
+    this.effects = this.effectService.getEffectsInfo();
+  }
 
   addEffect(event: MouseEvent, type: string) {
     this.typeChanged.emit(type);
     event.stopPropagation();
   }
+
 }

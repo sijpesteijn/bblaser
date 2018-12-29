@@ -19,6 +19,14 @@ export const initialAnimationState: AnimationState = {
 
 export function animationReducer(state = initialAnimationState, action: fromAnimation.AnimationActions): AnimationState {
   switch (action.type) {
+    case fromAnimation.ANIMATION_UPDATED: {
+      return {
+        ...state,
+        animation: {
+          ...action.animation
+        }
+      };
+    }
     case fromAnimation.SELECT_DRAW_TOOL: {
       return {
         ...state,

@@ -1,7 +1,10 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { BBColorGradientEffect, BBEffectData, BBResizeEffect } from '../../../animations/animation.service';
-import { TimeScale } from '../../timeline.component';
-import { EffectComponent } from '../../store';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { BBEffectData } from '../animations/animation.service';
+import { EffectComponent } from '../timeline/store/index';
+
+export interface ShapeResizeEffect extends BBEffectData {
+  scale: number;
+}
 
 @Component({
   selector: 'bb-shape-resize-effect',
@@ -23,12 +26,12 @@ import { EffectComponent } from '../../store';
 })
 export class ShapeResizeEffectComponent implements EffectComponent {
   readonly type = 'shape_resize';
-  effectData: BBResizeEffect;
+  effectData: ShapeResizeEffect;
 
   constructor() {}
 
   setEffectData(effectData: BBEffectData): void {
-    this.effectData = effectData as BBResizeEffect;
+    this.effectData = effectData as ShapeResizeEffect;
   }
 
 }
