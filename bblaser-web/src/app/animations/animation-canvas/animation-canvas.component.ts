@@ -11,9 +11,16 @@ import { MatCheckboxChange } from '@angular/material';
 @Component({
   selector: 'bb-animation-canvas',
   template: `
-    <div class="animation_container" oncontextmenu="return false;">
-      <canvas id="animation" resize="true"></canvas>
-      <mat-checkbox (change)="toggleGrid($event)">Show grid</mat-checkbox>
+    <div class="animation_container">
+      <mat-card>
+        <mat-checkbox (change)="toggleGrid($event)" [checked]="false">Show grid</mat-checkbox>
+        <mat-checkbox (change)="toggleSnapToGrid($event)" [checked]="false">Snap to grid</mat-checkbox>
+      </mat-card>
+      <canvas 
+        id="animation" 
+        resize="true"
+        oncontextmenu="return false;"
+        (mousemove)="dispatchGridPointHit($event)"></canvas>
     </div>`,
   styles: [`
     .animation_container {
@@ -136,5 +143,18 @@ export class AnimationCanvasComponent implements OnInit, OnDestroy {
 
   toggleGrid(event: MatCheckboxChange) {
     this.paperService.showGrid(event.checked);
+  }
+
+  toggleSnapToGrid(event: MatCheckboxChange) {
+    this.paperService.snapToGrid(event.checked);
+  }
+
+  dispatchGridPointHit(event: MouseEvent) {
+    // const hit: paper.HitResult = paper.project.layers[0].hitTest(new paper.Point(event.x, event.y), HIT_OPTIONS);
+    // // // console.log('Ja');
+    // if (hit && hit.item.data.type === 'grid') {
+    //   console.log('Point ', hit.item.data.id);
+    // //   // console.log('HIt ', hit);
+    // }
   }
 }

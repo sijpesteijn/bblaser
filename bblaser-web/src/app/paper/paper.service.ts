@@ -15,11 +15,22 @@ import * as paperStore from './';
 import { BoxTool, LineTool, SelectTool, STROKE_WIDTH } from './tools';
 import { MoveTool } from './tools/move.tool';
 import { EffectService } from '../timeline-effects/effect.service';
+import IHitTestOptions = paper.IHitTestOptions;
+
+export const HIT_OPTIONS: IHitTestOptions = {
+  tolerance: 10,
+  bounds: true,
+  fill: true,
+  stroke: true,
+  segments: true
+};
 
 export interface Tool {
-  activate();
+  activate(): void;
 
-  remove();
+  remove(): void;
+
+  snapToGrid(checked: boolean): void;
 }
 
 @Injectable({
@@ -52,11 +63,6 @@ export class PaperService {
     this.createGridLayer();
   }
 
-  setZoom(zoom: number) {
-    paper.view.zoom = zoom;
-    this.calculateScale();
-  }
-
   setTool(tool: string) {
     if (tool) {
       this.activeTool = this.tools.find(t => t.name === tool).tool;
@@ -70,15 +76,39 @@ export class PaperService {
 
   createGridLayer(): void {
     this.gridLayer = paper.project.activeLayer;
+    this.gridLayer.visible = false;
     const gridLevel = 25;
-    const side = (((65534 * this.scale) % gridLevel) / 2) - 2;
-    this.lineGrid(side, gridLevel, true);
+    this.lineDotted(gridLevel);
+    new paper.Layer();
+  }
+
+  private lineDotted(gridLevel: number) {
+    let index = 0;
+    for (let x = 0; x <= ((65534 * this.scale)); x++) {
+      if (x % gridLevel === 0) {
+        for (let y = 0; y <= ((65534 * this.scale)); y++) {
+          if (y % gridLevel === 0) {
+            const line = new paper.Path.Circle(new paper.Point(x, y), 1);
+            line.strokeColor = '#bbbbbb';
+            line.strokeWidth = 1;
+            line.fillColor = '#bbbbbb';
+            line.data = {
+              ...line.data,
+              type: 'grid',
+              id: index++
+            }
+          }
+        }
+      }
+    }
   }
 
   private lineGrid(side, gridLevel: number, dotted: boolean) {
     const dashArray = [2, gridLevel];
+    let x = 0;
     for (let i = 0; i < ((65534 * this.scale) - side); i++) {
       if (i % gridLevel === 0) {
+        x++;
         const line = new paper.Path.Line(new paper.Point(i + side, 0), new paper.Point(i + side, (65534 * this.scale)));
         line.strokeColor = '#bbbbbb';
         line.strokeWidth = 1;
@@ -87,6 +117,7 @@ export class PaperService {
         }
       }
     }
+    console.log('X ', x);
     if (!dotted) {
       for (let i = 0; i < ((65534 * this.scale) - side); i++) {
         if (i % gridLevel === 0) {
@@ -177,9 +208,9 @@ export class PaperService {
   }
 
   clear() {
-    if (paper.project) {
-      // paper.project.clear();
-    }
+    // if (paper.project) {
+    //   paper.project.activeLayer.clear();
+    // }
   }
 
   private drawShapeWithEffects(element: BBElement, position: number) {
@@ -263,5 +294,10 @@ export class PaperService {
 
   showGrid(visible: boolean) {
     this.gridLayer.visible = visible;
+  }
+
+
+  snapToGrid(checked: boolean) {
+    this.tools.forEach(tool => tool.tool.snapToGrid(checked));
   }
 }

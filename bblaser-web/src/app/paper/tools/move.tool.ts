@@ -23,4 +23,7 @@ export class MoveTool implements Tool {
     this.tool.remove();
     this.tool = undefined;
   }
+
+  snapToGrid(checked: boolean): void {
+  }
 }

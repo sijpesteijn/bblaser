@@ -18,14 +18,16 @@ export class AnimationEffects {
   }
 
   @Effect()
-  selectAnimation$ = this.actions$.ofType(animationActions.SELECT_ANIMATION).pipe(
+  selectAnimation$ = this.actions$.pipe(
+    ofType(animationActions.SELECT_ANIMATION),
     switchMap((action: animationActions.SelectAnimationAction) => {
       return of(new animationActions.LoadAnimationSuccessAction(action.animation));
     })
   );
 
   @Effect()
-  loadAnimation$ = this.actions$.ofType(animationActions.LOAD_ANIMATION).pipe(
+  loadAnimation$ = this.actions$.pipe(
+    ofType(animationActions.LOAD_ANIMATION),
     switchMap((action: animationActions.LoadAnimationAction) => {
       return this.animationService.get(action.animationId).pipe(
         map(animation => new animationActions.LoadAnimationSuccessAction(animation)),
@@ -35,7 +37,8 @@ export class AnimationEffects {
   );
 
   @Effect()
-  saveAnimation$ = this.actions$.ofType(animationActions.SAVE_ANIMATION).pipe(
+  saveAnimation$ = this.actions$.pipe(
+    ofType(animationActions.SAVE_ANIMATION),
     debounceTime(500),
     switchMap((action: animationActions.SaveAnimationAction) => {
       action.animation.last_update = moment().valueOf();
@@ -52,7 +55,8 @@ export class AnimationEffects {
   );
 
   @Effect({ dispatch: false})
-  sendToLaser$ = this.actions$.ofType(animationActions.SEND_TO_LASER).pipe(
+  sendToLaser$ = this.actions$.pipe(
+    ofType(animationActions.SEND_TO_LASER),
     switchMap((action: animationActions.SendToLaser) => {
       return this.animationService.sendToLaser(action.bbShapes).pipe(
         // tap(  console.log),

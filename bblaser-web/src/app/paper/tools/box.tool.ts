@@ -60,4 +60,7 @@ export class BoxTool implements Tool {
     this.tool = undefined;
   }
 
+  snapToGrid(checked: boolean): void {
+  }
+
 }

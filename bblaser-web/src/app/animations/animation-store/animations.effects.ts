@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect } from '@ngrx/effects';
+import { Actions, Effect, ofType } from '@ngrx/effects';
 import { AnimationPagedCollection, AnimationService } from '../animation.service';
 import * as animationActions from './animations.actions';
 import { catchError, map, switchMap } from 'rxjs/internal/operators';
@@ -14,7 +14,8 @@ export class AnimationsEffects {
   }
 
   @Effect()
-  loadAnimations$ = this.actions$.ofType(animationActions.LOAD_ANIMATIONS).pipe(
+  loadAnimations$ = this.actions$.pipe(
+    ofType(animationActions.LOAD_ANIMATIONS),
     switchMap((action: animationActions.LoadAnimationsAction) => {
       return this.animationService.all(action.options).pipe(
         map(animationPagedCollection => {
@@ -27,7 +28,8 @@ export class AnimationsEffects {
   );
 
   @Effect()
-  removeAnimation$ = this.actions$.ofType(animationActions.REMOVE_ANIMATION).pipe(
+  removeAnimation$ = this.actions$.pipe(ofType(
+    animationActions.REMOVE_ANIMATION),
     switchMap((action: animationActions.RemoveAnimationAction) => {
       return this.animationService.remove(action.payload).pipe(
         map(() => new animationActions.LoadAnimationsAction({
