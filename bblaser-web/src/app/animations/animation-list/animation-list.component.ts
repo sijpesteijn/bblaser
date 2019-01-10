@@ -25,7 +25,7 @@ export class AnimationListComponent implements OnInit, AfterViewInit {
   humanizeBytes: Function;
   dragOver: boolean;
   options: UploaderOptions;
-  selectedRowIndex = -1;
+  selectedAnimation: BBAnimation;
   tableHighlight = false;
   pageSize = 10;
   dialogRef;
@@ -89,12 +89,12 @@ export class AnimationListComponent implements OnInit, AfterViewInit {
 
   previewAnimation(animation) {
     if (animation) {
-      this.selectedRowIndex = animation.id;
+      this.selectedAnimation = animation;
       if (this.preview) {
         this.store.dispatch(new animationStore.PreviewAnimation(animation));
       }
     } else {
-      this.selectedRowIndex = -1;
+      this.selectedAnimation = undefined;
       if (this.preview) {
         this.store.dispatch(new animationStore.PreviewAnimation(undefined));
       }

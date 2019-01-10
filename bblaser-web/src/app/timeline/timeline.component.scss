@@ -1,32 +1,35 @@
 @import '../../styles';
 
 .timeline-content {
-  display: block;
+  //display: block;
+  height: calc(100% - 15px);
+  background-color: $timeline_background;
+
 
   .timeline-navigator {
-    width: 100%;
-    height: 20px;
-    border: 1px solid #000;
-    border-bottom: 0;
+    //width: 100%;
+    //height: 20px;
+    //border: 1px solid #000;
+    //border-bottom: 0;
     overflow-x: hidden;
     overflow-y: hidden;
     position: relative;
-    white-space: nowrap;
+    //white-space: nowrap;
     background-color: $timeline_background;
 
     .timeline-header {
       height: 20px;
       width: 150px;
-      border-right: 1px solid black;
+      border-right: 1px solid $timeline_border;
       float: left;
     }
 
     .timeline-ruler-scroll-container {
-      height: 100%;
+      //height: 100%;
       //width: 100%;
       position: relative;
       overflow-x: scroll;
-      overflow-y: hidden;
+      //overflow-y: hidden;
 
       .timeline-ruler-container {
         height: 20px;
@@ -78,27 +81,26 @@
 
   .timeline-group {
     width: 100%;
-    //height: calc(100% - 16px);
-    height: 20vh;
+    height: 100%;
     overflow-y: scroll;
     /* remove header height, its a patch */
-    border: 1px solid black;
+    border: 1px solid $timeline_border;
     overflow-x: hidden;
     position: relative;
     white-space: nowrap;
-    background-color: #F0F0F5;
+    //background-color: #F0F0F5;
 
     .timeline-group-headers {
       width: 150px;
       vertical-align: top;
       float: left;
-      background-color: #808080;
-      color: white;
-      border-right: 1px black dashed;
+      //background-color: $timeline_border;
+      //color: white;
+      border-right: 1px $timeline_border dashed;
       min-height: 100%;
 
       .timeline-group-header {
-        background-color: #999;
+        //background-color: #999;
         vertical-align: middle;
         overflow: hidden;
         background: $white;
@@ -162,7 +164,11 @@
   .timeline-controls {
     width: 100%;
     height: 20px;
+    position: absolute;
+    bottom: 0;
+    border-top: 1px solid $timeline_border;
     background-color: $timeline_background;
+    z-index: 10;
 
     mat-icon {
       font-size: 20px;

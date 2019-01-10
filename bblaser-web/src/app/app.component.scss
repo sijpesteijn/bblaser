@@ -1,11 +1,11 @@
 
-bb-radial-color-picker {
+.app_container {
+  height: 100vh;
   display: flex;
-  /*width: 100%;*/
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+}
 
-  /*width: 50px;*/
-  /*height: 100px;*/
+.router-outlet {
+  flex-grow: 2;
 }

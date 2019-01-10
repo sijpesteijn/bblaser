@@ -58,7 +58,7 @@ export class TimelineRowObjectEffectComponent implements OnChanges {
   private effectChanged: EventEmitter<BBEffectData> = new EventEmitter();
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.parentDuration) {
+    if (changes.maxDuration) {
       this.setPosition();
     }
   }
@@ -73,10 +73,13 @@ export class TimelineRowObjectEffectComponent implements OnChanges {
   }
 
   handleResizing(event: ResizeEvent) {
+    console.log('Max ', this.maxDuration);
     if (event.edges.left) {
       this.effect.start = (event.edges.left) as number * this.scale.pixelsPerMillisecond;
     } else if (event.edges.right) {
-      this.effect.duration = (event.rectangle.right - event.rectangle.left) * this.scale.pixelsPerMillisecond;
+      if ((event.rectangle.right - event.rectangle.left) * this.scale.pixelsPerMillisecond <= this.maxDuration) {
+        this.effect.duration = (event.rectangle.right - event.rectangle.left) * this.scale.pixelsPerMillisecond;
+      }
     }
     this.setPosition();
   }

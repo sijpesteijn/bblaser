@@ -18,6 +18,7 @@ import * as timelineStore from './store';
 import { TimelineObject, TimelineRow } from './store';
 import { MatDialog } from '@angular/material';
 import { TimelineRowDeleteDialogComponent } from './timeline-row/timeline-row.component';
+import { ResizeEvent } from 'angular-resizable-element';
 
 export const TIMEOUT_TIME = 50;
 
@@ -51,6 +52,8 @@ export const LABEL_WIDTH = 400;
 })
 export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
   private startTime: number;
+  @Input()
+  height = 150;
   @Input()
   timelineRows: TimelineRow[] = [];
 
@@ -279,5 +282,9 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
   setVisible(row: TimelineRow, visibility: boolean) {
     row.visible = visibility;
     this.timelineRowChanged.emit(row);
+  }
+
+  handleResizing(event: ResizeEvent) {
+    this.height = event.rectangle.height;
   }
 }

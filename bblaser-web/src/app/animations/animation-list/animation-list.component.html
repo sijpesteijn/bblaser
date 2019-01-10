@@ -1,6 +1,5 @@
-<mat-sidenav-container class="animation_list">
-
-  <mat-sidenav opened mode="side">
+<div class="animation_list_container">
+  <div class="animation_list">
     <mat-progress-bar mode="indeterminate" *ngIf="!animationsPage"></mat-progress-bar>
     <div class="mat-elevation-z8" ngFileDrop [options]="options"
          *ngIf="animationsPage"
@@ -9,16 +8,6 @@
          (dragover)="highlightTable(true)" (dragend)="highlightTable(false)" (dragleave)="highlightTable(false)"
          [ngClass]="{'highlightTable': tableHighlight}">
 
-      <section>
-        <mat-button-toggle-group>
-          <!--<mat-slide-toggle [checked]="preview" (change)="preview!=preview">Preview</mat-slide-toggle>-->
-          <button mat-button (click)="newAnimation()">
-            <mat-icon>add_circle_outline</mat-icon>
-          </button>
-        </mat-button-toggle-group>
-      </section>
-
-      <mat-spinner *ngIf="!animationsPage"></mat-spinner>
       <mat-table #table [dataSource]="animationsPage.content" matSort dense aria-label="Elements" (matSortChange)="emitChange()">
 
         <!-- Name Column -->
@@ -35,15 +24,21 @@
 
         <!-- Remove Column -->
         <ng-container matColumnDef="remove">
-          <mat-header-cell *matHeaderCellDef></mat-header-cell>
+          <mat-header-cell *matHeaderCellDef>
+            <button mat-button (click)="newAnimation()">
+              <mat-icon>add_circle_outline</mat-icon>
+            </button>
+          </mat-header-cell>
           <mat-cell *matCellDef="let animation">
-            <i class="fa fa-trash" (click)="removeAnimation(animation)"></i>
+            <button mat-button (click)="removeAnimation(animation)">
+              <mat-icon>delete</mat-icon>
+            </button>
           </mat-cell>
         </ng-container>
 
         <mat-header-row sticky=true *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let animation; columns: displayedColumns;"
-                 [ngClass]="{'highlight': selectedRowIndex == animation.id}"
+                 [ngClass]="{'highlight': selectedAnimation == animation}"
                  (mouseover)="previewAnimation(animation)"
                  (mouseout)="previewAnimation()"></mat-row>
       </mat-table>
@@ -55,13 +50,14 @@
         [pageSizeOptions]="[5, 10, 20]"
       (page)="emitChange($event)">
       </mat-paginator>
+  </div>
 
-  </mat-sidenav>
-  <mat-sidenav-content position="end" #drawer>
-    <div class="animation_preview">
-      <bb-animation-canvas></bb-animation-canvas>
-    </div>
-  </mat-sidenav-content>
-
-</mat-sidenav-container>
+  <div class="animation_preview">
+    <!--<div class="content">PREVIEW</div>-->
+    <bb-animation-canvas></bb-animation-canvas>
+  </div>
+  <div class="animation_details">
+    <bb-animation-details [animation]="selectedAnimation"></bb-animation-details>
+  </div>
+</div>
 

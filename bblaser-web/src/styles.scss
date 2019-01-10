@@ -2,8 +2,11 @@
 /*@import "~@angular/material/prebuilt-themes/indigo-pink.css";*/
 @import 'properties.scss';
 
-body {
-  padding: 0;
+html, body {
+  height: 100%;
   margin: 0;
+  padding:0;
+  height: 100%;
   background-color: $background_color;
 }
+

@@ -13,6 +13,10 @@ import { EffectsModule } from '@ngrx/effects';
 import { AnimationEffects } from './animation-store/animation.effects';
 import { EditValueModule } from '../edit-value/edit-value.module';
 import { TimelineModule } from '../timeline/timeline.module';
+import { AnimationCanvasSettingsComponent } from './animation-canvas/animation-canvas-settings/animation-canvas-settings.component';
+import { PrefrabricatedAnimationListComponent } from './prefrabricated-animation-list/prefrabricated-animation-list.component';
+import { AnimationDetailsComponent } from './animation-details/animation-details.component';
+import { ResizableModule } from 'angular-resizable-element';
 
 const routes = [
   { path: '', component: AnimationListComponent},
@@ -24,6 +28,7 @@ const routes = [
     CommonModule,
     EditValueModule,
     MaterialModule,
+    ResizableModule,
     RouterModule.forChild(routes),
     MaterialModule,
     EffectsModule.forFeature([AnimationsEffects, AnimationEffects]),
@@ -36,6 +41,9 @@ const routes = [
     AnimationCanvasComponent,
     AnimationEditComponent,
     AnimationDrawToolsComponent,
+    AnimationCanvasSettingsComponent,
+    PrefrabricatedAnimationListComponent,
+    AnimationDetailsComponent,
   ],
   exports: [
     RouterModule

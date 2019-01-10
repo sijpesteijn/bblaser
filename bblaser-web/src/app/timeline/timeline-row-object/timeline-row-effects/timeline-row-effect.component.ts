@@ -108,8 +108,11 @@ export class TimelineRowEffectComponent implements OnChanges {
         this.effectData.duration = event.rectangle.width * this.timeScale.pixelsPerMillisecond;
       }
     } else if (event.edges.right) {
+      console.log('Max ', this.parentDuration);
+      console.log('event.rectangle.width ', event.rectangle.width * this.timeScale.pixelsPerMillisecond);
       const durationRowObject = (this.parentDuration / this.timeScale.pixelsPerMillisecond);
-      if (event.rectangle.width <= durationRowObject) {
+      // if (event.rectangle.width <= durationRowObject) {
+      if (event.rectangle.width * this.timeScale.pixelsPerMillisecond < this.parentDuration) {
         this.effectData.duration = (event.rectangle.right - event.rectangle.left) * this.timeScale.pixelsPerMillisecond;
       }
     }

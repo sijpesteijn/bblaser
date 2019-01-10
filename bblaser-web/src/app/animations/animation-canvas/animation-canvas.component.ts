@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PaperService } from '../../paper/paper.service';
 import * as animationStore from '../animation-store';
 import * as paperStore from '../../paper';
@@ -6,30 +6,30 @@ import * as laserStore from '../../laser';
 import { select, Store } from '@ngrx/store';
 import { BBAnimation } from '../animation.service';
 import { TIMEOUT_TIME } from '../../timeline/timeline.component';
-import { MatCheckboxChange } from '@angular/material';
+
 
 @Component({
   selector: 'bb-animation-canvas',
   template: `
-    <div class="animation_container">
-      <mat-card>
-        <mat-checkbox (change)="toggleGrid($event)" [checked]="false">Show grid</mat-checkbox>
-        <mat-checkbox (change)="toggleSnapToGrid($event)" [checked]="false">Snap to grid</mat-checkbox>
-      </mat-card>
-      <canvas 
-        id="animation" 
+    <div
+      #canvasParent
+      class="animation_canvas" 
+      (window:resize)="onResize($event)">
+      <canvas
+        #canvas
+        id="animation"
         resize="true"
-        oncontextmenu="return false;"
-        (mousemove)="dispatchGridPointHit($event)"></canvas>
-    </div>`,
+        oncontextmenu="return false;"></canvas>
+    </div>
+  `,
   styles: [`
-    .animation_container {
+    .animation_canvas {
       position: relative;
-      width: 50vw;
-      border: 1px solid red;
+      width: 100%;
+      background-color: greenyellow;
     }
 
-    .animation_container:after {
+    .animation_canvas:after {
       content: "";
       display: block;
       padding-bottom: 100%;
@@ -52,6 +52,10 @@ export class AnimationCanvasComponent implements OnInit, OnDestroy {
   private previewHandle: any;
   private connected = false;
   private position = 0;
+  @ViewChild('canvas')
+  canvas: ElementRef<HTMLElement>;
+  @ViewChild('canvasParent')
+  canvasParent: ElementRef<HTMLElement>;
 
   constructor(private paperService: PaperService,
               private aStore: Store<animationStore.AnimationState>,
@@ -60,6 +64,7 @@ export class AnimationCanvasComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.paperService.setup('animation');
+    this.onResize();
     this.aStore.pipe(select(animationStore.selectSelectedAnimation)).subscribe(animation => {
       if (animation) {
         if (this.animation === undefined || this.animation.id !== animation.id) {
@@ -81,10 +86,8 @@ export class AnimationCanvasComponent implements OnInit, OnDestroy {
     this.aStore.pipe(select(animationStore.selectTimerPosition))
       .subscribe(position => {
         this.position = position;
-        if (this.connected) {
-          const bbShapes = this.paperService.showCurrentPosition(this.position);
-          this.aStore.dispatch(new animationStore.SendToLaser(bbShapes));
-        }
+        const bbShapes = this.paperService.showCurrentPosition(this.position);
+        this.aStore.dispatch(new animationStore.SendToLaser(bbShapes));
       });
 
     this.aStore.pipe(select(animationStore.selectSelectedAnimation))
@@ -141,20 +144,8 @@ export class AnimationCanvasComponent implements OnInit, OnDestroy {
     setTimeout(() => this.previewPosition(), TIMEOUT_TIME);
   }
 
-  toggleGrid(event: MatCheckboxChange) {
-    this.paperService.showGrid(event.checked);
-  }
-
-  toggleSnapToGrid(event: MatCheckboxChange) {
-    this.paperService.snapToGrid(event.checked);
-  }
-
-  dispatchGridPointHit(event: MouseEvent) {
-    // const hit: paper.HitResult = paper.project.layers[0].hitTest(new paper.Point(event.x, event.y), HIT_OPTIONS);
-    // // // console.log('Ja');
-    // if (hit && hit.item.data.type === 'grid') {
-    //   console.log('Point ', hit.item.data.id);
-    // //   // console.log('HIt ', hit);
-    // }
+  onResize() {
+    console.log('Resize ', this.canvasParent.nativeElement.style.height);
+    this.paperService.setScaleAndRedraw(this.position);
   }
 }

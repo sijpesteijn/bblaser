@@ -1,5 +1,14 @@
 import * as paper from 'paper';
-import { HIT_OPTIONS, PaperService, Tool } from '../paper.service';
+import { PaperService, Tool } from '../paper.service';
+import IHitTestOptions = paper.IHitTestOptions;
+
+export const HIT_OPTIONS: IHitTestOptions = {
+  tolerance: 10,
+  bounds: true,
+  fill: true,
+  stroke: true,
+  segments: true
+};
 
 export class SelectTool implements Tool {
   private tool: paper.Tool;

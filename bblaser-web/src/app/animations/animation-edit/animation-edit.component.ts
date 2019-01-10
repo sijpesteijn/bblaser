@@ -7,8 +7,7 @@ import * as animationStore from '../animation-store';
 import * as paperStore from '../../paper';
 import { PaperState } from '../../paper';
 import { TimelineRow } from '../../timeline/store';
-import { Subject } from 'rxjs';
-import { debounce, debounceTime, switchMap } from 'rxjs/operators';
+import { ResizeEvent } from 'angular-resizable-element';
 
 @Component({
   selector: 'bb-animation-edit',
@@ -19,6 +18,7 @@ export class AnimationEditComponent implements OnInit {
   private animation: BBAnimation;
   public timelineRows: TimelineRow[] = [];
   indicatorPosition: number;
+  height = 150;
 
   constructor(private route: ActivatedRoute,
               private pStore: Store<PaperState>,
@@ -126,5 +126,10 @@ export class AnimationEditComponent implements OnInit {
     this.timelineRows = this.timelineRows.filter(row => row.id !== timelineRow.id);
     this.animation.elements = this.animation.elements.filter(element => element.id !== timelineRow.id);
     this.aStore.dispatch(new animationStore.SaveAnimationAction(this.animation, false));
+  }
+
+  handleResizing(event: ResizeEvent) {
+    this.height = event.rectangle.height;
+    console.log('Height ', this.height);
   }
 }

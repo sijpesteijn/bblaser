@@ -22,19 +22,21 @@ import * as laserStore from '../laser';
     </div>`,
   styles: [`
     .header-container {
-      position: relative;
-      overflow: hidden;
+      /*position: relative;*/
+      /*overflow: hidden;*/
+      display: flex;
+      justify-content: space-between;
     }
 
     .header-links {
-      float: left;
+      /*float: left;*/
     }
 
     .laser-indication {
       color: white;
       top: 3px;
       margin-right: 20px;
-      float: right;
+      /*float: right;*/
     }
 
     .laser-indication .blink_me {

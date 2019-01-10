@@ -15,15 +15,6 @@ import * as paperStore from './';
 import { BoxTool, LineTool, SelectTool, STROKE_WIDTH } from './tools';
 import { MoveTool } from './tools/move.tool';
 import { EffectService } from '../timeline-effects/effect.service';
-import IHitTestOptions = paper.IHitTestOptions;
-
-export const HIT_OPTIONS: IHitTestOptions = {
-  tolerance: 10,
-  bounds: true,
-  fill: true,
-  stroke: true,
-  segments: true
-};
 
 export interface Tool {
   activate(): void;
@@ -117,7 +108,6 @@ export class PaperService {
         }
       }
     }
-    console.log('X ', x);
     if (!dotted) {
       for (let i = 0; i < ((65534 * this.scale) - side); i++) {
         if (i % gridLevel === 0) {
@@ -208,9 +198,9 @@ export class PaperService {
   }
 
   clear() {
-    // if (paper.project) {
-    //   paper.project.activeLayer.clear();
-    // }
+    if (paper.project) {
+      paper.project.layers[1].removeChildren();
+    }
   }
 
   private drawShapeWithEffects(element: BBElement, position: number) {
@@ -230,7 +220,7 @@ export class PaperService {
       path.closed = true;
       path.data.closed = true;
     }
-    path.visible = element.shape.visible;
+    path.visible = true; // TODO element.shape.visible;
     element.appearances
       .filter(app => app.start <= position && position < app.start + app.duration)
       .forEach(app => {
@@ -299,5 +289,10 @@ export class PaperService {
 
   snapToGrid(checked: boolean) {
     this.tools.forEach(tool => tool.tool.snapToGrid(checked));
+  }
+
+  setScaleAndRedraw(position: number) {
+    this.calculateScale();
+    this.showCurrentPosition(position);
   }
 }
