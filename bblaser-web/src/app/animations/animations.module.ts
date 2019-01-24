@@ -13,7 +13,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { AnimationEffects } from './animation-store/animation.effects';
 import { EditValueModule } from '../edit-value/edit-value.module';
 import { TimelineModule } from '../timeline/timeline.module';
-import { AnimationCanvasSettingsComponent } from './animation-canvas/animation-canvas-settings/animation-canvas-settings.component';
+import { AnimationCanvasSettingsComponent } from './animation-canvas-settings/animation-canvas-settings.component';
 import { PrefrabricatedAnimationListComponent } from './prefrabricated-animation-list/prefrabricated-animation-list.component';
 import { AnimationDetailsComponent } from './animation-details/animation-details.component';
 import { ResizableModule } from 'angular-resizable-element';

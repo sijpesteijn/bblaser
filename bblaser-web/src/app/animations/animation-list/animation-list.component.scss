@@ -1,3 +1,5 @@
+@import '../../../styles';
+
 .animation_list_container {
   display: flex;
 
@@ -15,8 +17,9 @@
       cursor: pointer;
     }
 
-    .highlight {
-      background: #42A948; /* green */
+    tr:hover {
+      background: $timeline_border;
+      color: $white;
     }
 
     .highlightTable {
@@ -29,39 +32,29 @@
       flex: 0 0 auto;
     }
 
-    .mat-column-last_update {
-      max-width: 100px;
-    }
+    //.mat-column-last_update {
+    //  max-width: 100px;
+    //}
     .mat-column-remove {
       max-width: 15px;
     }
 
   }
 
-  bb-animation-canvas {
+  //bb-animation-canvas {
     //width: calc(100vh - 24px);
-  }
+  //}
 
   .animation_preview {
+    flex: 1;
     //flex-grow: 2;
-    width: calc(100vh - 24px);
+    //width: calc(100vh - 24px);
     //border: 1px solid deepskyblue;
-    display: flex;
-    flex-direction: column;
-    //height: 100%;
-
-    //height: calc(100vh - 24px);
-    //width: 100%;
-
-    .animation_canvas {
-    //  align-content: center;
-    //  text-align: center;
-      height: 100%;
-    }
+    //display: flex;
+    //flex-direction: column;
   }
 
   .animation_details {
-    //flex-grow: 2;
     width: 350px;
   }
 

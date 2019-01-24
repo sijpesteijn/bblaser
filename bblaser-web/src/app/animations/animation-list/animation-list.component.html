@@ -16,11 +16,11 @@
           <mat-cell *matCellDef="let animation" (click)="openAnimation(animation)">{{animation.title}}</mat-cell>
         </ng-container>
         <!-- LastUpdate Column -->
-        <ng-container matColumnDef="last_update">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Last update</mat-header-cell>
-          <mat-cell *matCellDef="let animation" (click)="openAnimation(animation)">{{animation.last_update | date: 'dd-MM-yy'}}
-          </mat-cell>
-        </ng-container>
+        <!--<ng-container matColumnDef="last_update">-->
+          <!--<mat-header-cell *matHeaderCellDef mat-sort-header>Last update</mat-header-cell>-->
+          <!--<mat-cell *matCellDef="let animation" (click)="openAnimation(animation)">{{animation.last_update | date: 'dd-MM-yy'}}-->
+          <!--</mat-cell>-->
+        <!--</ng-container>-->
 
         <!-- Remove Column -->
         <ng-container matColumnDef="remove">

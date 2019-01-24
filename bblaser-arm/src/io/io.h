@@ -6,7 +6,7 @@
 #define BB_LASER_ARM_IO_H
 
 #ifdef __APPLE__
-#define SYSFS_GPIO_DIR "/Users/gijssijpesteijn/programming/c/bb-laser/resources/gpios/"
+#define SYSFS_GPIO_DIR "/Users/gijs.sijpesteijn/programming/java/bblaser/bblaser-arm/resources/gpios/"
 #else
 #define SYSFS_GPIO_DIR "/sys/class/gpio/"
 #define SYSFS_SPI_DIR "/sys/class/spidev/"

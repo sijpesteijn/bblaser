@@ -5,7 +5,8 @@
 #ifndef BB_LASER_SPI_H
 #define BB_LASER_SPI_H
 
-#include <unitypes.h>
+//#include <unitypes.h>
+#include <sys/types.h>
 #include <fstream>
 #include <fcntl.h>
 

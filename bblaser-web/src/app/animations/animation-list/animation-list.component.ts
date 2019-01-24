@@ -19,7 +19,7 @@ export class AnimationListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   animationsPage: AnimationPagedCollection;
-  displayedColumns = [ 'title', 'last_update', 'remove'];
+  displayedColumns = [ 'title', 'remove'];
   files: UploadFile[];
   uploadInput: EventEmitter<UploadInput>;
   humanizeBytes: Function;
