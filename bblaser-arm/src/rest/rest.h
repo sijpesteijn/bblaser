@@ -14,7 +14,7 @@ using namespace restbed;
 
 class rest {
 public:
-    rest(list<rest_resource*> resources);
+    rest(const list<rest_resource*>& resources);
 
     void close();
 

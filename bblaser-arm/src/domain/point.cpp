@@ -4,15 +4,15 @@
 
 #include "point.h"
 
-point::point(string x, string y) {
+point::point(int x, int y) {
     this->x = x;
     this->y = y;
 }
 
-string point::getX() {
+int point::getX() const {
     return this->x;
 }
 
-string point::getY() {
+int point::getY() const {
     return this->y;
 }

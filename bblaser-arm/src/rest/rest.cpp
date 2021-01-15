@@ -5,14 +5,14 @@
 #include "rest.h"
 #include "../log.h"
 
-rest::rest(list<rest_resource *> resources) {
+rest::rest(const list<rest_resource *>& resources) {
     this->resources = resources;
     auto settings = make_shared< Settings >( );
     settings->set_port( 1984 );
     settings->set_default_header( "Connection", "spi_close" );
 
     for ( rest_resource *r_resource: resources) {
-        for ( shared_ptr<Resource> resource : r_resource->getResources()) {
+        for ( const shared_ptr<Resource>& resource : r_resource->getResources()) {
             this->service.publish( resource );
         }
     }

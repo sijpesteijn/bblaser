@@ -8,14 +8,15 @@
 #include <future>
 #include <list>
 #include "domain/laser.h"
-#include "domain/line.h"
+#include "domain/segment.h"
 
 using namespace std;
 
 class lines_player {
 public:
-    lines_player(laser *lp, list<line> lines);
-    void playLines(list<line> lines);
+    lines_player(laser *lp);
+    void playLines(segment *segments, int total_segments);
+    void disable();
     void stop();
 
 private:

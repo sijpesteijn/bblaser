@@ -5,19 +5,15 @@
 #ifndef BB_LASER_POINT_H
 #define BB_LASER_POINT_H
 
-#include <string>
-
-using namespace std;
-
 class point {
 public:
-    point(string x, string y);
-    string getX();
-    string getY();
+    point(int x, int y);
+    int getX() const;
+    int getY() const;
 
 private:
-    string x;
-    string y;
+    int x;
+    int y;
 };
 
 

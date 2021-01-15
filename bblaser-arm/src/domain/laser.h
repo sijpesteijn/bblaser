@@ -7,7 +7,7 @@
 
 #include "../io/spi.h"
 #include "../io/gpio.h"
-#include "line.h"
+#include "segment.h"
 
 #define MCP23S08_ALL_DOWN		0x00
 #define MCP4902_1_CS	 		0x01		//GPIO_0 0000 0001
@@ -24,17 +24,14 @@
 class laser {
 public:
     laser();
-    void setEnabled(bool enabled);
-    bool isEnabled();
-    void setRed(int red);
-    void setGreen(int green);
-    void setBlue(int blue);
+    bool isEnabled() const;
+    void setColor(color * col);
     void setPoint(point *p);
     void close();
+    void enabled();
+    void disable();
 private:
-    bool enabled;
-    point *p;
-    int pixels_per_bit;
+    bool enable = false;
     spi *spi_bus;
     gpio *axis_gpio;
     gpio *axis_ldac_gpio;

@@ -22,6 +22,10 @@ using namespace std;
 #define NO_OF_BYTES                      2
 
 /*Definitions specific to spidev1.0 */
+/**
+ * spi1.0: CS = P9_17, SCLK = P9_22, D0 = P9_21, D1 = P9_18
+ * spi1.1: CS = P9_42, SCLK = P9_20, D0 = P9_29, D1 = P9_30
+ */
 #define SPIDEV1_PATH                     "/dev/spidev1.0"
 #define SPIDEV1_BUS_SPEED_HZ             50000
 

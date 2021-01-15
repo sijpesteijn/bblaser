@@ -1,13 +1,13 @@
-#include <syslog.h>
 #include "log.h"
 #include "rest/rest.h"
 #include "domain/laser.h"
 #include "rest/lifeline_resource.h"
 #include "rest/player_resource.h"
+#include "rest/hello_resource.h"
 
 laser *laser1;
 rest *rest1;
-void closeResources(void) {
+void closeResources() {
     rest1->close();
     laser1->close();
     log::info("Closed BBLaser...");
@@ -25,11 +25,12 @@ int main() {
 
     lifeline_resource ll_resource(laser1);
     player_resource p_resource(laser1);
-    rest1 = new rest({&ll_resource, &p_resource});
+    hello_resource h_resource;
+    rest1 = new rest({&ll_resource, &p_resource, &h_resource});
 
     log::info("Stopping BBLaser...");
 #ifndef __APPLE__
     closelog();
 #endif
-    pthread_exit(NULL);
+    pthread_exit(nullptr);
 }

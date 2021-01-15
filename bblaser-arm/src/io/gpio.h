@@ -10,24 +10,16 @@
 #include <fstream>
 using namespace std;
 
-#define MAX_BUF 64
-
-
-typedef enum {
-    INPUT_PIN=0,
-    OUTPUT_PIN=1
-} PIN_DIRECTION;
+#define OUTPUT_PIN 1
 
 class gpio {
 public:
     gpio(int nr);
-    gpio(int nr, PIN_DIRECTION direction);
     ~gpio();
     void setValue(int val);
-    int getValue();
 private:
     int nr;
-    PIN_DIRECTION direction;
+    int direction;
     fstream value_file_descriptor;
     void open();
 };

@@ -6,7 +6,6 @@
 #include "io.h"
 #include "../log.h"
 #include <string>
-#include <syslog.h>
 #include <dirent.h>
 #include <unistd.h>
 
@@ -18,12 +17,6 @@ gpio::gpio(int nr) {
     this->open();
 }
 
-gpio::gpio(int nr, PIN_DIRECTION direction) {
-    this->nr = nr;
-    this->direction = direction;
-    this->open();
-}
-
 gpio::~gpio() {
     this->value_file_descriptor.close();
 }
@@ -31,7 +24,7 @@ gpio::~gpio() {
 void gpio::open() {
     int result;
 
-    if (opendir(string(string(SYSFS_GPIO_DIR) + "gpio" + to_string(this->nr)).c_str()) == NULL) {
+    if (opendir(string(string(SYSFS_GPIO_DIR) + "gpio" + to_string(this->nr)).c_str()) == nullptr) {
         string echo_export = string("echo " + to_string(this->nr) + " > " + SYSFS_GPIO_DIR + "export");
         result = system(echo_export.c_str());
         if (result != 0 || errno != 0) {
@@ -60,11 +53,4 @@ void gpio::open() {
 void gpio::setValue(int val) {
     this->value_file_descriptor << val;
     this->value_file_descriptor.flush();
-}
-
-int gpio::getValue() {
-    this->value_file_descriptor.seekg (0, ios::beg);
-    string line;
-    getline(this->value_file_descriptor, line);
-    return stoi(line);
 }

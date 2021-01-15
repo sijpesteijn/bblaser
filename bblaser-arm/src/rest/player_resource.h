@@ -13,6 +13,8 @@ public:
     player_resource(laser *laser1);
     list<shared_ptr<Resource>> getResources();
     void close();
+
+    static segment emptyLine;
 private:
     shared_ptr<Resource> resource;
 };

@@ -8,57 +8,55 @@
 #include <unistd.h>
 #include <mutex>
 #include <string>
+#include <iostream>
 using namespace std;
 
 // Create a lock
 mutex mtx;
-list<line> lines;
+segment* segments;
+int total_segments;
 
-void plotPoints(laser *lp, list<point> points) {
-    std::list<point>::iterator it;
-    for (it = points.begin(); it != points.end(); it++){
-        point p = *it;
-        lp->setPoint(&p);
+void plotPoints(laser *lp, point* points, int total_points) {
+    for (int i=0; i < total_points; i++){
+        lp->setPoint(&points[i]);
     }
-//#ifdef __APPLE__
-//    usleep(100000);
-//#endif
-//    log::debug("Points plotted");
-
+#ifdef __APPLE__
+    usleep(10000);
+#endif
 }
 
-void player(laser *lp, future<void> futureObj) {
-//    while (futureObj.wait_for(chrono::milliseconds(1)) == future_status::timeout) {
+[[noreturn]] void player(laser *lp, future<void> futureObj) {
     for(;;) {
         mtx.lock();
-        for (list<line>::iterator it = lines.begin(); it != lines.end(); it++) {
-            line l = *it;
-            lp->setRed(atoi(l.getRed().c_str()));
-            lp->setGreen(atoi(l.getGreen().c_str()));
-            lp->setBlue(atoi(l.getBlue().c_str()));
-            plotPoints(lp, l.getPoints());
+        for (int i=0;i<total_segments;i++) {
+            lp->setColor(segments[i].getColor());
+            plotPoints(lp, segments->getPoints(), segments->getTotalPoints());
             usleep(10);
         }
         mtx.unlock();
     }
-    log::debug("Thread stopped.");
 }
 
-lines_player::lines_player(laser *lp, list<line> lns) {
-    this->lp = lp;
-    lines = move(lns);
-    this->futureObj = this->exitSignal.get_future();
-    this->runner = thread(player, this->lp, move(this->futureObj));
-}
-
-void lines_player::playLines(list<line> lns) {
+void lines_player::playLines(segment *segs, int total_segs) {
     mtx.lock();
-    lines = move(lns);
+    cout << "Total segments " << total_segs << endl;
+    segments = segs;
+    total_segments = total_segs;
     mtx.unlock();
+}
+
+void lines_player::disable() {
+    this->lp->disable();
 }
 
 void lines_player::stop() {
     exitSignal.set_value();
     this->runner.join();
     log::debug("Stopping");
+}
+
+lines_player::lines_player(laser *lp) {
+    this->lp = lp;
+    this->futureObj = this->exitSignal.get_future();
+    this->runner = thread(player, this->lp, move(this->futureObj));
 }
