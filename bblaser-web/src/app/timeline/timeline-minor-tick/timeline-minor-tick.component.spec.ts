@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TimelineMinorTickComponent } from './timeline-minor-tick.component';
 
@@ -6,7 +6,7 @@ describe('TimelineMinorTickComponent', () => {
   let component: TimelineMinorTickComponent;
   let fixture: ComponentFixture<TimelineMinorTickComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TimelineMinorTickComponent ]
     })

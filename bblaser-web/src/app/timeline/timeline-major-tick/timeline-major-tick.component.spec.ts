@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TimelineMajorTickComponent } from './timeline-major-tick.component';
 
@@ -6,7 +6,7 @@ describe('TimelineMajorTickComponent', () => {
   let component: TimelineMajorTickComponent;
   let fixture: ComponentFixture<TimelineMajorTickComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TimelineMajorTickComponent ]
     })

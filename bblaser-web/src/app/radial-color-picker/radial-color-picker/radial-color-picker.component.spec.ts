@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { RadialColorPickerComponent } from './radial-color-picker.component';
 
@@ -6,7 +6,7 @@ describe('RadialColorPickerComponent', () => {
   let component: RadialColorPickerComponent;
   let fixture: ComponentFixture<RadialColorPickerComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ RadialColorPickerComponent ]
     })

@@ -55,7 +55,7 @@ export function createTranslateLoader(http: HttpClient) {
       maxAge: 25, // Retains last 25 states
       logOnly: environment.production, // Restrict extension to log-only mode
     }),
-    RouterModule.forRoot(routes),
+    RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

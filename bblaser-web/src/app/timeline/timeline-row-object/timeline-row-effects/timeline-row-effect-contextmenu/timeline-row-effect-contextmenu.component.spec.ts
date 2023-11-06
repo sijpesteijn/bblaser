@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TimelineRowEffectContextmenuComponent } from './timeline-row-effect-contextmenu.component';
 
@@ -6,7 +6,7 @@ describe('TimelineRowEffectContextmenuComponent', () => {
   let component: TimelineRowEffectContextmenuComponent;
   let fixture: ComponentFixture<TimelineRowEffectContextmenuComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TimelineRowEffectContextmenuComponent ]
     })

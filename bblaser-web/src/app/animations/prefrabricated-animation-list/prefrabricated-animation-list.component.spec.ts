@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { PrefrabricatedAnimationListComponent } from './prefrabricated-animation-list.component';
 
@@ -6,7 +6,7 @@ describe('PrefrabricatedAnimationListComponent', () => {
   let component: PrefrabricatedAnimationListComponent;
   let fixture: ComponentFixture<PrefrabricatedAnimationListComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ PrefrabricatedAnimationListComponent ]
     })
