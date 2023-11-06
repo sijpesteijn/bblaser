@@ -214,7 +214,7 @@ POST http://192.168.6.2:1984/play
 Accept: text/plain
 Content-Type: text/plain
 
-00FFFF000000000FFFFFFFFFFFF000
+00FF00000000000FFFFFFFFFFFF000
 
 ###
 POST http://192.168.6.2:1984/play
