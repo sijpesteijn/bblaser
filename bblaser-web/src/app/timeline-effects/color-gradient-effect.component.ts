@@ -21,11 +21,11 @@ export interface ColorGradientEffect extends BBEffectData {
   selector: 'bb-color-gradient-effect',
   template: `
     <div class="effect-color-gradient">
-      <bb-radial-color-picker [color]="effectData.startColor" [toolTip]="'Start color of gradient'"></bb-radial-color-picker>
+      <!-- <bb-radial-color-picker [color]="effectData.startColor" [toolTip]="'Start color of gradient'"></bb-radial-color-picker>
       <bb-radial-color-picker [color]="effectData.endColor" [toolTip]="'End color of gradient'"></bb-radial-color-picker>
       <span class="color gradient"
             #gradientColor
-            matTooltip="Gradient result"></span>
+            matTooltip="Gradient result"></span> -->
     </div>
   `,
   styles: [`

@@ -21,6 +21,13 @@ export interface GetAnimationOptions {
   direction: string;
 }
 
+export const defaultGetAnimationOptions: GetAnimationOptions = {
+  page: 0,
+  pageSize: 10,
+  direction: 'asc',
+  sort: 'name'
+}
+
 export interface BBPoint {
   x: number;
   y: number;
@@ -72,7 +79,7 @@ export interface BBElement {
 
 export class BBAnimation {
   id?: number;
-  title: string;
+  name: string;
   last_update: number;
   elements: BBElement[];
 }

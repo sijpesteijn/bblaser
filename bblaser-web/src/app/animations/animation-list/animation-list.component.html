@@ -13,7 +13,7 @@
         <!-- Name Column -->
         <ng-container matColumnDef="title">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
-          <mat-cell *matCellDef="let animation" (click)="openAnimation(animation)">{{animation.title}}</mat-cell>
+          <mat-cell *matCellDef="let animation" (click)="openAnimation(animation)">{{animation.name}}</mat-cell>
         </ng-container>
         <!-- LastUpdate Column -->
         <!--<ng-container matColumnDef="last_update">-->
@@ -40,7 +40,7 @@
         <mat-row *matRowDef="let animation; columns: displayedColumns;"
                  [ngClass]="{'highlight': selectedAnimation == animation}"
                  (mouseover)="previewAnimation(animation)"
-                 (mouseout)="previewAnimation()"></mat-row>
+                 (mouseout)="previewAnimation(undefined)"></mat-row>
       </mat-table>
 
     </div>
@@ -48,7 +48,7 @@
         [length]="(animationsPage ? animationsPage.totalElements : 0)"
         [pageSize]="pageSize"
         [pageSizeOptions]="[5, 10, 20]"
-      (page)="emitChange($event)">
+      (page)="emitChange()">
       </mat-paginator>
   </div>
 

@@ -5,11 +5,11 @@ import { BBAnimation } from '../animation.service';
   selector: 'bb-animation-details',
   template: `    
     <mat-card>
-      <mat-card-title [innerHTML]="animation?.title"></mat-card-title>
+      <mat-card-title [innerHTML]="animation?.name"></mat-card-title>
       <mat-list dense>
         <mat-list-item>
           <caption>Title</caption>
-          <span>{{animation?.title}}</span>
+          <span>{{animation?.name}}</span>
         </mat-list-item>
         <mat-list-item>
           <caption>Nr of elements</caption>

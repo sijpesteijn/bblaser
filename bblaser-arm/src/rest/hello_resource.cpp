@@ -3,14 +3,15 @@
 //
 
 #define HELLO "/hello"
+
 #include "hello_resource.h"
 #include "../log.h"
 
-void get_hello_method_handler(const shared_ptr<Session>& session) {
-    const auto& request = session->get_request( );
+void get_hello_method_handler(const shared_ptr <Session> &session) {
+    const auto &request = session->get_request();
 
     const string body = "Hello world!";
-    session->close( OK, body, { { "Content-Length", ::to_string( body.size( ) ) } } );
+    session->close(OK, body, {{"Content-Length", ::to_string(body.size())}});
 }
 
 hello_resource::hello_resource() {
@@ -22,7 +23,7 @@ hello_resource::hello_resource() {
     log::debug(str);
 }
 
-list<shared_ptr<Resource>> hello_resource::getResources() {
+list <shared_ptr<Resource>> hello_resource::getResources() {
     return {this->resource};
 }
 

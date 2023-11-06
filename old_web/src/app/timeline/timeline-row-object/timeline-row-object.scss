@@ -1,0 +1,53 @@
+@import "../../../styles";
+
+.timeline-row-object-effects {
+  display: flex;
+  position: relative;
+  top: 22px;
+  background-color: $timeline_object_effect_background;
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      //height: 15px;
+    }
+  }
+}
+
+.timeline-row-object {
+  //top: 2px;
+  display: inline-block;
+  position: absolute;
+  height: 20px;
+  background-color: #F0FFE0;
+  border: 1px solid #7A995C;
+}
+.timeline-row-object:hover {
+  top: 1px;
+  -webkit-box-shadow: 2px 2px 2px 0px rgba(49, 50, 50, 0.75);
+  -moz-box-shadow: 2px 2px 2px 0px rgba(49, 50, 50, 0.75);
+  box-shadow: 2px 2px 2px 0px rgba(49, 50, 50, 0.75);
+  //z-index: 9;
+}
+.highlight {
+  top: 1px;
+  -webkit-box-shadow: 2px 2px 2px 0px rgba(49, 50, 50, 0.75);
+  -moz-box-shadow: 2px 2px 2px 0px rgba(49, 50, 50, 0.75);
+  box-shadow: 2px 2px 2px 0px rgba(49, 50, 50, 0.75);
+  //z-index: 9;
+}
+
+.selected {
+  border: 2px dotted $timeline_object_selected;
+}
+
+.center {
+  //cursor: move;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+

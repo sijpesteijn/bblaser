@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from '../material.module';
 import { AnimationListComponent } from './animation-list/animation-list.component';
-import { NgxUploaderModule } from 'ngx-uploader';
+import { NgUploaderModule } from 'ngx-uploader';
 import { AnimationDeleteDialogComponent } from './animation-delete-dialog/animation-delete-dialog.component';
 import { AnimationCanvasComponent } from './animation-canvas/animation-canvas.component';
 import { AnimationEditComponent } from './animation-edit/animation-edit.component';
@@ -32,7 +32,7 @@ const routes = [
     RouterModule.forChild(routes),
     MaterialModule,
     EffectsModule.forFeature([AnimationsEffects, AnimationEffects]),
-    NgxUploaderModule,
+    NgUploaderModule,
     TimelineModule
   ],
   declarations: [

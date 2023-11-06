@@ -8,15 +8,16 @@
 #include "../domain/laser.h"
 #include "rest_resource.h"
 
-class player_resource: public rest_resource {
+class player_resource : public rest_resource {
 public:
-    player_resource(laser *laser1);
-    list<shared_ptr<Resource>> getResources();
-    void close();
+    explicit player_resource(laser *laser1);
 
-    static segment emptyLine;
+    list <shared_ptr<Resource>> getResources() override;
+
+    void close() override;
+
 private:
-    shared_ptr<Resource> resource;
+    shared_ptr <Resource> resource;
 };
 
 

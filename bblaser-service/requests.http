@@ -1,0 +1,8 @@
+
+POST http://192.168.88.24:1984/play
+Accept: application/json
+Content-Type: application/json
+
+{"shapes":[]}
+
+###

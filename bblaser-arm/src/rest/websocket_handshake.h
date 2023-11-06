@@ -25,7 +25,7 @@
 using namespace restbed;
 using namespace std;
 
-multimap< string, string > build_websocket_handshake_response_headers( const shared_ptr< const Request >& request);
+multimap <string, string> build_websocket_handshake_response_headers(const shared_ptr<const Request> &request);
 //    void close_handler( const shared_ptr< WebSocket > socket );
 //    void* checkObservers(void* params);
 

@@ -13,14 +13,18 @@ using namespace std;
 
 class segment {
 public:
-    segment(color *col, int total_points, point* points);
-    color* getColor();
+    segment(color *col, int total_points, point *points);
+
+    color *getColor();
+
     int getTotalPoints() const;
-    point* getPoints();
+
+    point *getPoints();
+
 private:
     color *col;
     int total_points;
-    point* points;
+    point *points;
 };
 
 #endif //BB_LASER_LINE_H

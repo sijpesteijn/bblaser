@@ -24,8 +24,8 @@ import { LaserEffects } from './laser';
 
 const routes = [
   { path: '', redirectTo: '/animations', pathMatch: 'full' },
-  { path: 'animations', loadChildren: './animations/animations.module#AnimationsModule'},
-  { path: 'sequences', loadChildren: './sequences/sequences.module#SequencesModule'}
+  { path: 'animations', loadChildren: () => import('./animations/animations.module').then(m => m.AnimationsModule)},
+  { path: 'sequences', loadChildren: () => import('./sequences/sequences.module').then(m => m.SequencesModule)}
 ];
 
 export function createTranslateLoader(http: HttpClient) {

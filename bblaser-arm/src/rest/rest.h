@@ -14,13 +14,13 @@ using namespace restbed;
 
 class rest {
 public:
-    rest(const list<rest_resource*>& resources);
+    explicit rest(const list<rest_resource *> &resources);
 
     void close();
 
 private:
     Service service;
-    list<rest_resource*> resources;
+    list<rest_resource *> resources;
 };
 
 

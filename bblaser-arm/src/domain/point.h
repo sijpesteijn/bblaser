@@ -5,15 +5,24 @@
 #ifndef BB_LASER_POINT_H
 #define BB_LASER_POINT_H
 
+#include <sys/types.h>
+
 class point {
 public:
-    point(int x, int y);
-    int getX() const;
-    int getY() const;
+    point(u_int16_t x, u_int16_t y);
+
+    point(u_int16_t x, u_int16_t y, u_int16_t z);
+
+    u_int16_t getX() const;
+
+    u_int16_t getY() const;
+
+    u_int16_t getZ() const;
 
 private:
-    int x;
-    int y;
+    u_int16_t _x;
+    u_int16_t _y;
+    u_int16_t _z;
 };
 
 

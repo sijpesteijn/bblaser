@@ -1,6 +1,5 @@
 import {
   Component,
-  OnInit,
   ChangeDetectionStrategy,
   Input,
   ViewChild,
@@ -10,7 +9,6 @@ import {
 } from '@angular/core';
 import { BBColor } from '../../animations/animation.service';
 import { RotatorOptions } from '../radial-color-rotator.directive';
-import * as Propeller from '../../../../node_modules/Propeller';
 
 @Component({
   selector: 'bb-radial-color-picker',
@@ -84,7 +82,7 @@ export class RadialColorPickerComponent implements OnChanges, AfterViewInit {
     if (this.color_open) {
       event.stopPropagation();
       event.preventDefault();
-      this.rotatorOptions.angle += event.wheelDeltaY;
+      this.rotatorOptions.angle += event.deltaY;
       this.propellor.angle = this.rotatorOptions.angle;
     }
   };

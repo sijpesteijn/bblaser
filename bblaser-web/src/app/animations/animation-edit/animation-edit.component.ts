@@ -51,6 +51,7 @@ export class AnimationEditComponent implements OnInit {
           selected: false,
           visible: true,
           expanded: false,
+          highlight: false,
           timelineObjects: [{
             id: shape.id,
             start: appearance.start,
@@ -86,6 +87,7 @@ export class AnimationEditComponent implements OnInit {
           selected: false,
           expanded: false,
           visible: true,
+          highlight: false,
           timelineObjects: [{
             id: appearance.id,
             start: appearance.start,
@@ -99,22 +101,23 @@ export class AnimationEditComponent implements OnInit {
   }
 
   handleTimelineRowChanged(row: TimelineRow) {
-    const bbElement = this.animation.elements.find(element => element.id === row.id);
-    bbElement.name = row.name;
-    const appearances: BBAppearance[] = [];
-    row.timelineObjects.forEach(timelineObject => {
-      appearances.push({
-        id: timelineObject.id,
-        start: timelineObject.start,
-        duration: timelineObject.duration,
-        effects: timelineObject.effects
-      });
-    });
-    bbElement.appearances = appearances;
-    bbElement.shape.visible = row.visible;
+    // const bbElement = this.animation.elements.slice().find(element => element.id === row.id);
+    // console.log('Element ', row);
+    // bbElement.name = row.name;
+    // const appearances: BBAppearance[] = [];
+    // row.timelineObjects.forEach(timelineObject => {
+    //   appearances.push({
+    //     id: timelineObject.id,
+    //     start: timelineObject.start,
+    //     duration: timelineObject.duration,
+    //     effects: timelineObject.effects
+    //   });
+    // });
+    // bbElement.appearances = appearances;
+    // bbElement.shape.visible = row.visible;
 
-    this.aStore.dispatch(new animationStore.AnimationUpdatedAction(this.animation));
-    this.aStore.dispatch(new animationStore.SaveAnimationAction(this.animation, false));
+    // this.aStore.dispatch(new animationStore.AnimationUpdatedAction(this.animation));
+    // this.aStore.dispatch(new animationStore.SaveAnimationAction(this.animation, false));
   }
 
   setIndicatorPosition(position: number) {

@@ -24,15 +24,17 @@ using namespace restbed;
 class rest_resource {
 
 public:
-    virtual ~rest_resource() {}
-    void sendError(const shared_ptr<Session> session, string msg) {
-        const string body = "{\"error\": \"" + msg + "\"}";
+    virtual ~rest_resource() = default;
+
+    void sendError(const shared_ptr <Session> session, string msg) {
+        const string body = R"({"error": ")" + msg + "\"}";
         session->close(500, body, {
-                { "Content-Type", "application/json" },
-                { "Content-Length", ::to_string(body.size()) }
+                {"Content-Type",   "application/json"},
+                {"Content-Length", ::to_string(body.size())}
         });
     }
-    virtual list<shared_ptr<Resource>> getResources() = 0;
+
+    virtual list <shared_ptr<Resource>> getResources() = 0;
 
     virtual void close() = 0;
 };

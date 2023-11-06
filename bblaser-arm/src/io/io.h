@@ -1,7 +1,6 @@
 //
 // Created by Gijs Sijpesteijn on 21/11/2018.
 //
-
 #ifndef BB_LASER_ARM_IO_H
 #define BB_LASER_ARM_IO_H
 

@@ -1,0 +1,63 @@
+<div class="animation_list_container">
+  <div class="animation_list">
+    <mat-progress-bar mode="indeterminate" *ngIf="!animationsPage"></mat-progress-bar>
+    <div class="mat-elevation-z8" ngFileDrop [options]="options"
+         *ngIf="animationsPage"
+         (uploadOutput)="onUploadOutput($event)"
+         [uploadInput]="uploadInput"
+         (dragover)="highlightTable(true)" (dragend)="highlightTable(false)" (dragleave)="highlightTable(false)"
+         [ngClass]="{'highlightTable': tableHighlight}">
+
+      <mat-table #table [dataSource]="animationsPage.content" matSort dense aria-label="Elements" (matSortChange)="emitChange()">
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="title">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+          <mat-cell *matCellDef="let animation" (click)="openAnimation(animation)">{{animation.title}}</mat-cell>
+        </ng-container>
+        <!-- LastUpdate Column -->
+        <!--<ng-container matColumnDef="last_update">-->
+          <!--<mat-header-cell *matHeaderCellDef mat-sort-header>Last update</mat-header-cell>-->
+          <!--<mat-cell *matCellDef="let animation" (click)="openAnimation(animation)">{{animation.last_update | date: 'dd-MM-yy'}}-->
+          <!--</mat-cell>-->
+        <!--</ng-container>-->
+
+        <!-- Remove Column -->
+        <ng-container matColumnDef="remove">
+          <mat-header-cell *matHeaderCellDef>
+            <button mat-button (click)="newAnimation()">
+              <mat-icon>add_circle_outline</mat-icon>
+            </button>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let animation">
+            <button mat-button (click)="removeAnimation(animation)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row sticky=true *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let animation; columns: displayedColumns;"
+                 [ngClass]="{'highlight': selectedAnimation == animation}"
+                 (mouseover)="previewAnimation(animation)"
+                 (mouseout)="previewAnimation()"></mat-row>
+      </mat-table>
+
+    </div>
+      <mat-paginator
+        [length]="(animationsPage ? animationsPage.totalElements : 0)"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[5, 10, 20]"
+      (page)="emitChange($event)">
+      </mat-paginator>
+  </div>
+
+  <div class="animation_preview">
+    <!--<div class="content">PREVIEW</div>-->
+    <bb-animation-canvas></bb-animation-canvas>
+  </div>
+  <div class="animation_details">
+    <bb-animation-details [animation]="selectedAnimation"></bb-animation-details>
+  </div>
+</div>
+

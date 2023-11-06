@@ -1,0 +1,61 @@
+@import '../../../styles';
+
+.animation_list_container {
+  display: flex;
+
+  .animation_list {
+    .mat-form-field {
+      font-size: 14px;
+      width: 100%;
+    }
+
+    td, th {
+      width: 25%;
+    }
+
+    mat-cell {
+      cursor: pointer;
+    }
+
+    tr:hover {
+      background: $timeline_border;
+      color: $white;
+    }
+
+    .highlightTable {
+      opacity: 0.5;
+    }
+
+    mat-paginator {
+      border-top-width: 1px;
+      border-top-style: solid;
+      flex: 0 0 auto;
+    }
+
+    //.mat-column-last_update {
+    //  max-width: 100px;
+    //}
+    .mat-column-remove {
+      max-width: 15px;
+    }
+
+  }
+
+  //bb-animation-canvas {
+    //width: calc(100vh - 24px);
+  //}
+
+  .animation_preview {
+    flex: 1;
+    //flex-grow: 2;
+    //width: calc(100vh - 24px);
+    //border: 1px solid deepskyblue;
+    //display: flex;
+    //flex-direction: column;
+  }
+
+  .animation_details {
+    width: 350px;
+  }
+
+}

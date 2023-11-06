@@ -7,14 +7,18 @@
 
 class color {
 public:
-    color(int red, int green, int blue);
-    int getRed() const;
-    int getGreen() const;
-    int getBlue() const;
+    color(u_int8_t red, u_int8_t green, u_int8_t blue);
+
+    u_int8_t getRed() const;
+
+    u_int8_t getGreen() const;
+
+    u_int8_t getBlue() const;
+
 private:
-    int red;
-    int green;
-    int blue;
+    u_int8_t red;
+    u_int8_t green;
+    u_int8_t blue;
 };
 
 

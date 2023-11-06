@@ -7,28 +7,29 @@
 #include <iostream>
 #include <syslog.h>
 
+
 using namespace std;
 
-void log::info(string message) {
+void log::info(const string &message) {
 #ifdef __APPLE__
     cout << message << endl;
 #else
-    syslog (LOG_INFO, "%s", message.c_str());
+    syslog(LOG_INFO, "%s", message.c_str());
 #endif
 }
 
-void log::debug(string message) {
+void log::debug(const string &message) {
 #ifdef __APPLE__
     cout << message << endl;
 #else
-    syslog (LOG_DEBUG, "%s", message.c_str());
+    syslog(LOG_DEBUG, "%s", message.c_str());
 #endif
 }
 
-void log::error(string message) {
+void log::error(const string &message) {
 #ifdef __APPLE__
     cout << message << endl;
 #else
-    syslog (LOG_ERR, "%s", message.c_str());
+    syslog(LOG_ERR, "%s", message.c_str());
 #endif
 }

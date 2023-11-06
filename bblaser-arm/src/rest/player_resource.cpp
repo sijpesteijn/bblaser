@@ -7,90 +7,85 @@
 #include "../log.h"
 #include <jansson.h>
 #include <list>
-#include <unistd.h>
 
 #define PLAYER "/play"
 
 using namespace std;
 static laser *l;
 static lines_player *lp;
-segment player_resource::emptyLine = segment(new color(0, 0, 0), 0, nullptr);
 
-color *getColor(json_t *pJson);
-
-point* getPoints(const json_t *pointsJson, int &total_points, point *&points);
-
-json_t *parseRoot(const char *buffer, size_t buflen) {
-    json_t *root;
-    json_error_t error;
-    root = json_loadb(buffer, buflen, 0, &error);
-    if (!root) {
-        fprintf(stderr, "error: on segment %d: %s\n", error.line, error.text);
-        log::debug(string("deserialize parseRoot: error on segment ") + to_string(error.line) + string(error.text));
-        return nullptr;
-    }
-    if (!json_is_object(root)) {
-        fprintf(stderr, "error: commit data is not an object\n");
-        log::debug("deserialize parseRoot: error commit data is not an object\n");
-        json_decref(root);
-        return nullptr;
-    }
-    return root;
+u_int32_t hex2int(char *hex) {
+//    cout << "hex: " << hex << endl;
+    u_int32_t number = (u_int32_t) strtol(hex, nullptr, 16);
+//    cout << "number: " << number << endl;
+    return number;
 }
 
-void post_play_method_handler(const shared_ptr<Session>& session) {
-    if (!l->isEnabled()) {
-        string error_body = "No lifeline. Laser stopped.";
-        session->close(405, error_body, {{"Content-Length", ::to_string(error_body.size())}});
-    } else {
-        const auto request = session->get_request();
-        int content_length = request->get_header("Content-Length", 0);
+u_int8_t getColor(char d1, char d2) {
+    char color[3];
+    color[0] = d1;
+    color[1] = d2;
+    color[2] = '\0';
+    return hex2int(color);
+}
 
-        session->fetch(content_length, [](const shared_ptr<Session>& session, const Bytes &body) {
-            json_t *root = parseRoot((char *) body.data(), (int) body.size());
-            json_t *segmentsJson = json_object_get(root, "segments");
-            int total_segments = json_array_size(segmentsJson);
-            auto *segments = (segment*)malloc(sizeof(segment) * total_segments);
-            for (int i = 0; i < total_segments; i++) {
-                json_t *segmentJson = json_array_get(segmentsJson, i);
-                json_t *colorJson = json_object_get(segmentJson, "color");
-                color *col = getColor(colorJson);
-                json_t *pointsJson = json_object_get(segmentJson, "points");
-                int total_points;
-                point *points = getPoints(pointsJson, total_points, points);
-                segments[i] = segment(col, total_points, points);
-//                json_decref(segmentJson);
-//                json_decref(colorJson);
-//                json_decref(pointsJson);
-            }
-            if (total_segments == 0) {
-                lp->disable();
+u_int16_t getCoordinate(char d0, char d1, char d2) {
+    char coordinate[4];
+    coordinate[0] = d0;
+    coordinate[1] = d1;
+    coordinate[2] = d2;
+    coordinate[3] = '\0';
+    return hex2int(coordinate);
+}
+
+void post_play_method_handler(const shared_ptr <Session> &session) {
+//    if (!l->isOn()) {
+//        string error_body = "No lifeline. Laser not accepting.";
+//        session->close(405, error_body, {{"Content-Length", ::to_string(error_body.size())}});
+//    } else {
+    l->on();
+    const auto request = session->get_request();
+    int content_length = request->get_header("Content-Length", 0);
+
+    session->fetch(content_length, [](const shared_ptr <Session> &session, const Bytes &body) {
+        char *p, *data = (char *) &body[0];
+        char *lines;
+        lines = strtok(data, "\n");
+        while (lines != NULL) {
+            cout << lines << endl; // print the string token
+            lines = strtok(NULL, " , ");
+        }
+        cout << "Body: " << data << endl;
+        uint8_t i;
+        vector <segment> segmentVector;
+        for (i = 1, p = strtok(data, "\n"); p != nullptr; p = strtok(nullptr, "\n"), i++) {
+            uint16_t index = 0, body_length = body.size(), points_length = body_length - 6;
+//                cout << "Body len: " << p << endl;
+            cout << "Body len: " << body_length << endl;
+//                cout << "Point len: " << points_length << endl;
+            auto *c = new color(getColor(p[0], p[1]), getColor(p[2], p[3]), getColor(p[4], p[5]));
+            if ((body_length - 6) % 6 == 0) {
+                auto *points = (point *) malloc(sizeof(point) * (points_length / 4));
+                for (int j = 6; j < body_length;) {
+                    points[index++] = point(getCoordinate(p[j], p[j + 1], p[j + 2]),
+                                            getCoordinate(p[j + 3], p[j + 4], p[j + 5]));
+                    j += 6;
+                }
+                segmentVector.emplace_back(c, points_length / 6, points);
             } else {
-                lp->playLines(segments, total_segments);
+                cout << "Content length not okay" << endl;
             }
-            json_decref(root);
-            session->close(OK);
-        });
-    }
-}
-
-point *getPoints(const json_t *pointsJson, int &total_points, point *&points) {
-    total_points= json_array_size(pointsJson);
-    points= (point*)malloc(sizeof(point) * total_points);
-    for(int j=0; j < total_points; j++) {
-        json_t *pointJson = json_array_get(pointsJson, j);
-        int x = json_integer_value(json_array_get(pointJson, 0));
-        int y = json_integer_value(json_array_get(pointJson, 1));
-        points[j] = point(x, y);
-    }
-    return points;
-}
-
-color *getColor(json_t *pJson) {
-    int red = json_integer_value(json_array_get(pJson, 0));
-    int green = json_integer_value(json_array_get(pJson, 1));
-    int blue = json_integer_value(json_array_get(pJson, 2));
-    return new color(red, green, blue);
+        }
+        if (segmentVector.empty()) {
+            lp->disable();
+        } else {
+            segment *segments = (segment *) malloc(sizeof(segment) * segmentVector.size());
+            copy(segmentVector.begin(), segmentVector.end(), segments);
+            lines_player::playLines(segments, segmentVector.size());
+        }
+        session->close(OK);
+    });
+//    }
 }
 
 player_resource::player_resource(laser *laser1) {
@@ -104,7 +99,7 @@ player_resource::player_resource(laser *laser1) {
     log::debug(str);
 }
 
-list<shared_ptr<Resource>> player_resource::getResources() {
+list <shared_ptr<Resource>> player_resource::getResources() {
     return {this->resource};
 }
 

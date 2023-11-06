@@ -6,7 +6,7 @@ import { TimelineRow } from '../../../store';
   selector: 'bb-timeline-row-effect-contextmenu',
   template: `
     <div class="context-menu" [ngStyle]="{'left.px': point.x, 'top.px': point.y}">
-      <mat-card>
+     <!-- <mat-card>
         <ul>
           <li>
             <mat-icon *ngIf="effect.visible" (click)="setVisible(effect, false)">visibility</mat-icon>
@@ -16,7 +16,7 @@ import { TimelineRow } from '../../../store';
             <mat-icon (click)="deleteRow($event, timelineRow)">delete</mat-icon>
           </li>
         </ul>
-      </mat-card>
+      </mat-card> -->
     </div>
   `,
   styles: [

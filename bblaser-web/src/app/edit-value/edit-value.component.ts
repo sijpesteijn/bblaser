@@ -11,7 +11,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 export class EditValueComponent {
   @Input()
   name: string;
-  edit: false;
+  edit: boolean = false;
   @Output()
   click = new EventEmitter();
   @Output()

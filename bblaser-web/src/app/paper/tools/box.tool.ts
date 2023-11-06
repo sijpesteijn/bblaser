@@ -13,9 +13,10 @@ export class BoxTool implements Tool {
     this.tool = new paper.Tool();
     this.tool.onMouseDown = (event: paper.ToolEvent) => {
       if (this.drawing === false) {
-        this.startPoint = new paper.Point(event.downPoint.x, event.downPoint.y);
+        const point = this.paperService.getGridHit(event.downPoint).point;
+        this.startPoint = new paper.Point(point.x, point.y);
         if (!paperService.isSomethingSelected(this.rectangle)) {
-          const bottomRight = new paper.Point(event.downPoint.x + 10, event.downPoint.y + 10);
+          const bottomRight = new paper.Point(point.x + 10, point.y + 10);
           this.rectangle = new paper.Path.Rectangle(this.startPoint, bottomRight);
           this.rectangle.name = 'Rectangle_' + this.rectangle.index;
           this.rectangle.strokeColor = this.color;
@@ -31,10 +32,12 @@ export class BoxTool implements Tool {
           paperService.moveShape(this.rectangle, paperService.getDiff(this.startPoint, event.downPoint));
         }
       } else if (this.drawing === true) {
-        this.rectangle.segments[0].point.y = event.lastPoint.y;
-        this.rectangle.segments[2].point.x = event.lastPoint.x;
-        this.rectangle.segments[3].point = event.lastPoint;
-        paper.view.draw();
+        const point = this.paperService.getGridHit(event.lastPoint).point;
+        this.rectangle.segments[0].point.y = point.y;
+        this.rectangle.segments[2].point.x = point.x;
+        this.rectangle.segments[3].point = point;
+        // paper.view.draw();
+        paper.view.requestUpdate();
       }
     };
     this.tool.onMouseUp = (event: paper.ToolEvent) => {
@@ -59,8 +62,4 @@ export class BoxTool implements Tool {
     this.tool.remove();
     this.tool = undefined;
   }
-
-  snapToGrid(checked: boolean): void {
-  }
-
 }

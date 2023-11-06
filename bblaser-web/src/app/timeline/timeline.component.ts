@@ -16,9 +16,9 @@ import { Store } from '@ngrx/store';
 import * as timelineReducers from './store';
 import * as timelineStore from './store';
 import { TimelineObject, TimelineRow } from './store';
-import { MatDialog } from '@angular/material';
 import { TimelineRowDeleteDialogComponent } from './timeline-row/timeline-row.component';
 import { ResizeEvent } from 'angular-resizable-element';
+import { MatDialog } from '@angular/material/dialog';
 
 export const TIMEOUT_TIME = 50;
 
@@ -64,18 +64,18 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
   @Output()
   private timelineRowDeleted: EventEmitter<TimelineRow> = new EventEmitter();
 
-  @ViewChild('timelineRulerIndicator')
+  @ViewChild('timelineRulerIndicator', { static: true })
   private rulerIndicator: ElementRef;
-  @ViewChild('timelineIndicator')
+  @ViewChild('timelineIndicator', { static: true })
   private indicator: ElementRef;
-  @ViewChild('timelineRulerScrollContainer')
+  @ViewChild('timelineRulerScrollContainer', { static: false })
   indicatorContainer: ElementRef;
-  @ViewChild('timelineGroupContainer')
+  @ViewChild('timelineGroupContainer', { static: false })
   groupContainer: ElementRef;
 
   private playing = false;
   private maxPosition = 0;
-  private repeat = false;
+  public repeat = false;
   private moveIndicator = false;
   ticks: Tick[] = [];
   position = 0;
@@ -140,7 +140,7 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
     event.preventDefault();
   }
 
-  mouseUpIndicator() {
+  mouseUpIndicator(event: Event) {
     this.moveIndicator = false;
   }
 
@@ -156,7 +156,7 @@ export class TimelineComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   scrollIndicator(event: Event, slave: ElementRef) {
-    slave.nativeElement.scrollLeft = event.srcElement.scrollLeft;
+    // slave.nativeElement.scrollLeft = event.srcElement.scrollLeft;
   }
 
   private playPosition() {

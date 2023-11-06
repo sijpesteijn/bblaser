@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
-import { MatDialog, MatPaginator, MatSort } from '@angular/material';
 import { AnimationPagedCollection, BBAnimation } from '../animation.service';
 import { humanizeBytes, UploaderOptions, UploadFile, UploadInput, UploadOutput, UploadStatus } from 'ngx-uploader';
 import { ANIMATION_UPLOAD, EndpointsService } from '../../endpoints.service';
@@ -9,6 +8,9 @@ import { Store } from '@ngrx/store';
 
 import * as animationStore from '../animation-store';
 import * as moment from 'moment';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'bb-animation-list',
@@ -129,7 +131,7 @@ export class AnimationListComponent implements OnInit, AfterViewInit {
 
   newAnimation() {
     this.store.dispatch(new animationStore.SaveAnimationAction({
-      title: 'New Animation', last_update: moment().valueOf(), elements: []}, true));
+      name: 'New Animation', last_update: moment().valueOf(), elements: []}, true));
   }
 
   emitChange() {

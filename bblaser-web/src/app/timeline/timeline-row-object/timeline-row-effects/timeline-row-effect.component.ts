@@ -28,7 +28,7 @@ import { BoundingRectangle, ResizeEvent } from 'angular-resizable-element';
         (mousedown)="downCenter($event)"
          (mousemove)="moveCenter($event)"
          (mouseup)="upCenter($event)">
-      <div class="effect-container"
+     <!-- <div class="effect-container"
            #effectContainer
            (resizeStart)="handleResizeStart($event)"
            (resizing)="handleResizing($event)"
@@ -38,7 +38,7 @@ import { BoundingRectangle, ResizeEvent } from 'angular-resizable-element';
            mwlResizable [resizeEdges]="{left:true, right: true}">
         <ng-template effect-host></ng-template>
       </div>
-      <bb-timeline-row-effect-contextmenu [point]="point" *ngIf="contextMenu === true" [effect]="effectData"></bb-timeline-row-effect-contextmenu>
+      <bb-timeline-row-effect-contextmenu [point]="point" *ngIf="contextMenu === true" [effect]="effectData"></bb-timeline-row-effect-contextmenu> -->
     </div>
   `,
   styles: [`
@@ -66,9 +66,9 @@ export class TimelineRowEffectComponent implements OnChanges {
   parentDuration = 0;
   @Output()
   private effectChanged: EventEmitter<BBEffectData> = new EventEmitter();
-  @ViewChild(EffectDirective)
+  @ViewChild(EffectDirective, { static: false })
   effectHost: EffectDirective;
-  @ViewChild('effectContainer')
+  @ViewChild('effectContainer', { static: false })
   effectContainer: ElementRef;
   centerDown = false;
   private center_down_x: number;
@@ -164,8 +164,8 @@ export class TimelineRowEffectComponent implements OnChanges {
   showContextMenu(event: MouseEvent) {
     event.stopPropagation();
     this.point = {
-      x: (this.effectData.start / this.timeScale.pixelsPerMillisecond / this.timeScale.scale) + event.layerX,
-      y: event.layerY
+      x: (this.effectData.start / this.timeScale.pixelsPerMillisecond / this.timeScale.scale) + event.clientX,
+      y: event.clientY
     };
     this.contextMenu = true;
   }

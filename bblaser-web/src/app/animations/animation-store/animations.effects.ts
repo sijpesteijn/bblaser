@@ -1,9 +1,10 @@
+import { defaultGetAnimationOptions } from './../animation.service';
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { AnimationPagedCollection, AnimationService } from '../animation.service';
 import * as animationActions from './animations.actions';
 import { catchError, map, switchMap } from 'rxjs/internal/operators';
-import { of } from 'rxjs/index';
+import { of, defer } from 'rxjs/index';
 
 @Injectable()
 export class AnimationsEffects {
@@ -44,6 +45,6 @@ export class AnimationsEffects {
   );
 
   // @Effect()
-  // initialize$ = () => defer(() => of(new LoadAnimationsAction()))
+  // initialize$ = () => defer(() => of(new animationActions.LoadAnimationsAction(defaultGetAnimationOptions)))
 
 }

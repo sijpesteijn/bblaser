@@ -1,6 +1,8 @@
+import { ColorGradientEffect } from './../../timeline-effects/color-gradient-effect.component';
 import * as paper from 'paper';
 import { STROKE_WIDTH } from './tools';
 import { PaperService, Tool } from '../paper.service';
+// import { HIT_OPTIONS } from './select.tool';
 
 export class LineTool implements Tool {
   private tool: paper.Tool;
@@ -10,18 +12,21 @@ export class LineTool implements Tool {
   private nextPoint: paper.Point;
   private color = new paper.Color(255, 255, 255);
   private selectStart: any;
+  private snap = false;
 
   constructor(private paperService: PaperService) {
     this.tool = new paper.Tool();
     this.tool.onMouseDown = (event: paper.ToolEvent) => {
       if ((event as any).event.button === 0) {
         if (paperService.isSomethingSelected(this.path)) {
-          this.selectStart = event.downPoint;
+          this.selectStart = this.paperService.getGridHit(event.downPoint).point;
+          // this.selectStart = event.downPoint;
         } else {
-          const point = new paper.Point(event.downPoint.x, event.downPoint.y);
+          // const point = new paper.Point(event.downPoint.x, event.downPoint.y);
+          const point = this.paperService.getGridHit(event.downPoint).point;
           if (this.drawing === false) {
             this.path = new paper.Path();
-            this.path.selectedColor = 'red';
+            this.path.selectedColor = new paper.Color(1,0,0);
             this.path.name = 'Path_' + this.path.index;
             (this.path as any).type = 'Path';
             this.path.strokeColor = this.color;
@@ -55,7 +60,7 @@ export class LineTool implements Tool {
     };
     this.tool.onMouseMove = (event: paper.ToolEvent) => {
       if (!this.paperService.isSomethingSelected(this.path) && this.drawing === true) {
-        this.line.segments[1].point = event.point;
+        this.line.segments[1].point = this.paperService.getGridHit(event.lastPoint).point;
       }
     };
     this.tool.onMouseUp = this.mouseUp;
@@ -88,9 +93,10 @@ export class LineTool implements Tool {
     if (this.line) {
       this.line.remove();
     }
-    this.nextPoint = new paper.Point(event.downPoint.x + 1, event.downPoint.y);
+    const point = this.paperService.getGridHit(event.lastPoint).point;
+    this.nextPoint = new paper.Point(point.x + 1, point.y);
     (this.nextPoint as any).name = 'Point';
-    this.line = new paper.Path.Line(new paper.Point(event.downPoint.x, event.downPoint.y), this.nextPoint);
+    this.line = new paper.Path.Line(new paper.Point(point.x, point.y), this.nextPoint);
     this.line.strokeColor = this.color;
     this.line.strokeWidth = STROKE_WIDTH;
     this.line.dashArray = [5, 5];
@@ -105,6 +111,7 @@ export class LineTool implements Tool {
     this.tool = undefined;
   }
 
-  snapToGrid(checked: boolean): void {
+  snapToGrid(snap: boolean): void {
+    this.snap = snap;
   }
 }

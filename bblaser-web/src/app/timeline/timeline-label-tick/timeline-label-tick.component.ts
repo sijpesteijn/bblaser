@@ -25,9 +25,9 @@ import { Tick } from '../timeline.component';
   `]
 })
 export class TimelineLabelTickComponent implements OnChanges {
-  @ViewChild('label')
+  @ViewChild('label', { static: true })
   private label: ElementRef;
-  @ViewChild('labelText')
+  @ViewChild('labelText', { static: true })
   private labelText: ElementRef;
   @Input()
   tick: Tick;

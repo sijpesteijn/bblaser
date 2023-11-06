@@ -12,7 +12,7 @@ import {
 import { EventService } from '../event.service';
 import { Store } from '@ngrx/store';
 import * as paperStore from './';
-import { BoxTool, LineTool, SelectTool, STROKE_WIDTH } from './tools';
+import { BoxTool, HIT_OPTIONS, LineTool, SelectTool, STROKE_WIDTH } from './tools';
 import { MoveTool } from './tools/move.tool';
 import { EffectService } from '../timeline-effects/effect.service';
 
@@ -20,8 +20,6 @@ export interface Tool {
   activate(): void;
 
   remove(): void;
-
-  snapToGrid(checked: boolean): void;
 }
 
 @Injectable({
@@ -33,11 +31,12 @@ export class PaperService {
   private animation: BBAnimation;
   private tools: { name: string; tool: Tool; }[] = [];
   private gridLayer: paper.Layer;
+  private snap = false;
 
   constructor(private eventService: EventService,
               private effectService: EffectService,
               private pStore: Store<paperStore.PaperState>) {
-    paper.install(window);
+    // paper.install(window);
     this.tools.push({name: 'selectTool', tool: new SelectTool(this)});
     this.tools.push({name: 'boxTool', tool: new BoxTool(this)});
     this.tools.push({name: 'lineTool', tool: new LineTool(this)});
@@ -80,9 +79,9 @@ export class PaperService {
         for (let y = 0; y <= ((65534 * this.scale)); y++) {
           if (y % gridLevel === 0) {
             const line = new paper.Path.Circle(new paper.Point(x, y), 1);
-            line.strokeColor = '#bbbbbb';
+            line.strokeColor = new paper.Color('#bbbbbb');
             line.strokeWidth = 1;
-            line.fillColor = '#bbbbbb';
+            line.fillColor = new paper.Color('#bbbbbb');
             line.data = {
               ...line.data,
               type: 'grid',
@@ -101,7 +100,7 @@ export class PaperService {
       if (i % gridLevel === 0) {
         x++;
         const line = new paper.Path.Line(new paper.Point(i + side, 0), new paper.Point(i + side, (65534 * this.scale)));
-        line.strokeColor = '#bbbbbb';
+        line.strokeColor = new paper.Color('#bbbbbb');
         line.strokeWidth = 1;
         if (dotted) {
           line.dashArray = dashArray;
@@ -112,7 +111,7 @@ export class PaperService {
       for (let i = 0; i < ((65534 * this.scale) - side); i++) {
         if (i % gridLevel === 0) {
           const line = new paper.Path.Line(new paper.Point(0, i + side), new paper.Point((65534 * this.scale), i + side));
-          line.strokeColor = '#bbbbbb';
+          line.strokeColor = new paper.Color('#bbbbbb');
           line.strokeWidth = 1;
         }
       }
@@ -270,7 +269,7 @@ export class PaperService {
   }
 
   getDuration(): number {
-    const longest = this.animation.elements.sort((e1, e2) => {
+    const longest = this.animation.elements.slice().sort((e1, e2) => {
       const eA1 = e1.appearances.sort((a1, a2) => (a1.start + a1.duration) - (a2.start + a2.duration))[0];
       const eA2 = e2.appearances.sort((a1, a2) => (a1.start + a1.duration) - (a2.start + a2.duration))[0];
       return (eA2.start + eA2.duration) - (eA1.start + eA1.duration);
@@ -288,11 +287,25 @@ export class PaperService {
 
 
   snapToGrid(checked: boolean) {
-    this.tools.forEach(tool => tool.tool.snapToGrid(checked));
+    this.snap = checked;
   }
 
   setScaleAndRedraw(position: number) {
     this.calculateScale();
     this.showCurrentPosition(position);
+  }
+
+  getGridHit(point: paper.Point): paper.HitResult {
+    let hitResult: paper.HitResult;
+    if (this.snap) {
+      const hit: paper.HitResult = paper.project.layers[0].hitTest(point, HIT_OPTIONS);
+      if (hit && hit.item.data.type === 'grid') {
+        hitResult = hit;
+      }
+    } else {
+      hitResult = new paper.HitResult();
+      hitResult.point = point;
+    }
+    return hitResult;
   }
 }

@@ -1,18 +1,18 @@
 import { Component, EventEmitter, Inject, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { TimelineObject, TimelineRow } from '../store/index';
 import { TimeScale } from '../timeline.component';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'bb-timeline-row-delete-dialog',
   template: `
-    <mat-dialog-content class="mat-typography">
+    <!--<mat-dialog-content class="mat-typography">
       <p>Do you want to delete {{timelineRow.name}}?</p>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button (click)="onNoClick()">Cancel</button>
       <button mat-flat-button color="primary" [mat-dialog-close]="true" cdkFocusInitial>Ok</button>
-    </mat-dialog-actions>
+    </mat-dialog-actions> -->
   `,
   styles: [`
   `]
@@ -32,7 +32,7 @@ export class TimelineRowDeleteDialogComponent {
   selector: 'bb-timeline-row',
   template: `
     <div class="timeline-row">
-      <div class="timeline-row-container"
+    <!--  <div class="timeline-row-container"
            [ngClass]="{'selected': timelineRow.selected, 'highlight': timelineRow.highlight}">
         <div class="timeline-row-content"
              [ngStyle]="{'height.px': (timelineRow | timelineRowMaxEffects)}">
@@ -43,7 +43,7 @@ export class TimelineRowDeleteDialogComponent {
                                   (timelineObjectChanged)="handleTimelineObjectChanged($event)">
           </bb-timeline-row-object>
         </div>
-      </div>
+      </div> -->
     </div>
   `,
   styles: [`

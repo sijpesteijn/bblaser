@@ -1,8 +1,8 @@
 import * as paper from 'paper';
 import { PaperService, Tool } from '../paper.service';
-import IHitTestOptions = paper.IHitTestOptions;
+// import IHitTestOptions = paper.IHitTestOptions;
 
-export const HIT_OPTIONS: IHitTestOptions = {
+export const HIT_OPTIONS = {
   tolerance: 10,
   bounds: true,
   fill: true,
@@ -19,34 +19,29 @@ export class SelectTool implements Tool {
   constructor(private paperService: PaperService) {
     this.tool = new paper.Tool();
     this.tool.onMouseDown = (event: paper.ToolEvent) => {
-      const hit: paper.HitResult = paper.project.activeLayer.hitTest(event.downPoint);
-      if (hit && hit.item.data.type !== 'grid') {
-        if (!hit.item.selected) {
-          // console.log('Select ', event);
-          this.hit = hit;
-          this.hit.item.selected = true;
-        } else {
-          console.log('Doit ', hit);
-          this.hit = hit;
-          this.moving = true;
-        }
+      const hit: paper.HitResult = this.paperService.getGridHit(event.downPoint);
+      if (!hit.item.selected) {
+        // console.log('Select ', event);
+        this.hit = hit;
+        this.hit.item.selected = true;
+      } else {
+        // console.log('Doit ', hit);
+        this.hit = hit;
+        this.moving = true;
       }
     };
     this.tool.onMouseMove = (event: paper.ToolEvent) => {
       event.stopPropagation();
       if (this.moving) {
         if (this.snap) {
-          const hit: paper.HitResult = paper.project.layers[0].hitTest(event.lastPoint, HIT_OPTIONS);
-          if (hit && hit.item.data.type === 'grid') {
-            console.log('Hit ', hit);
-            if (this.hit.type === 'segment') {
-              this.hit.segment.point = hit.point;
-            } else if (this.hit.type === 'stroke') {
-              (this.hit.item as paper.Path).position = hit.point;
-            }
+          const hit: paper.HitResult = this.paperService.getGridHit(event.lastPoint);
+          if (this.hit.type === 'segment') {
+            this.hit.segment.point = hit.point;
+          } else if (this.hit.type === 'stroke') {
+            (this.hit.item as paper.Path).position = hit.point;
           }
         } else {
-          console.log('Hit ', this.hit);
+          // console.log('Hit ', this.hit);
           if (this.hit.type === 'segment') {
             this.hit.segment.point = event.lastPoint;
           } else if (this.hit.type === 'stroke') {
@@ -69,10 +64,6 @@ export class SelectTool implements Tool {
   remove() {
     this.tool.remove();
     this.tool = undefined;
-  }
-
-  snapToGrid(checked: boolean): void {
-    this.snap = checked;
   }
 
 }

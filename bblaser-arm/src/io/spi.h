@@ -5,73 +5,45 @@
 #ifndef BB_LASER_SPI_H
 #define BB_LASER_SPI_H
 
-//#include <unitypes.h>
-#include <sys/types.h>
-#include <fstream>
+#include <cstdint>
 #include <fcntl.h>
 
-using namespace std;
-#define SPIDEV_BYTES_NUM                 8
-#define SPIDEV_DATA_BITS_NUM             8
-#define SPIDEV_DELAY_US                     0
-#define SPI_SS_HIGH                      1
-#define SPI_SS_LOW                       0
-#define SPI_ONE_BYTE                     1
+#ifndef __APPLE__
 
-/* No. of bytes per transaction */
-#define NO_OF_BYTES                      2
+#include <linux/types.h>
+#include <linux/spi/spidev.h>
+
+#endif
 
 /*Definitions specific to spidev1.0 */
 /**
- * spi1.0: CS = P9_17, SCLK = P9_22, D0 = P9_21, D1 = P9_18
- * spi1.1: CS = P9_42, SCLK = P9_20, D0 = P9_29, D1 = P9_30
+ * spi0.0: CS = P9_17, SCLK = P9_22, D0 = P9_21, D1 = P9_18
+ * spi1.0: CS = P9_28, SCLK = P9_31, D0 = P9_29, D1 = P9_30
  */
-#define SPIDEV1_PATH                     "/dev/spidev1.0"
-#define SPIDEV1_BUS_SPEED_HZ             50000
-
-typedef enum {
-    SPI_MODE0 = 0,
-    SPI_MODE1 = 1,
-    SPI_MODE2 = 2,
-    SPI_MODE3 = 3
-} SPI_MODE;
-
-typedef struct {
-    char *spi_dev_path;
-    int fd_spi;
-    unsigned long spi_bytes_num;
-    unsigned long spi_bus_speedHZ;
-    unsigned char ss_change;
-    unsigned short spi_delay_us;
-    unsigned char spi_data_bits_No;
-    unsigned char spi_mode;
-} SPI_DeviceT, *SPI_DevicePtr;
-
 
 class spi {
 public:
-    spi(int nr);
-    ~spi();
+    explicit spi(uint8_t spi_id);
 
-    void write8Bits(unsigned char reg, unsigned char value);
+    void write8Bits(uint8_t reg, uint8_t value) const;
 
-    void write12Bits(unsigned char reg, unsigned char value);
+    void write12Bits(uint8_t reg, uint16_t value) const;
 
-    void spi_close();
+    uint8_t send(uint8_t tx[], uint32_t length) const;
+
+    void spi_close() const;
 
 private:
-    int spi_fd;
-    int nr;
+    int spi_fd{};
 
-    unsigned long bits_per_word = 8; /*!< @brief is used to hold the bits per word size of SPI */
-    unsigned char mode = 0; /*!< @brief is used to hold the mode of SPI */
-    unsigned long speed = 10000000; /*!< @brief is used to hold the speed of SPI */
-    unsigned char flags = O_RDWR;
+    uint8_t bits_per_word = 8; /*!< @brief is used to hold the bits per word size of SPI */
+    uint8_t mode = 0; /*!< @brief is used to hold the mode of SPI */
+    uint32_t speed = 10000000; /*!< @brief is used to hold the speed of SPI */
+    uint8_t flags = O_RDWR;
+    uint8_t spi_id;
 
     void connect();
 
-    int send(unsigned char tx[], unsigned int length);
 };
-
 
 #endif //BB_LASER_SPI_H

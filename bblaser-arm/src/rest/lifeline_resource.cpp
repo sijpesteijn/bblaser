@@ -11,10 +11,10 @@
 #define LIFELINE "/lifeline"
 
 static laser *laser1;
-static map<string, shared_ptr<WebSocket> > sockets = {};
+static map <string, shared_ptr<WebSocket>> sockets = {};
 static pthread_mutex_t checker_lock = PTHREAD_MUTEX_INITIALIZER;
 
-void lifeline_close_handler(const shared_ptr<WebSocket>& socket) {
+void lifeline_close_handler(const shared_ptr <WebSocket> &socket) {
     log::debug("Lifeline spi_close handler");
     if (socket->is_open()) {
         auto response = make_shared<WebSocketMessage>(WebSocketMessage::CONNECTION_CLOSE_FRAME, Bytes({10, 00}));
@@ -24,21 +24,21 @@ void lifeline_close_handler(const shared_ptr<WebSocket>& socket) {
     const auto key = socket->get_key();
     sockets.erase(key);
     log::debug(string(to_string(sockets.size())));
-    if (!laser1->isEnabled() && sockets.empty()) {
+    if (!laser1->isOn() && sockets.empty()) {
         log::debug("No connections laser disabled");
-        laser1->disable();
+        laser1->blank();
     }
 
     log::debug("Closed connection to " + string(key));
 }
 
-void lifeline_error_handler(const shared_ptr<WebSocket>& socket, const error_code error) {
+void lifeline_error_handler(const shared_ptr <WebSocket> &socket, const error_code error) {
     const auto key = socket->get_key();
     log::debug("WebSocket Errored " + string(error.message()) + " for " + key);
     sockets.erase(key);
 }
 
-void lifeline_message_handler(const shared_ptr<WebSocket>& source, const shared_ptr<WebSocketMessage>& message) {
+void lifeline_message_handler(const shared_ptr <WebSocket> &source, const shared_ptr <WebSocketMessage> &message) {
     const auto opcode = message->get_opcode();
 
     if (opcode == WebSocketMessage::TEXT_FRAME) {
@@ -48,7 +48,7 @@ void lifeline_message_handler(const shared_ptr<WebSocket>& source, const shared_
     }
 }
 
-void get_lifeline_method_handler(const shared_ptr<Session>& session) {
+void get_lifeline_method_handler(const shared_ptr <Session> &session) {
     const auto request = session->get_request();
     const auto connection_header = request->get_header("connection", String::lowercase);
 
@@ -56,7 +56,7 @@ void get_lifeline_method_handler(const shared_ptr<Session>& session) {
         if (request->get_header("upgrade", String::lowercase) == "websocket") {
             const auto headers = build_websocket_handshake_response_headers(request);
 
-            session->upgrade(SWITCHING_PROTOCOLS, headers, [](const shared_ptr<WebSocket>& socket) {
+            session->upgrade(SWITCHING_PROTOCOLS, headers, [](const shared_ptr <WebSocket> &socket) {
                 if (socket->is_open()) {
                     if (pthread_mutex_lock(&checker_lock) != 0) {
                         log::debug("Sockethandler: Could not get a lock on the queue");
@@ -66,7 +66,7 @@ void get_lifeline_method_handler(const shared_ptr<Session>& session) {
                     socket->set_message_handler(lifeline_message_handler);
 
                     const string body = "Lifeline connected";
-                    socket->send(body, [](const shared_ptr<WebSocket>& socket) {
+                    socket->send(body, [](const shared_ptr <WebSocket> &socket) {
                         const auto key = socket->get_key();
                         sockets.insert(make_pair(key, socket));
                     });
@@ -91,13 +91,13 @@ void get_lifeline_method_handler(const shared_ptr<Session>& session) {
         if (pthread_mutex_lock(&checker_lock) != 0) {
             log::debug("Sockethandler: Could not get a lock on the queue");
         }
-        if (!l->isEnabled() && !sockets.empty()) {
+        if (!l->isOn() && !sockets.empty()) {
             log::debug("New connection. Laser enabled.");
-            l->enabled();
+            l->on();
         }
-        if (l->isEnabled() && sockets.empty()) {
+        if (l->isOn() && sockets.empty()) {
             log::debug("No connections. Laser disabled.");
-            l->disable();
+//            l->blank();
         }
         if (pthread_mutex_unlock(&checker_lock) != 0) {
             log::debug("Sockethandler: Could not unlock the queue");
@@ -118,7 +118,7 @@ lifeline_resource::lifeline_resource(laser *l_p) {
     pthread_create(&checker, nullptr, connectionChecker, l_p);
 }
 
-list<shared_ptr<Resource>> lifeline_resource::getResources() {
+list <shared_ptr<Resource>> lifeline_resource::getResources() {
     return {this->resource};
 }
 

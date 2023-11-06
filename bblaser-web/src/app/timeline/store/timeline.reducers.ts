@@ -25,6 +25,7 @@ export interface TimelineRow {
   visible: boolean;
   expanded: boolean;
   timelineObjects: TimelineObject[];
+  highlight: boolean; // added 5-2020
 }
 
 export interface TimelineState {

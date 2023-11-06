@@ -8,19 +8,25 @@
 
 #include <cstdio>
 #include <fstream>
-using namespace std;
 
 #define OUTPUT_PIN 1
 
+using namespace std;
+
 class gpio {
 public:
-    gpio(int nr);
+    explicit gpio(uint16_t nr, char *header_name);
+
     ~gpio();
-    void setValue(int val);
+
+    void setValue(uint16_t val);
+
 private:
-    int nr;
-    int direction;
-    fstream value_file_descriptor;
+    uint16_t nr;
+    char *header_name;
+    uint16_t direction;
+    ofstream value_file_descriptor;
+
     void open();
 };
 

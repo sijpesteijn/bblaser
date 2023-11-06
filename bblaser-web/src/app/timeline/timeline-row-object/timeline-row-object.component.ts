@@ -159,8 +159,8 @@ export class TimelineRowObjectComponent implements OnChanges, OnInit {
   showContextMenu(event: MouseEvent) {
     event.stopPropagation();
     this.point = {
-      x: (this.timelineObject.start / this.timeScale.pixelsPerMillisecond / this.timeScale.scale) + event.layerX,
-      y: event.layerY
+      x: (this.timelineObject.start / this.timeScale.pixelsPerMillisecond / this.timeScale.scale) + event.clientX,
+      y: event.clientY
     };
     this.contextMenu = true;
     this.store.dispatch(new timelineStore.TimelineSetSelected([this.timelineObject]));

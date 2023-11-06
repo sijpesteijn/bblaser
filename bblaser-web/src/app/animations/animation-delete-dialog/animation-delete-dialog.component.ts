@@ -1,13 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import { Animation } from '@angular/animations/browser/src/dsl/animation';
 import { BBAnimation } from '../animation.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'bb-animation-delete-dialog',
   template: `
     <mat-dialog-content class="mat-typography">
-      <p>Do you want to delete {{animation.title}}?</p>
+      <p>Do you want to delete {{animation.name}}?</p>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button (click)="onNoClick()">Cancel</button>

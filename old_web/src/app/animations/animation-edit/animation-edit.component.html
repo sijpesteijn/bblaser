@@ -1,0 +1,22 @@
+<div class="animation_edit_container">
+  <div class="animation_edit_top">
+    <div class="left_container">Bla</div>
+    <div class="animation_canvas">
+      <bb-animation-canvas></bb-animation-canvas>
+    </div>
+    <div class="right_container">
+      <bb-animation-draw-tools></bb-animation-draw-tools>
+      <bb-animation-canvas-settings></bb-animation-canvas-settings>
+    </div>
+  </div>
+  <div class="animation_edit_bottom"
+       mwlResizable
+       (resizing)="handleResizing($event)"
+       [resizeEdges]="{top: true}"
+       [ngStyle]="{'height.px' : height}">
+    <bb-timeline [timelineRows]="timelineRows"
+                 (indicatorPosition)="setIndicatorPosition($event)"
+                 (timelineRowChanged)="handleTimelineRowChanged($event)"
+                 (timelineRowDeleted)="handleTimelineRowDeleted($event)"></bb-timeline>
+  </div>
+</div>

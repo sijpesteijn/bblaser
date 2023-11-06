@@ -1,0 +1,170 @@
+.radial-color-picker {
+  $button-border: #b2b2b2;
+  $material-curve-angular: cubic-bezier(0.35, 0, 0.25, 1) !default;
+
+  @function z-depth-all($depth: 1) {
+    $color1:    0.12, 0.19, 0.19, 0.21, 0.22, 0.38;
+    $blur1:     10px, 20px, 50px, 55px, 77px, 30px;
+
+    $color2:    0.16, 0.2, 0.24, 0.22, 0.2, 0.48;
+    $blur2:     5px, 17px, 15px, 28px, 24px, 15px;
+    @return 0 0 nth($blur1, $depth) rgba(0, 0, 0, nth($color1, $depth)), 0 0 nth($blur2, $depth) rgba(0, 0, 0, nth($color2, $depth));
+  }
+
+  @mixin z-depth-all($depth: 1) {
+    box-shadow: z-depth-all($depth);
+  }
+
+  @mixin disable-user-select() {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  z-index: 1;
+  position: relative;
+  display: block;
+  overflow: visible;
+  border-radius: 20px;
+  border: 1px solid #b4b4b4;
+
+  &:focus {
+    outline: 0;
+
+    .rotator-knob {
+      @include z-depth-all(6);
+    }
+    .rotator {
+      display: block;
+    }
+  }
+
+  &.disabled {
+    .rotator {
+      pointer-events: none;
+    }
+  }
+
+  &,
+  .color-palette,
+  .rotator,
+  .color,
+  .color-shadow,
+  .rotator-knob {
+    @include disable-user-select();
+    box-sizing: border-box;
+
+    &::before {
+      box-sizing: border-box;
+    }
+  }
+
+  .color {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    padding: 0;
+    margin: 0;
+    border-radius: 50%;
+    outline: 0;
+    cursor: pointer;
+    transition: transform .7s $material-curve-angular;
+    will-change: transform;
+    overflow: visible;
+    //border: 6px solid #fff;
+    //box-shadow: 0 0 0 1px $button-border;
+  }
+
+  .rotator {
+    position: absolute;
+    display: none;
+
+    &.dragging {
+      z-index: 1;
+    }
+  }
+
+  .color-shadow {
+    width: 20%;
+    height: 20%;
+    border-radius: 50%;
+    border: red solid 8px;
+    opacity: 0;
+    position: absolute;
+    top: 40%;
+    left: 40%;
+    z-index: -1;
+  }
+
+  .color-shadow-animate {
+    z-index: 0;
+    animation: color-shadow-animation .5s $material-curve-angular forwards;
+  }
+
+  .rotator-knob {
+    @include z-depth-all(1);
+    border-radius: 50%;
+    position: absolute;
+    width: 9%;
+    height: 9%;
+    top: 2.5%;
+    left: 46.5%;
+    background-color: #fff;
+    transition: transform .4s $material-curve-angular;
+    outline: 0;
+    border-style: none;
+
+    &.rotator-knob-zoom-in {
+      transform: scale(1);
+    }
+
+    &.rotator-knob-zoom-out {
+      transform: scale(0);
+    }
+  }
+
+  .color-palette {
+    position: absolute;
+    background-size: 100% 100%;
+    border-radius: 50%;
+    will-change: transform, opacity;
+    transition: transform .5s $material-curve-angular,
+    opacity .5s $material-curve-angular;
+
+    &::before {
+      content: '';
+      display: block;
+      position: absolute;
+      width: 76%;
+      height: 76%;
+      top: 12%;
+      left: 12%;
+      background-color: #fff;
+      border-radius: 50%;
+    }
+
+    &.blur-palette-in {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    &.blur-palette-out {
+      transform: scale(0);
+      opacity: 0;
+    }
+
+  }
+
+  &:not(:focus) .rotator-knob:hover {
+    @include z-depth-all(3);
+  }
+
+  .dragging .rotator-knob {
+    @include z-depth-all(6);
+  }
+
+}

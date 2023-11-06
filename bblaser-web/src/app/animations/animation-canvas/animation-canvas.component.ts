@@ -11,10 +11,10 @@ import { TIMEOUT_TIME } from '../../timeline/timeline.component';
 @Component({
   selector: 'bb-animation-canvas',
   template: `
-    <div
+   <div
       #canvasParent
       class="animation_canvas" 
-      (window:resize)="onResize($event)">
+      (window:resize)="onResize()">
       <canvas
         #canvas
         id="animation"
@@ -87,6 +87,7 @@ export class AnimationCanvasComponent implements OnInit, OnDestroy {
       .subscribe(position => {
         this.position = position;
         const bbShapes = this.paperService.showCurrentPosition(this.position);
+        console.log('Shapes ', bbShapes);
         this.aStore.dispatch(new animationStore.SendToLaser(bbShapes));
       });
 
@@ -145,7 +146,7 @@ export class AnimationCanvasComponent implements OnInit, OnDestroy {
   }
 
   onResize() {
-    console.log('Resize ', this.canvasParent.nativeElement.style.height);
+    // console.log('Resize ', this.canvasParent.nativeElement.style.height);
     this.paperService.setScaleAndRedraw(this.position);
   }
 }

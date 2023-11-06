@@ -34,9 +34,10 @@ export function animationReducer(state = initialAnimationState, action: fromAnim
       };
     }
     case fromAnimation.SELECT_ANIMATION: {
-      state.animation = action.animation;
+      // state.animation = {...action.animation};
       return {
         ...state,
+        animation: action.animation,
         loading: true,
       };
     }

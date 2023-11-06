@@ -19,11 +19,11 @@ export class EndpointsService {
   readonly BASE_URL = '://bb-laser.test/';
 
   constructor() {
-    this.endpoints[ANIMATION_ALL] = this.PROTOCOL + this.BASE_URL + 'r/animations';
-    this.endpoints[ANIMATION_REMOVE] = this.PROTOCOL + this.BASE_URL + 'r/animations/:id';
-    this.endpoints[ANIMATION_BYID] = this.PROTOCOL + this.BASE_URL + 'r/animations/:id';
-    this.endpoints[ANIMATION_UPLOAD] = this.PROTOCOL + this.BASE_URL + 'r/animations/upload';
-    this.endpoints[ANIMATION_SAVE] = this.PROTOCOL + this.BASE_URL + 'r/animations/';
+    this.endpoints[ANIMATION_ALL] = this.PROTOCOL + this.BASE_URL + 'r/animation';
+    this.endpoints[ANIMATION_REMOVE] = this.PROTOCOL + this.BASE_URL + 'r/animation/:id';
+    this.endpoints[ANIMATION_BYID] = this.PROTOCOL + this.BASE_URL + 'r/animation/:id';
+    this.endpoints[ANIMATION_UPLOAD] = this.PROTOCOL + this.BASE_URL + 'r/animation/upload';
+    this.endpoints[ANIMATION_SAVE] = this.PROTOCOL + this.BASE_URL + 'r/animation/';
     this.endpoints[ANIMATION_FRAME_UPDATE] = this.PROTOCOL + this.BASE_URL + 'r/animations/:id/frame';
     this.endpoints[LASER] = this.PROTOCOL + this.BASE_URL + 'r/laser';
     this.endpoints[LIFELINE] = 'ws' + this.BASE_URL + 'r/lifeline'; //ws://192.168.88.28:1984/lifeline';

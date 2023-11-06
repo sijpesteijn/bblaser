@@ -2,33 +2,42 @@
 // Created by Gijs Sijpesteijn on 26/10/2018.
 //
 
-#include <cstdio>
-#include <syslog.h>
 #include "spi.h"
-#include "io.h"
 #include "../log.h"
-#include <sys/ioctl.h>
-#include <cmath>
-#include <fcntl.h>
 #include <unistd.h>
+#include <iostream>
+#include <sys/ioctl.h>
 
-#ifndef __APPLE__
-#include <linux/spi/spidev.h>
-#endif
+using namespace std;
 
-spi::spi(int nr) {
-    this->nr = nr;
+void setupSpi_0() {
+    system("config-pin p9_17 spi_cs");
+    system("config-pin p9_18 spi");
+    system("config-pin p9_21 spi");
+    system("config-pin p9_22 spi_sclk");
+}
+
+void setupSpi_1() {
+    system("config-pin p9_28 spi_cs");
+    system("config-pin p9_29 spi");
+    system("config-pin p9_30 spi");
+    system("config-pin p9_31 spi_sclk");
+}
+
+spi::spi(uint8_t spi_id) {
+    this->spi_id = spi_id;
     this->connect();
 }
 
 void spi::connect() {
 #ifndef __APPLE__
+    spi_id == 0 ? setupSpi_0() : setupSpi_1();
     char filename[20];
-    sprintf(filename, "/dev/spidev1.%d", this->nr);
+    sprintf(filename, "/dev/spidev%d.0", spi_id);
     if ((this->spi_fd = open(filename, this->flags)) < 0) {
         log::error("SPI: Can't open device");
     } else {
-        log::debug("SPI " + to_string(this->nr) + " openend.");
+        log::debug("SPI 1.0 openend.");
     }
     if (ioctl(this->spi_fd, SPI_IOC_WR_MODE, &this->mode) == -1) {
         log::error("SPI: Can't set SPI mode.");
@@ -48,12 +57,13 @@ void spi::connect() {
 #endif
 }
 
-int spi::send(unsigned char tx[], unsigned int length) {
+u_int8_t spi::send(u_int8_t tx[], uint32_t length) const {
 #ifndef __APPLE__
-    unsigned char rx[length];
-    struct spi_ioc_transfer transfer;
-    transfer.tx_buf = (unsigned long)tx;
-    transfer.rx_buf = (unsigned long)rx;
+//    cout << "tx: " << tx[0] << " len: " << length << endl;
+    char rx[length];
+    struct spi_ioc_transfer transfer{};
+    transfer.tx_buf = (unsigned long) tx;
+    transfer.rx_buf = (unsigned long) rx;
     transfer.len = length;
     transfer.delay_usecs = 0;
     transfer.speed_hz = this->speed;
@@ -63,23 +73,23 @@ int spi::send(unsigned char tx[], unsigned int length) {
     if (status < 0) {
         log::debug("Spi error: " + to_string(status));
         perror("SPI: SPI_IOC_MESSAGE Failed");
+        return -1;
     }
 #endif
-return 0;
+    return 0;
 }
 
-void spi::write8Bits(unsigned char reg, unsigned char value) {
-    unsigned char data[2] = {};
+void spi::write8Bits(u_int8_t reg, u_int8_t value) const {
+    u_int8_t data[2] = {};
     data[0] = reg | ((value & 0xf0) >> 4);
     data[1] = (value & 0x0f) << 4;
     if (this->send(data, sizeof(data)) == -1) {
         perror("Failed to update output.");
     }
-
 }
 
-void spi::write12Bits(unsigned char reg, unsigned char value) {
-    unsigned char data[2] = {};
+void spi::write12Bits(u_int8_t reg, u_int16_t value) const {
+    u_int8_t data[2] = {};
     data[0] = reg | ((value & 0xff00) >> 8);
     data[1] = (value & 0x00ff);
     if (this->send(data, sizeof(data)) == -1) {
@@ -87,7 +97,7 @@ void spi::write12Bits(unsigned char reg, unsigned char value) {
     }
 }
 
-void spi::spi_close() {
+void spi::spi_close() const {
 #ifndef __APPLE__
     close(this->spi_fd);
 #endif

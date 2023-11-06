@@ -17,7 +17,7 @@ import { Tick } from '../timeline.component';
   `]
 })
 export class TimelineMajorTickComponent implements OnChanges {
-  @ViewChild('major')
+  @ViewChild('major', { static: true })
   private major: ElementRef;
 
   @Input()

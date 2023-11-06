@@ -8,13 +8,16 @@
 
 #include "rest_resource.h"
 
-class hello_resource: public rest_resource {
+class hello_resource : public rest_resource {
 public:
     hello_resource();
-    list<shared_ptr<Resource>> getResources();
-    void close();
+
+    list <shared_ptr<Resource>> getResources() override;
+
+    void close() override;
+
 private:
-    shared_ptr<Resource> resource;
+    shared_ptr <Resource> resource;
 };
 
 

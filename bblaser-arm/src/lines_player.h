@@ -14,14 +14,17 @@ using namespace std;
 
 class lines_player {
 public:
-    lines_player(laser *lp);
-    void playLines(segment *segments, int total_segments);
+    explicit lines_player(laser *lp);
+
+    static void playLines(segment *segments, int total_segments);
+
     void disable();
+
     void stop();
 
 private:
     promise<void> exitSignal;
-    future<void> futureObj;
+//    future<void> futureObj;
     thread runner;
     laser *lp;
 };

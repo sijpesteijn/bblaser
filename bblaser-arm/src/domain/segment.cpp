@@ -4,17 +4,17 @@
 
 #include "segment.h"
 
-segment::segment(color *col, int total_points, point* points) {
+segment::segment(color *col, int total_points, point *points) {
     this->col = col;
     this->total_points = total_points;
     this->points = points;
 }
 
-color* segment::getColor() {
+color *segment::getColor() {
     return this->col;
 }
 
-point* segment::getPoints() {
+point *segment::getPoints() {
     return this->points;
 }
 
