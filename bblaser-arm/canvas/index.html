@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas draw</title>
+
+</head>
+<script type="text/javascript">
+    var canvas, ctx, flag = false,
+        prevX = 0,
+        currX = 0,
+        prevY = 0,
+        currY = 0,
+        dot_flag = false;
+
+    var x = "black",
+        y = 2;
+
+    function init() {
+        canvas = document.getElementById('can');
+        ctx = canvas.getContext("2d");
+        w = canvas.width;
+        h = canvas.height;
+
+        canvas.addEventListener("mousemove", function (e) {
+            findxy('move', e)
+        }, false);
+        canvas.addEventListener("mousedown", function (e) {
+            findxy('down', e)
+        }, false);
+        canvas.addEventListener("mouseup", function (e) {
+            findxy('up', e)
+        }, false);
+        canvas.addEventListener("mouseout", function (e) {
+            findxy('out', e)
+        }, false);
+    }
+
+    function draw() {
+        ctx.beginPath();
+        ctx.moveTo(prevX, prevY);
+        ctx.lineTo(currX, currY);
+        ctx.strokeStyle = x;
+        ctx.lineWidth = y;
+        ctx.stroke();
+        ctx.closePath();
+    }
+
+    function blank() {
+        sendToLaser("000000000000");
+    }
+
+    function erase() {
+        sendToLaser("000000000000");
+        ctx.clearRect(0, 0, w, h);
+        // document.getElementById("canvasimg").style.display = "none";
+        document.getElementById("coorsHex").value = "";
+        document.getElementById("coors").value = "";
+    }
+
+    function send() {
+        var coorsHex = document.getElementById("coorsHex");
+        sendToLaser("00FF00" + coorsHex.value);
+    }
+
+    function sendToLaser(value) {
+        fetch("http://192.168.6.2:1984/play", {
+            method: "POST",
+            body: value,
+            headers: {
+                "Content-Type": "text/plain"
+            }
+        }).then((response) => console.log(response));
+    }
+
+    function findxy(res, e) {
+        var xCoor = document.getElementById("xCoor").value;
+        var fixedX = document.getElementById("fixedX").checked;
+        var coors = document.getElementById("coors");
+        var coorsHex = document.getElementById("coorsHex");
+
+        if (res == 'down') {
+            prevX = currX;
+            prevY = currY;
+            if (fixedX) {
+                currX = xCoor;
+            } else {
+                currX = e.clientX - canvas.offsetLeft;
+            }
+            currY = e.clientY - canvas.offsetTop;
+
+            flag = true;
+            dot_flag = true;
+            if (dot_flag) {
+                ctx.beginPath();
+                ctx.fillStyle = x;
+
+                ctx.fillRect(currX, currY, 4, 4);
+                currXX = 8 * currX;
+                currYY = 8 * currY;
+                currXHex = ("000" + currXX.toString(16)).slice(-3).toUpperCase();
+                currYHex = ("000" + currYY.toString(16)).slice(-3).toUpperCase();
+                coors.value = coors.value + currXX + currYY;
+                coorsHex.value = coorsHex.value + currXHex + currYHex;
+                ctx.closePath();
+                dot_flag = false;
+            }
+        }
+        if (res == 'up' || res == "out") {
+            flag = false;
+        }
+        if (res == 'move') {
+            if (flag) {
+                prevX = currX;
+                prevY = currY;
+                currX = e.clientX - canvas.offsetLeft;
+                currY = e.clientY - canvas.offsetTop;
+                draw();
+            }
+        }
+    }
+
+    function xMin() {
+        document.getElementById("xCoor").value = 0;
+    }
+    function xMax() {
+        document.getElementById("xCoor").value = 511;
+    }
+</script>
+<body onload="init()">
+<input type="button" value="clear" id="clr" size="23" onclick="erase()">
+<input type="button" value="blank" id="blank" size="23" onclick="blank()">
+<input type="button" value="Send" id="send" size="23" onclick="send()">
+X -  fixed:<input type="checkbox" id="fixedX"><input type="text" id="xCoor" value="0"><input type="button" value="X min" onclick="xMin()"><input type="button" value="X max" onclick="xMax()">
+<br/>
+<canvas id="can" width="512" height="512" style="border:2px solid;"></canvas>
+<br/>
+Decimal:<textarea id="coors" cols="200" rows="5">
+</textarea>
+<br/>
+Hex:<textarea id="coorsHex" cols="200" rows="5">
+</textarea>
+</body>
+</html>

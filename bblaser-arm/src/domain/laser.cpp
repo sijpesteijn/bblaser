@@ -6,14 +6,17 @@
 #include "../log.h"
 #include "segment.h"
 #include "defines.h"
+#include "settings.h"
 #include <unistd.h>
 #include <iostream>
+#include <valarray>
 
 
 /**
 * spi1.0: CS = P9_42, SCLK = P9_20, D0 = P9_29, D1 = P9_30
 */
-laser::laser() {
+laser::laser(settings *sett) {
+    this->sett = sett;
     char P9_11[] = "P9_11";
     this->_axis_cs = new gpio(30, P9_11); // P9_11
     this->_axis_cs->setValue(1);
@@ -121,13 +124,30 @@ void laser::sendToRaw(point *p) {
 
 void laser::setPoint(point *p) {
     if (this->_enabled) {
+//        cout << "x: " << p->getX() << endl;
+//        cout << "y: " << p->getY() << endl;
+//        long d = 0, e = 1000;
+//        double x_angle = atan((p->getX() - 2048)/(sqrt(pow(d,2)+pow((p->getY() - 2048),2)) + e));
+//        x_angle = (4096/(M_PI/2))*x_angle + 2048;
+//        float y_angle = atan((p->getY() - 2048)/(sqrt(pow(d,2)-pow((p->getX() - 2048),2)/5)));
+//        y_angle = (2048/(M_PI/2))*y_angle + 2048;
+//        cout << "xc: " << x_angle << endl;
+//        cout << "yc" << y_angle << endl;
 //        cout << "P " << p->getX() << ", " << p->getY() << endl;
+        u_int16_t x;
+        if (p->getX() < 2047) {
+            x = p->getX() + pow(p->getY() -2046, 2) * this->sett->getCorrLX();
+        } else {
+            x = p->getX() - pow(p->getY() -2047, 2) * this->sett->getCorrRX();
+        }
+////        cout << "x: " << x << endl;
         this->_axis_cs->setValue(0);
-        this->_spi_bus->write12Bits(0xf0, p->getY());
+        this->_spi_bus->write12Bits(0xf0, x);
+//        this->_spi_bus->write12Bits(0xf0, p->getX());
 //        usleep(5);
         this->_axis_cs->setValue(1);
         this->_axis_cs->setValue(0);
-        this->_spi_bus->write12Bits(0x70, p->getX());
+        this->_spi_bus->write12Bits(0x70, p->getY());
 //        usleep(5);
         this->_axis_cs->setValue(1);
         this->_axis_ldac->setValue(0);

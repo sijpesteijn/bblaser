@@ -7,6 +7,7 @@
 
 #include "../domain/laser.h"
 #include "rest_resource.h"
+#include "../domain/settings.h"
 
 class player_resource : public rest_resource {
 public:

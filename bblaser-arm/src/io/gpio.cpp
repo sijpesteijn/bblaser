@@ -43,5 +43,5 @@ void gpio::open() {
 
 void gpio::setValue(uint16_t val) {
     this->value_file_descriptor << val << endl;
-    usleep(250);
+//    usleep(250);
 }

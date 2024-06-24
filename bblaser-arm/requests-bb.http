@@ -208,8 +208,89 @@ Accept: text/plain
 Content-Type: text/plain
 
 000000000000
+
+### Settings
+
+POST http://192.168.6.2:1984/settings
+Accept: application/json
+Content-Type: application/json
+
+{
+  "corr_l_x": "0.00001",
+  "corr_r_x": "0.00001"
+}
+
 ###
 
+POST http://192.168.6.2:1984/play
+Accept: text/plain
+Content-Type: text/plain
+
+00FF00FFF000FFF200FFF400FFF600FFF800FFFA00FFFC00FFFE00FFFFFF
+
+###
+POST http://192.168.6.2:1984/play
+Accept: text/plain
+Content-Type: text/plain
+
+00FF00000028000FB8FF8010FF8FD8
+
+### Linksboven
+
+POST http://192.168.6.2:1984/play
+Accept: text/plain
+Content-Type: text/plain
+
+00FF00000000
+
+### Rechtsboven
+
+POST http://192.168.6.2:1984/play
+Accept: text/plain
+Content-Type: text/plain
+
+00FF00FFF000
+
+### Links onder
+
+POST http://192.168.6.2:1984/play
+Accept: text/plain
+Content-Type: text/plain
+
+00FF00000FFF
+
+### Rechtsonder
+
+POST http://192.168.6.2:1984/play
+Accept: text/plain
+Content-Type: text/plain
+
+00FF00FFFFFF
+
+###
+
+POST http://192.168.6.2:1984/play
+Accept: text/plain
+Content-Type: text/plain
+
+00FF00000000400000800000C00000FFF000FFF400FFF800FFFC00FFFFFFC00FFF800FFF400FFF000FFF000C00000800000400000000
+
+###
+POST http://192.168.6.2:1984/play
+Accept: text/plain
+Content-Type: text/plain
+
+00FF00800000800200800400800600800800800A00800C00800E00800FFF
+
+###
+
+POST http://192.168.6.2:1984/play
+Accept: text/plain
+Content-Type: text/plain
+
+00FF00000800200800400800600800800800A00800C00800E00800FFF800
+
+###
 POST http://192.168.6.2:1984/play
 Accept: text/plain
 Content-Type: text/plain

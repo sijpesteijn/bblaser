@@ -9,7 +9,7 @@ rest::rest(const list<rest_resource *> &resources) {
     this->resources = resources;
     auto settings = make_shared<Settings>();
     settings->set_port(1984);
-    settings->set_default_header("Connection", "spi_close");
+    settings->set_default_headers({{"Connection","spi_close"}, {"Access-Control-Allow-Origin", "*"}});
 
     for (rest_resource *r_resource: resources) {
         for (const shared_ptr <Resource> &resource: r_resource->getResources()) {

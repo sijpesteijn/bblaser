@@ -4,7 +4,7 @@ project(bb_laser_arm)
 set(CMAKE_CXX_STANDARD 20)
 
 
-set(SOURCE_FILES src/domain/font.h src/main.cpp src/log.h src/log.cpp src/rest/rest.cpp src/rest/rest.h src/rest/rest_resource.h src/rest/lifeline_resource.cpp src/rest/lifeline_resource.h src/domain/laser.cpp src/domain/laser.h src/rest/websocket_handshake.cpp src/rest/websocket_handshake.h src/rest/player_resource.cpp src/rest/player_resource.h src/io/gpio.cpp src/io/gpio.h src/io/spi.cpp src/io/spi.h src/domain/segment.cpp src/domain/segment.h src/lines_player.cpp src/lines_player.h src/domain/point.cpp src/domain/point.h src/io/io.h src/rest/hello_resource.cpp src/rest/hello_resource.h src/domain/color.cpp src/domain/color.h src/domain/matrix3.cpp src/domain/matrix3.h src/domain/defines.h src/domain/drawing.cpp src/domain/drawing.h)
+set(SOURCE_FILES src/domain/font.h src/main.cpp src/log.h src/log.cpp src/rest/rest.cpp src/rest/rest.h src/rest/rest_resource.h src/rest/lifeline_resource.cpp src/rest/lifeline_resource.h src/domain/laser.cpp src/domain/laser.h src/rest/websocket_handshake.cpp src/rest/websocket_handshake.h src/rest/player_resource.cpp src/rest/player_resource.h src/io/gpio.cpp src/io/gpio.h src/io/spi.cpp src/io/spi.h src/domain/segment.cpp src/domain/segment.h src/lines_player.cpp src/lines_player.h src/domain/point.cpp src/domain/point.h src/io/io.h src/rest/hello_resource.cpp src/rest/hello_resource.h src/domain/color.cpp src/domain/color.h src/domain/matrix3.cpp src/domain/matrix3.h src/domain/defines.h src/domain/drawing.cpp src/domain/drawing.h  src/rest/settings_resource.h src/rest/settings_resource.cpp src/domain/settings.h src/domain/settings.cpp)
 
 
 #include_directories( /usr/local/include/openssl )

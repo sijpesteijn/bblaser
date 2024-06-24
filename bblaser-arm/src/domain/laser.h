@@ -9,6 +9,7 @@
 #include "../io/gpio.h"
 #include "segment.h"
 #include "matrix3.h"
+#include "settings.h"
 
 #define MCP23S08_ALL_DOWN        0x00
 #define MCP4902_1_CS            0x01        //GPIO_0 0000 0001
@@ -40,7 +41,7 @@
 
 class laser {
 public:
-    laser();
+    laser(settings *sett);
 
     bool isOn() const;
 
@@ -119,6 +120,7 @@ private:
     u_int16_t _maxMove;
     bool _laserForceOff;
     point *_maxMovePoint;
+    settings *sett;
 };
 
 #endif //BB_LASER_LASER_H
